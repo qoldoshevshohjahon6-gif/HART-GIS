@@ -1,2 +1,2 @@
 # HART-GIS
-HART — Hududiy Arxitektura va Rejalashtirish Tizimi. GIS — Geographic Information System, ya'ni geografik axborot tizimi.
+Hududiy Arxitektura va Rejalashtirish Tizimi.Geographic Information System, ya'ni geografik axborot tizimi.
