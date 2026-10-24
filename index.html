@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HART GIS — Hududiy zonalash va tahlil</title>
+<meta name="description" content="HART GIS — shaharsozlik zonalash va hududiy tahlil tizimi">
+<meta name="theme-color" content="#1a56a8">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAB/lBMVEXj5tbpaSDh3a8mYpzlpV01pdvepiYWLWH003RYVmVilaldq9OVt8yc0NyMsHOZxZcRW51UaopPnDoeYKBaoVgdX56ka1QacDWWpbLfrJAyiDqOw3ENfMWoqjIdMXAeMnA5ikXddEQbMWoAAP8eW3QAdu5/f39qxuf+0zQzMzMzM5kAVVUohrspgbwgg8EkgcMA//95wlEZR4ccZ6gaN3UaVpcjeLb6/focdbUvV40jaqlutk0AAAAcXqD7xRM0ZJRMh7IXQXvR2uXV5e9FaZHudy7zhS4miMdGeqYMLGa117DsZynzpVEkOW5UpkhGmkj35IzuxEsuRnWTw9ruuSkul9Go1uby2IzvmEz0thnvuot3tHVLteX79NEVhso3lTlLqNdtqW6Iuom0yNDkhVLuqhLwxJD2008Af38lTIdph6bJ1dT0yCltweMbYZ40VXY2rOKq0Zdtk7EZldVMcpnxmDrolm1tuNiS1OerybDyt2nx13MAAH8WPoArgrs8lUIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB5HkPHAAAAgHRSTlP////d//j/7///////////Ef//pP9O//////////9Opf//GAH/AwL//wUFAxNJV68B//7+/v7+//////8A/v/+/v////////7+//////7//////////////////////////////////wL/////////////////////////Av/9//KLYdYAAAetSURBVHjalZeHV+rKFsZDbyIW7J5+2+vvhYQhIRIkQJQO0gVEUPRgQ+zl6L9+90wIBtT71vlcRrJw/+bbe89MJpQA+nYo/DY3a9jQKvhXMsz+6zfh8L84loLfQ0GYM/Aej2fN86Z8ryTLsunfgvCrAjgUpmZ5zf+rn708731HT09PsvyfKUygcLzBw7Lvje7FI74JkU1TEEwdHk4ZeHbtnXjs3+sdJQxvZNM/Dw+pKWGWh/Gx3rGgjRm9kWeFKUqYA/9AgBxO3yjE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">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAMAAAAKE/YAAAADAFBMVEXepWGSoqdbYmOfb18nXV8eXp3sax3Xz6IbY6EjYJ1rn6hPbZvUqS7o4tkqMlfedUhfmmF4wmAHaG/rzjYwpN8odC83iDqinWKbxpGk1+URHG4eXZodMGxkkyl7xOClpitOOkziy2/WsZQeMG0kfcEXl7I0jr6Rw2oJf+0GNTwWm+IA//+Lr8IkIj8AP78jgsJvahpOaZYif8IogLwogb1ylashOYEuVHc3RWkafcBAIixWdIxFZ4pijKNstuW9WjGBfYUaR4cZN3QcZ6gbV5b5/fgheLcAAABwuFEedbQjaadImkocXqH7xxoWQnojWJHxhy/weSvqZypKteX0xilNpEn4+dL3tBspY5cqmNMpgrsah8khNnLttSmXuclth6UaYZyyx9TryU37uGYnh8YLJ1VLqdTXh1DztlQSLWUhSYiQyNlsq1KnuccmRnLO6O3mpib0qFMyptv36Mvwh0lwlK7S9PdlepgyqeKVprf457fwxmzYpS0blNTu1nL79bRIl8tOebDvlk6tyq7S59FzpmpGiUtVdZRUiqzTZTGLt3TtkzjQeE+Ot4vt2ooFG0nqqBw7iEO11bIXajBKlzwaPoDZpxl2t9FJi8bmXCNpgpxTaovv1qtcwu8vVXUaczdWlrV4t2220tva89alx4/bgzrZdjRGrOJLsdrH2NDy444Zg7vQqEnnvIxpx/OltLfnxZMAVao+lUZom2qv2OXaWyUUNFrPh2QWe8Tu0lJKWXAGPHtxqsXI3OQAAP9Pii8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACJM7vLAAAAwHRSTlP//f3//2T//xbt/vz///b///8I//v//////xOoZP///////6n+E/D/BQcOAeb/BGr/HFNcp5r/bZu//22bbf////7+/v7//gD//v7//v///v///////////v/+//7//v///////v/////+///////////////+//7//v////////////////////////////////////////////////////////////////////////8D////////////Bv//Af/Ra3HkAAAiVUlEQVR42r2diUMT2Z7vE0RZBMQNRVu93beXu83cubO8mfdm3pJKVUISrBIIMYkJBgg7JuzK0sgmiwItuHULotJtK62tdru1+7/2fr9zTlWqKlVJWO78xIIgwodvvr/lnKokFqdRfDi0B4579vznv1mt/TX/3fGXv/zb//7b3xAg98+GeBYj5F/gkLv9sKQErwr5NhwTX+BfX7j9bnU44A95r47D23MB44s/Zwb9CyHGb2svt9vdGYRjayIYDEYxyA18/6/I/acMoAkyENt1kfyZpK9w2F3kd3TRkFk0N1SfcqX8BeAPcAf/+gVBSgkNzsjdDj/fn54xKRwOuz0J2mUITT/pSMEdZBGN/jXX+cuHVNCQftvzqK7rh1bClaB2mUFnYBWZet9fnc4/mEODzIftdsgvt30z0HaNNZQj1X1d0OAPdPe/5jq/MIN+68zNs2NhiEQi9s1By+K6EpEwhd4n5kJHP/+cJOW+XGeuMfRb53bezpeXlxPo8q2EdqihHRlAIzaSf07Jo9HtamqLmpnV4/LyPKl8M9CkDtrNlNYaJQW0rDcpgGpqi4rZzSvQeZthpmLbVSprFTbPTJdR7UN2R1BNLUP/o8xcTsO+aeik0NW7DKEVrwD1P2qhf4FSR7vzFkEbYaupjeHMPk+z8l/kNmNh9Tk3L0/SK71J8vU0wIygo39i9ZpAf9gDtU7JQnXYt6RaK3e7azPQjuiXf/rDBwX6F+dhezn/d4R2ZNgTU0KD1ofp+GShhrYrk+cWEVNTp3KIEWAa6GD0n51/o9DEHH8HaCx7KXCMxE8L/eUf9nwg0Fg5eE1gV6T0dmyOaXuJ3bjps1pt5oR1zlGUejtWEIvzw4dcnk+GZmpnwozEDnfEbQCt8vZ6IQ2/OurI/fBngAahNaspjUV4PsO+Hcm7YzoYkvVUipZi2GRMvhqk/sJp+eDUCi1pqMmH6Zn9Um/fqt+hM40rcVesd02W3I9kk7j+4PyzBWaO8iRoXeFLgx1ZmVoVhFqAVmPDLZfa9nayeDXJA82Uopqv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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#e8ebe6; --panel:#f5f6f3; --panel2:#ebeee9; --ink:#1c272b; --mute:#65757a; --line:#cdd5cf;
+  --accent:#1f6f78; --accent-ink:#ffffff; --danger:#b23a2e; --canvas:#d5dad3; --blank:#ffffff; --edge:#8b9891;
+  --shadow:0 8px 28px rgba(15,28,30,.22);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#111719; --panel:#192023; --panel2:#222b2f; --ink:#e3e9e6; --mute:#8e9ea3; --line:#2d393e;
+    --accent:#5cb5bd; --accent-ink:#0b1416; --danger:#e0685a; --canvas:#0d1214; --blank:#1c2427; --edge:#3b4a50;
+    --shadow:0 8px 28px rgba(0,0,0,.55);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111719; --panel:#192023; --panel2:#222b2f; --ink:#e3e9e6; --mute:#8e9ea3; --line:#2d393e;
+  --accent:#5cb5bd; --accent-ink:#0b1416; --danger:#e0685a; --canvas:#0d1214; --blank:#1c2427; --edge:#3b4a50;
+  --shadow:0 8px 28px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.4 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+#app{height:100%;position:relative}
+button,input,select,textarea{font:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:6px 11px;border-radius:6px;cursor:pointer;min-height:34px;white-space:nowrap;flex:none}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:500}
+.btn.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--danger)}
+.btn.big{min-height:46px;padding:10px 20px;font-size:16px}
+.btn.block{display:flex;width:100%;margin-top:8px}
+.mob{display:none}
+
+/* ---------- home ---------- */
+.home{height:100%;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center;padding:32px clamp(20px,7vw,96px);overflow:auto;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;background-position:-1px -1px}
+.hcol{background:var(--bg);padding:8px 0}
+.home h1{margin:0;font-size:clamp(30px,5vw,50px);line-height:1.06;font-weight:600;letter-spacing:-.025em}
+.home h1.brand{display:flex;align-items:center;gap:clamp(12px,2vw,20px)}
+.hlogo{width:clamp(56px,9vw,84px);height:auto;flex:none;filter:drop-shadow(0 4px 10px rgba(26,86,168,.28))}
+.wm{display:flex;align-items:center;gap:clamp(8px,1.4vw,14px)}
+.wm b{font-weight:700;letter-spacing:.01em;color:var(--ink)}
+.wm i{width:2px;align-self:stretch;margin:.12em 0;background:#1a56a8;opacity:.8}
+.wm em{font-style:normal;font-weight:400;color:#1a56a8}
+:root[data-theme="dark"] .wm em{color:#5b9bf0}
+:root[data-theme="dark"] .wm i{background:#5b9bf0}
+.home .tag{margin:12px 0 26px;font-size:clamp(16px,2vw,20px);color:var(--mute)}
+.hbtns{display:flex;gap:10px;flex-wrap:wrap}
+.home .note{margin:22px 0 0;max-width:46ch;color:var(--mute)}
+#recent{margin-top:26px;max-width:460px}
+#recent h2{font-size:13px;font-weight:600;margin:0 0 6px;color:var(--mute)}
+.rec{display:flex;width:100%;justify-content:space-between;gap:12px;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);padding:9px 2px;cursor:pointer}
+.rec:hover b{color:var(--accent)}
+.rec span{color:var(--mute);font-size:12px;white-space:nowrap}
+.hart{min-width:0}
+.hart svg{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow)}
+
+/* ---------- editor ---------- */
+#editor{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.topbar{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--panel);border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+.sep{width:1px;align-self:stretch;background:var(--line);margin:2px 4px;flex:none}
+.grow{flex:1 1 auto;min-width:6px}
+.pname{font-weight:600;background:transparent;border:1px solid transparent;color:var(--ink);padding:5px 8px;border-radius:6px;width:210px;min-width:110px;flex:none}
+.pname:hover,.pname:focus{border-color:var(--line);background:var(--panel2)}
+.main{position:relative;display:grid;grid-template-columns:268px minmax(0,1fr) 306px;min-height:0}
+.panel{background:var(--panel);overflow:auto;min-height:0;overscroll-behavior:contain}
+#left{border-right:1px solid var(--line)}
+#right{border-left:1px solid var(--line)}
+.stage{position:relative;z-index:0;isolation:isolate;min-width:0;min-height:0;background:var(--canvas);overflow:hidden}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:default}
+#osmMap{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+#osmMap .leaflet-marker-icon{background:none;border:none}
+.vtx{width:15px;height:15px;border-radius:50%;background:#fff;border:2px solid var(--accent);box-sizing:border-box}
+.vtx.mid{width:11px;height:11px;background:rgba(255,255,255,.6)}
+.vtx.first{width:36px;height:36px;background:rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center}
+.vtx.first.closeable{cursor:pointer}
+.vtx.first i{display:block;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--accent);box-sizing:border-box}
+.scl-pt{width:13px;height:13px;border-radius:50%;background:#e08a1e;border:2px solid #fff;box-sizing:border-box}
+#hud{position:absolute;inset:0;pointer-events:none;z-index:5}
+#hudLegend{position:absolute;background:rgba(255,255,255,.93);color:#1c272b;border:1px solid rgba(20,30,32,.45);border-radius:6px;padding:9px 11px;font-size:12.5px;box-shadow:var(--shadow);min-width:120px}
+#hudLegend b{display:block;font-size:11px;font-weight:600;margin-bottom:6px}
+#hudLegend .li{display:flex;align-items:center;gap:7px;padding:3px 0}
+#hudLegend .sw{width:13px;height:13px;border-radius:3px;border:1px solid rgba(0,0,0,.28);flex:none}
+/* ---------- Chop etish rejimi ---------- */
+#printFrame{position:absolute;background:transparent;border:2px solid #fff;box-shadow:0 0 0 2000px rgba(10,16,18,.42),0 6px 18px rgba(0,0,0,.35);pointer-events:none;z-index:7}
+#printFrame::after{content:"";position:absolute;inset:0;outline:1px dashed rgba(255,255,255,.6);outline-offset:-1px}
+.pv-item{position:absolute;pointer-events:auto;cursor:grab;user-select:none;touch-action:none}
+.pv-item.dragging{cursor:grabbing;opacity:.92}
+.pv-resize{position:absolute;right:-7px;bottom:-7px;width:17px;height:17px;background:var(--accent);border:2px solid #fff;border-radius:50%;cursor:nwse-resize;box-shadow:0 1px 4px rgba(0,0,0,.45);pointer-events:auto;touch-action:none}
+#printLegend{background:rgba(255,255,255,.95);color:#1c272b;border:1px solid rgba(20,30,32,.45);border-radius:6px;padding:9px 11px 9px 8px;font-size:12.5px;box-shadow:var(--shadow);min-width:120px}
+#printLegend b{display:block;font-size:11px;font-weight:600;margin:0 0 6px 3px}
+#printLegend .li{display:flex;align-items:center;gap:7px;padding:3px 3px}
+#printLegend .sw{width:13px;height:13px;border-radius:3px;border:1px solid rgba(0,0,0,.28);flex:none}
+#printScaleBar{background:rgba(255,255,255,.93);border:1px solid rgba(20,30,32,.45);border-radius:6px;padding:6px 10px;box-shadow:var(--shadow);text-align:center}
+#printScaleBar .bar2{display:flex;height:7px;margin-top:4px;border:1px solid #1c272b}
+#printScaleBar .bar2 i{flex:1}
+#printScaleBar .bar2 i:nth-child(odd){background:#1c272b}
+#printScaleBar .bar2 i:nth-child(even){background:#fff}
+#printScaleBar .lbl{display:flex;justify-content:space-between;font-size:10px;color:#1c272b;margin-top:2px}
+#printNorth{width:38px;height:52px;background:rgba(255,255,255,.93);border:1px solid rgba(20,30,32,.45);border-radius:6px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 12px "IBM Plex Sans",sans-serif;color:#1c272b}
+#printNorth .pv-content{display:flex;flex-direction:column;align-items:center}
+#printNorth i{width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:16px solid #1c272b;margin-top:3px}
+#printTitle{background:rgba(255,255,255,.93);border:1px solid rgba(20,30,32,.45);border-radius:6px;padding:8px 16px;box-shadow:var(--shadow);text-align:center}
+#printTitle b{display:block;font-size:15px;font-weight:600;color:#1c272b}
+#printTitle span{display:block;font-size:10.5px;color:#5b6b70;margin-top:1px}
+#printBar{position:absolute;left:50%;top:10px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;box-shadow:var(--shadow);z-index:30;max-width:calc(100% - 16px);overflow-x:auto;white-space:nowrap}
+#printBar select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 7px;min-height:34px}
+@media (max-width:820px){ #printBar{top:auto;bottom:66px} }
+.srcCards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.srcCard{border:1px solid var(--line);border-radius:8px;padding:10px;cursor:pointer;background:var(--panel2)}
+.srcCard.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.srcCard b{display:block;font-size:13px;margin-bottom:3px}
+.srcCard span{font-size:11.5px;color:var(--mute)}
+#npOsmPick{height:220px;border:1px solid var(--line);border-radius:8px;margin-top:4px;overflow:hidden}
+.bottombar{display:flex;align-items:center;gap:10px;padding:4px 8px;background:var(--panel);border-top:1px solid var(--line);font-size:12px;color:var(--mute);overflow-x:auto;white-space:nowrap}
+.bottombar .btn{min-height:28px;padding:2px 9px}
+.zoomc{display:flex;align-items:center;gap:4px;flex:none}
+#zPct{min-width:46px;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}
+.tnum{font-variant-numeric:tabular-nums}
+
+.ph{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:2}
+.ph h2{margin:0;font-size:13px;font-weight:600}
+.zrow{display:flex;align-items:center;gap:8px;padding:7px 10px 7px 6px;border-bottom:1px solid var(--line);cursor:pointer}
+.zrow:hover{background:var(--panel2)}
+.zrow.sel{background:color-mix(in srgb,var(--accent) 15%,var(--panel));box-shadow:inset 3px 0 0 var(--accent)}
+.sw{width:16px;height:16px;border-radius:4px;border:1px solid rgba(0,0,0,.28);flex:none;display:inline-block}
+.zname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zcnt{color:var(--mute);font-size:12px;flex:none}
+.eye{border:0;background:none;color:var(--ink);padding:4px;cursor:pointer;display:flex;border-radius:4px;flex:none}
+.eye.off{color:var(--mute);opacity:.55}
+.sec{padding:12px;border-bottom:1px solid var(--line)}
+.sec h3{margin:0 0 9px;font-size:13px;font-weight:600}
+.hint{margin:0;color:var(--mute);font-size:12px}
+.f{display:block;margin-bottom:9px;font-size:12px;color:var(--mute)}
+.f input[type=text],.f input[type=number],.f select,.f textarea,.field{display:block;width:100%;margin-top:3px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-height:34px}
+.f textarea{resize:vertical}
+.f input[type=range]{width:100%;margin:6px 0 0;accent-color:var(--accent)}
+.row{display:flex;gap:6px;align-items:center;margin-top:3px}
+.row .field{margin-top:0}
+.rgb label{flex:1;font-size:11px;color:var(--mute)}
+.rgb input{margin-top:2px!important;padding:5px 6px!important}
+input[type=color]{width:42px;height:34px;padding:2px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);cursor:pointer;flex:none}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--mute);margin:4px 0}
+.kv b{color:var(--ink);font-weight:500;text-align:right}
+.ai-tag{display:inline-block;background:color-mix(in srgb,#e08a1e 22%,transparent);color:var(--ink);border:1px dashed #e08a1e;border-radius:6px;padding:4px 8px;font-size:12px;margin:4px 0 8px}
+.chk{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--accent)}
+.pos{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.pos .btn{font-size:12px;padding:5px 6px}
+
+#drawbar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;box-shadow:var(--shadow);z-index:10;max-width:calc(100% - 16px);overflow-x:auto;white-space:nowrap}
+#drawbar .info{display:flex;align-items:center;gap:7px;padding:0 6px;font-size:12px}
+
+@media (max-width:820px){
+  .mob{display:inline-flex}
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:absolute;left:0;right:0;bottom:0;max-height:60%;z-index:20;border:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:var(--shadow);transform:translateY(108%);transition:transform .22s ease;visibility:hidden}
+  .panel.open{transform:none;visibility:visible}
+  .home{grid-template-columns:1fr;gap:26px;align-content:start}
+  .pname{width:130px}
+  #stHint{display:none}
+}
+@media (prefers-reduced-motion:reduce){.panel{transition:none}}
+
+/* ---------- modal & toast ---------- */
+.overlay{position:fixed;inset:0;background:rgba(8,14,16,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:12px}
+.modal{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);width:min(480px,100%);max-height:90%;overflow:auto;padding:18px}
+.modal.wide{width:min(620px,100%)}
+.modal h2{margin:0 0 12px;font-size:17px;font-weight:600}
+.mact{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+.err{color:var(--danger);font-size:13px;margin:8px 0 0;min-height:18px}
+.help{color:var(--mute);font-size:12px;margin:6px 0 0}
+.mlist .rec{padding:10px 2px}
+.mrow{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:8px 0}
+.mrow .grow b{display:block}
+.mrow small{color:var(--mute)}
+#toast{position:fixed;left:50%;bottom:calc(58px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:8px;max-width:min(92vw,520px);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:200;font-size:13px;box-shadow:var(--shadow)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.bad{background:var(--danger);color:#fff}
+
+.stat-top{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat-top div{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.stat-top b{display:block;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat-top span{font-size:12px;color:var(--mute)}
+.srow{padding:7px 0;border-bottom:1px solid var(--line)}
+.srow .l{display:flex;align-items:center;gap:8px}
+.srow .l .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .l .v{color:var(--mute);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.srow .l .p{width:48px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:3px;background:var(--panel2);margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%}
+.qopt{display:flex;align-items:center;gap:8px;margin:6px 0;cursor:pointer}
+textarea.field{min-height:90px;font-size:12px}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- =============== BOSH SAHIFA =============== -->
+  <section id="home" class="home">
+    <div class="hcol">
+      <h1 class="brand"><img class="hlogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABwCAMAAADxPgR5AAAB/lBMVEXlYyDepiDdm2Wh0+Hx0WfV5eFfoGJYp88TX6Rhl6tYWmuhyJA8kkKatsbfd0YabzOQqpri0p0NL3MeltdbeJcjYZ1TlDYyW3EXfMNjxO8fXZkZLV6hbVkGXmczhTiTpWghYJuhpirvzjMdMWwAAP8EfvYWgL7isZUcMGl6wVuUw3cRlrQhh8QlhMJLOk8fP58eTH0bfcEmgLsogLxVqqpLgqZVqv8ZR4cZN3QcZ6gaVpcieLf6/PkAAAAddLRwt1EcXqH6xhkmaacUQ3pHmknveC0lV5BLZ4/whS7G1NlQpUpKtub3tBksgrzzxynsaCltl7MrmNLR6M1SdJgXhsnttisPLGVTia1MqdVmq0wjN28zpdkqRG4rY5nsmEwaYZzxt0/Q6ezzp1L09tQnhsW11KzuyEzsh0kKKlr3uGjv2LFuuNf16qxpi6ohSohGW4SsyKzxlDitx9Hz5JEYPoDH2eLntY9xqHSOp7nmpiXrx5EyquHs6c86lDy709n58rEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtsUZHAAAAgHRSTlP//////////xr+/v////////8S/f3m//3//6Dz/wf//2j//58BCPj/aP//GyGf/wh+jFeLA7AD/v7+/v7/AP///v/+//////////////7///7///7///7////+/////////////v///////////v/+/////////////////////zuhq8wAABDkSURBVHjarZuJQ9ratsbDLCgWFWerbU/b03Pu+MaEJFIMEBUKisqkICKIs1XUo+1B/dfvWnvvhAQi4nt3SREnfnzfGvZOQrnFdnz6tLj4duDdTPDcGOuvDS+588In7/+8Gxigz6sHpz/6CD8amBlXFaUitiMSCb0cYbh1hQSRqkvj/wXP+98fu4EEpyiK9iTskfYN+ESegoT2fM9GKpWqwwc+qNdTf/sreXozcBRw8KxtYE9FFBiWXgIjGZl/G9CJnM4bD4liJRR6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" alt="HART GIS logotipi"><span class="wm"><b>HART</b><i></i><em>GIS</em></span></h1>
+      <p class="tag">Shaharsozlik zonalash va hududiy tahlil — hududni funksional zonalarga ajrating</p>
+      <div class="hbtns">
+        <button class="btn primary big" id="hNew">+ Yangi loyiha</button>
+        <button class="btn big" id="hOpen">Loyihani ochish</button>
+      </div>
+      <p class="note">Yuklangan rasm hech qachon o‘zgartirilmaydi. Zonalar rasm ustidagi alohida qatlamda saqlanadi va istalgan vaqtda tahrirlanadi.</p>
+      <div id="recent"></div>
+    </div>
+    <div class="hart" aria-hidden="true">
+      <svg viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg">
+        <rect width="480" height="340" fill="var(--blank)"/>
+        <g stroke="var(--line)" stroke-width="1">
+          <path d="M0 68H480M0 136H480M0 204H480M0 272H480M96 0V340M192 0V340M288 0V340M384 0V340"/>
+        </g>
+        <path d="M0 250C90 210 150 270 250 230S420 190 480 220" fill="none" stroke="#00B4D8" stroke-width="16" opacity=".35"/>
+        <polygon points="36,40 176,28 204,120 96,150 44,108" fill="#4A90E2" fill-opacity=".42" stroke="#4A90E2" stroke-width="2"/>
+        <polygon points="222,36 344,52 330,132 240,118" fill="#F1C40F" fill-opacity=".42" stroke="#F1C40F" stroke-width="2"/>
+        <polygon points="360,70 452,84 440,170 372,176" fill="#9B59B6" fill-opacity=".42" stroke="#9B59B6" stroke-width="2"/>
+        <polygon points="40,176 150,164 176,214 92,236 44,222" fill="#27AE60" fill-opacity=".42" stroke="#27AE60" stroke-width="2"/>
+        <polygon points="250,268 452,258 460,300 248,308" fill="#7F8C8D" fill-opacity=".42" stroke="#7F8C8D" stroke-width="2"/>
+        <g fill="var(--blank)" stroke="var(--accent)" stroke-width="2"><circle cx="36" cy="40" r="5"/><circle cx="176" cy="28" r="5"/><circle cx="204" cy="120" r="5"/><circle cx="96" cy="150" r="5"/><circle cx="44" cy="108" r="5"/></g>
+        <polygon points="36,40 176,28 204,120 96,150 44,108" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="6 4"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- =============== ISHCHI OYNA =============== -->
+  <section id="editor" hidden>
+    <header class="topbar">
+      <button class="btn" id="bHome" title="Loyihalar ro‘yxatiga qaytish">‹ Loyihalar</button>
+      <input class="pname" id="pname" aria-label="Loyiha nomi" maxlength="80">
+      <button class="btn mob" id="bLeft">Zonalar</button>
+      <button class="btn mob" id="bRight">Sozlamalar</button>
+      <span class="sep"></span>
+      <button class="btn" data-tool="select" title="Tanlash (V)">↖ Tanlash</button>
+      <button class="btn" data-tool="draw" title="Zona chizish (P)">✎ Zona chizish</button>
+      <button class="btn" data-tool="scale" title="Masshtabni sozlash (S)">⟷ Masshtab</button>
+      <span class="sep"></span>
+      <button class="btn" id="bUndo" title="Undo (Ctrl+Z)">↶ Undo</button>
+      <button class="btn" id="bRedo" title="Redo (Ctrl+Y)">↷ Redo</button>
+      <span class="grow"></span>
+      <button class="btn" id="bStats">Statistika</button>
+      <button class="btn" id="bAI">AI orqali tahlil qilish</button>
+      <button class="btn primary" id="bExport">PNG sifatida yuklab olish</button>
+      <button class="btn" id="bTheme" title="Dark / Light rejim" aria-label="Dark yoki Light rejim">◐</button>
+    </header>
+
+    <div class="main">
+      <aside id="left" class="panel" aria-label="Funksional zonalar">
+        <div class="ph"><h2>Funksional zonalar</h2><span style="display:flex;gap:6px"><button class="btn primary" id="zAdd">+ Yangi zona</button><button class="btn mob" data-close aria-label="Yopish">✕</button></span></div>
+        <div id="zlist"></div>
+      </aside>
+
+      <div class="stage" id="stage">
+        <canvas id="cv"></canvas>
+        <div id="osmMap" hidden></div>
+        <div id="hud"><div id="hudLegend" style="display:none"></div></div>
+        <div id="printLayer" hidden>
+          <div id="printFrame"></div>
+          <div id="printLegend" class="pv-item" hidden><div class="pv-content"></div><div class="pv-resize" data-rs="freeScale"></div></div>
+          <div id="printScaleBar" class="pv-item" hidden><div class="pv-content"></div><div class="pv-resize" data-rs="scaleTargetPx"></div></div>
+          <div id="printNorth" class="pv-item" hidden><div class="pv-content"><span>N</span><i></i></div><div class="pv-resize" data-rs="northScale"></div></div>
+          <div id="printTitle" class="pv-item" hidden><div class="pv-content"></div><div class="pv-resize" data-rs="titleScale"></div></div>
+          <div id="printBar">
+            <label style="font-size:12px;color:var(--mute)">Qog‘oz<select id="ppPaper"></select></label>
+            <span id="ppInfo" style="font-size:11.5px;color:var(--mute);white-space:nowrap"></span>
+            <button class="btn" id="ppOrient">Vertikal</button>
+            <span class="sep"></span>
+            <button class="btn" id="ppExport">Eksport</button>
+            <button class="btn" id="ppClose">✕ Yopish</button>
+          </div>
+        </div>
+        <div id="drawbar" hidden>
+          <span class="info" id="dbInfo"></span>
+          <button class="btn" id="dbBack">↶ Oxirgi nuqta</button>
+          <button class="btn primary" id="dbDone">✓ Yakunlash</button>
+          <button class="btn" id="dbCancel">✕ Bekor qilish</button>
+        </div>
+      </div>
+
+      <aside id="right" class="panel" aria-label="Sozlamalar"></aside>
+    </div>
+
+    <footer class="bottombar">
+      <div class="zoomc">
+        <button class="btn" id="zOut" aria-label="Kichraytirish">−</button>
+        <span id="zPct">100%</span>
+        <button class="btn" id="zIn" aria-label="Kattalashtirish">+</button>
+        <button class="btn" id="zFit">Ekranga sig‘dirish</button>
+        <button class="btn" id="z11">1:1</button>
+      </div>
+      <span class="grow"></span>
+      <span id="stHint"></span>
+      <span class="tnum" id="stCoord"></span>
+      <span id="stScale"></span>
+      <span id="stSave"></span>
+    </footer>
+  </section>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   Yordamchi funksiyalar
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = p => p + "_" + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const LS = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+function hexToRgb(h){ h = h.replace("#",""); if(h.length===3) h = h.split("").map(c=>c+c).join(""); const n = parseInt(h,16); return [(n>>16)&255,(n>>8)&255,n&255]; }
+function rgbToHex(r,g,b){ return "#"+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,"0")).join("").toUpperCase(); }
+function rgba(hex,a){ const [r,g,b] = hexToRgb(hex); return `rgba(${r},${g},${b},${a})`; }
+function validHex(h){ return /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(h).trim()); }
+function normHex(h){ h = String(h).trim().replace("#",""); if(h.length===3) h = h.split("").map(c=>c+c).join(""); return "#"+h.toUpperCase(); }
+const isMobile = () => window.matchMedia("(max-width:820px)").matches;
+
+let toastT = null;
+function toast(msg, bad){
+  const t = $("#toast"); t.textContent = msg; t.className = "show" + (bad ? " bad" : "");
+  clearTimeout(toastT); toastT = setTimeout(()=>{ t.className = ""; }, bad ? 4200 : 2600);
+}
+
+/* =====================================================================
+   Brauzer xotirasi (IndexedDB): loyiha ma’lumoti va original rasm alohida
+   ===================================================================== */
+let dbp = null;
+function openDB(){
+  if(dbp) return dbp;
+  dbp = new Promise((res, rej) => {
+    try{
+      const r = indexedDB.open("fzm-db", 1);
+      r.onupgradeneeded = () => {
+        const d = r.result;
+        if(!d.objectStoreNames.contains("projects")) d.createObjectStore("projects", {keyPath:"id"});
+        if(!d.objectStoreNames.contains("images")) d.createObjectStore("images", {keyPath:"id"});
+      };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    }catch(e){ rej(e); }
+  });
+  return dbp;
+}
+function tx(store, mode, fn){
+  return openDB().then(db => new Promise((res, rej) => {
+    const t = db.transaction(store, mode); const st = t.objectStore(store); const r = fn(st);
+    t.oncomplete = () => res(r && r.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+  }));
+}
+const dbPut = (s,v) => tx(s,"readwrite",st=>st.put(v));
+const dbGet = (s,k) => tx(s,"readonly",st=>st.get(k));
+const dbAll = s => tx(s,"readonly",st=>st.getAll());
+const dbDel = (s,k) => tx(s,"readwrite",st=>st.delete(k));
+
+/* =====================================================================
+   Ma’lumotlar modeli
+   ===================================================================== */
+const PRESETS = [
+  ["Turar-joy hududi","#4A90E2","🏠"],["Jamoat va ma’muriy hudud","#F1C40F","🏛️"],
+  ["Savdo va xizmat ko‘rsatish hududi","#E67E22","🛍️"],["Sanoat hududi","#9B59B6","🏭"],
+  ["Transport hududi","#7F8C8D","🚉"],["Ko‘kalamzor hudud","#27AE60","🌳"],
+  ["Rekreatsiya hududi","#7FD18B","⛲"],["Ta’lim hududi","#C0392B","🎓"],
+  ["Tibbiyot hududi","#E84393","🏥"],["Sport hududi","#16A085","⚽"],
+  ["Maxsus hudud","#34495E","🛡️"],["Qishloq xo‘jaligi hududi","#B7950B","🌾"],
+  ["Suv hududi","#00B4D8","💧"],["Bo‘sh hudud","#BDC3C7","▫️"],["Boshqa","#8E6E53","•"]
+];
+const ICONS = ["🏠","🏛️","🛍️","🏭","🚉","🌳","⛲","🎓","🏥","⚽","🛡️","🌾","💧","▫️","•","🏗️","🏢","🛒","🕌","⛪","🚧","🅿️","📍"];
+
+let P = null;            // joriy loyiha
+let IMG = null;          // yuklangan original rasm (HTMLImageElement) – hech qachon o‘zgartirilmaydi
+let IMG_URL = null;
+let tool = "select";
+let S = {poly:null, vertex:-1, zone:null};
+let D = null;            // chizilayotgan polygon {pts, hover, last}
+let SC = {pts:[]};       // masshtab nuqtalari
+let spaceDown = false;
+const V = {s:1, tx:0, ty:0, fitted:true};
+const L_ = {base:true, zones:true, labels:true};  // ko‘rinish qatlamlari
+
+function newProjectData(name, w, h){
+  return {
+    id: uid("p"), name, mode:"image", imgW:w, imgH:h,
+    zones: PRESETS.map(([n,c,i]) => ({id:uid("z"), name:n, color:c, icon:i, note:"", opacity:.4, visible:true})),
+    polys: [], scale: null,
+    legend: {pos:"tr", visible:true, labels:true},
+    createdAt: Date.now(), updatedAt: Date.now()
+  };
+}
+function newOsmProjectData(name, lat, lng, zoom){
+  return {
+    id: uid("p"), name, mode:"osm", view:{lat, lng, zoom},
+    zones: PRESETS.map(([n,c,i]) => ({id:uid("z"), name:n, color:c, icon:i, note:"", opacity:.4, visible:true})),
+    polys: [], scale: null,
+    legend: {pos:"tr", visible:true, labels:true},
+    createdAt: Date.now(), updatedAt: Date.now()
+  };
+}
+/* Geodezik (sfera) maydon — OSM rejimida [lat,lng] nuqtalar uchun, m² */
+function geoAreaM2(pts){
+  if(pts.length < 3) return 0;
+  const R = 6378137, rad = Math.PI/180;
+  let a = 0;
+  for(let i=0;i<pts.length;i++){
+    const [lat1,lng1] = pts[i], [lat2,lng2] = pts[(i+1)%pts.length];
+    a += (lng2-lng1)*rad * (2 + Math.sin(lat1*rad) + Math.sin(lat2*rad));
+  }
+  return Math.abs(a * R * R / 2);
+}
+const zoneMap = () => { const m = {}; P.zones.forEach(z => m[z.id] = z); return m; };
+const getPoly = id => P.polys.find(p => p.id === id);
+const curZone = () => P.zones.find(z => z.id === S.zone);
+
+/* ---------- Undo / Redo (snapshot) ---------- */
+let hist = [], hi = -1;
+function snap(){
+  return JSON.stringify({name:P.name, zones:P.zones.map(({visible,...r})=>r), polys:P.polys, scale:P.scale, legend:P.legend});
+}
+function resetHistory(){ hist = [snap()]; hi = 0; updateTopUI(); }
+function commit(){
+  const s = snap();
+  if(s === hist[hi]){ scheduleSave(); return; }
+  hist = hist.slice(0, hi+1); hist.push(s);
+  if(hist.length > 200) hist.shift();
+  hi = hist.length - 1;
+  updateTopUI(); scheduleSave();
+}
+function restore(i){
+  const d = JSON.parse(hist[i]);
+  const vis = {}; P.zones.forEach(z => vis[z.id] = z.visible);
+  P.name = d.name; P.zones = d.zones.map(z => ({...z, visible: z.id in vis ? vis[z.id] : true}));
+  P.polys = d.polys; P.scale = d.scale; P.legend = d.legend;
+  D = null; SC.pts = [];
+  if(!P.zones.find(z => z.id === S.zone)) S.zone = P.zones[0] ? P.zones[0].id : null;
+  if(S.poly && !getPoly(S.poly)){ S.poly = null; S.vertex = -1; }
+  $("#pname").value = P.name;
+  refreshAll(); scheduleSave();
+}
+function undo(){
+  if(D && D.pts.length){ D.pts.pop(); updateTopUI(); invalidate(); return; }
+  if(hi > 0){ hi--; restore(hi); }
+}
+function redo(){ if(hi < hist.length-1){ hi++; restore(hi); } }
+
+/* ---------- Saqlash ---------- */
+let saveT = null;
+function scheduleSave(){
+  $("#stSave").textContent = "Saqlanmoqda…";
+  clearTimeout(saveT); saveT = setTimeout(saveNow, 450);
+}
+async function saveNow(){
+  clearTimeout(saveT);
+  if(!P) return;
+  try{
+    P.updatedAt = Date.now();
+    await dbPut("projects", JSON.parse(JSON.stringify(P)));
+    $("#stSave").textContent = "Saqlandi ✓";
+  }catch(e){
+    $("#stSave").textContent = "Brauzer xotirasiga saqlab bo‘lmadi";
+  }
+}
+window.addEventListener("beforeunload", () => { if(P) saveNow(); });
+document.addEventListener("visibilitychange", () => { if(document.hidden && P) saveNow(); });
+
+/* =====================================================================
+   Geometriya
+   ===================================================================== */
+const toImg = (x,y) => ({x:(x - V.tx)/V.s, y:(y - V.ty)/V.s});
+const toScr = (x,y) => [x*V.s + V.tx, y*V.s + V.ty];
+function pointInPoly(x,y,pts){
+  let inside = false;
+  for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+    const [xi,yi]=pts[i],[xj,yj]=pts[j];
+    if(((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi)) inside = !inside;
+  }
+  return inside;
+}
+function polyAreaPx(pts){
+  let a = 0;
+  for(let i=0;i<pts.length;i++){ const [x1,y1]=pts[i],[x2,y2]=pts[(i+1)%pts.length]; a += x1*y2 - x2*y1; }
+  return Math.abs(a)/2;
+}
+function labelPoint(pts){
+  let a=0,cx=0,cy=0; const n=pts.length;
+  for(let i=0;i<n;i++){ const [x1,y1]=pts[i],[x2,y2]=pts[(i+1)%n]; const f=x1*y2-x2*y1; a+=f; cx+=(x1+x2)*f; cy+=(y1+y2)*f; }
+  if(Math.abs(a)<1e-9) return pts[0];
+  a*=.5; cx/=(6*a); cy/=(6*a);
+  const xs=[];
+  for(let i=0;i<n;i++){
+    const [x1,y1]=pts[i],[x2,y2]=pts[(i+1)%n];
+    if((y1<=cy&&y2>cy)||(y2<=cy&&y1>cy)) xs.push(x1+(cy-y1)*(x2-x1)/(y2-y1));
+  }
+  xs.sort((p,q)=>p-q);
+  let best=null,bl=-1;
+  for(let i=0;i+1<xs.length;i+=2){ const l=xs[i+1]-xs[i]; if(l>bl){bl=l;best=(xs[i]+xs[i+1])/2;} }
+  return best==null ? [cx,cy] : [best,cy];
+}
+const m2of = px => P.scale ? px/(P.scale.pxPerM*P.scale.pxPerM) : null;
+const polyM2 = pl => P.mode === "osm" ? geoAreaM2(pl.pts) : m2of(polyAreaPx(pl.pts));
+const hasArea = () => P.mode === "osm" || !!P.scale;
+function fmtArea(m2){
+  if(m2==null) return null;
+  if(m2 < 10000) return Math.round(m2).toLocaleString("en-US").replace(/,/g," ")+" m²";
+  return (m2/10000).toFixed(2)+" ga";
+}
+function computeStats(){
+  const osm = P.mode === "osm";
+  const rows = P.zones.map(z => {
+    const ps = P.polys.filter(p => p.zoneId === z.id);
+    const px = osm ? ps.reduce((a,p)=>a+geoAreaM2(p.pts),0) : ps.reduce((a,p)=>a+polyAreaPx(p.pts),0);
+    return {z, count:ps.length, px, m2: osm ? px : m2of(px)};
+  }).filter(r => r.count > 0);
+  return {rows, totalPx: rows.reduce((a,r)=>a+r.px,0)};
+}
+function legendItems(){
+  const cnt = {}; P.polys.forEach(p => cnt[p.zoneId] = (cnt[p.zoneId]||0)+1);
+  return P.zones.filter(z => cnt[z.id] && z.visible);
+}
+
+/* =====================================================================
+   Chizish (Canvas) – ekran va eksport uchun bitta funksiya
+   ===================================================================== */
+const cv = $("#cv"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1, needs = false, theme = {};
+function readTheme(){
+  const cs = getComputedStyle(document.documentElement);
+  theme = {blank: cs.getPropertyValue("--blank").trim()||"#fff", edge: cs.getPropertyValue("--edge").trim()||"#888", accent: cs.getPropertyValue("--accent").trim()||"#1f6f78"};
+}
+function invalidate(){
+  if(P && P.mode === "osm"){ syncOsm(); return; }
+  if(!needs){ needs = true; requestAnimationFrame(frame); }
+}
+function resize(){
+  const r = cv.getBoundingClientRect(); DPR = window.devicePixelRatio || 1;
+  W = r.width; H = r.height;
+  cv.width = Math.max(1, Math.round(W*DPR)); cv.height = Math.max(1, Math.round(H*DPR));
+  if(P && P.mode !== "osm" && V.fitted) fitView();
+  invalidate();
+}
+new ResizeObserver(resize).observe(cv);
+new ResizeObserver(() => { if(osmMap) osmMap.invalidateSize(); }).observe($("#stage"));
+
+function frame(){
+  needs = false;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.clearRect(0,0,W,H);
+  if(!P || !IMG) return;
+  paintMap(ctx, {
+    s:V.s, tx:V.tx, ty:V.ty, W, H, u:1, interactive:true,
+    showBase:L_.base, showZones:L_.zones,
+    showNames: L_.labels && P.legend.labels,
+    showLegend: L_.labels && P.legend.visible
+  });
+  $("#zPct").textContent = Math.round(V.s*100) + "%";
+}
+
+function drawLabelText(c, text, x, y, u){
+  c.font = `600 ${12*u}px "IBM Plex Sans",system-ui,sans-serif`;
+  c.textAlign = "center"; c.textBaseline = "middle";
+  c.lineJoin = "round"; c.lineWidth = 3.5*u; c.strokeStyle = "rgba(255,255,255,.92)";
+  c.strokeText(text, x, y);
+  c.fillStyle = "#151d20"; c.fillText(text, x, y);
+}
+
+function paintMap(c, o){
+  const {s, tx, ty, u} = o;
+  const iw = P.imgW, ih = P.imgH;
+  const X = x => x*s+tx, Y = y => y*s+ty;
+  const zm = zoneMap();
+
+  // 1) BASE IMAGE – faqat ko‘rsatiladi, o‘zgartirilmaydi
+  if(o.showBase){
+    c.imageSmoothingEnabled = true; c.imageSmoothingQuality = "high";
+    // Jonli ko'rinishda sub-piksel noaniqligidan kelib chiqadigan hiralashishni kamaytirish uchun,
+    // chizish nuqtasini qurilma pikseliga moslab yaxlitlaymiz (eksportda bu qo'llanmaydi).
+    const dx = o.interactive ? Math.round(tx*DPR)/DPR : tx;
+    const dy = o.interactive ? Math.round(ty*DPR)/DPR : ty;
+    c.drawImage(IMG, dx, dy, iw*s, ih*s);
+  }else{
+    c.fillStyle = o.interactive ? theme.blank : "#fff"; c.fillRect(tx, ty, iw*s, ih*s);
+  }
+  if(o.interactive){ c.strokeStyle = theme.edge; c.lineWidth = 1; c.strokeRect(tx-.5, ty-.5, iw*s+1, ih*s+1); }
+
+  // 2) ZONE LAYER
+  if(o.showZones){
+    for(const p of P.polys){
+      const z = zm[p.zoneId]; if(!z || !z.visible) continue;
+      c.beginPath();
+      p.pts.forEach(([x,y],i) => i ? c.lineTo(X(x),Y(y)) : c.moveTo(X(x),Y(y)));
+      c.closePath();
+      c.fillStyle = rgba(z.color, z.opacity); c.fill();
+      c.lineWidth = 1.6*u; c.strokeStyle = rgba(z.color, .95); c.lineJoin = "round";
+      if(p.ai && !p.approved) c.setLineDash([7*u,4*u]);
+      c.stroke(); c.setLineDash([]);
+    }
+  }
+
+  // 3) Zona nomlari
+  if(o.showNames && o.showZones){
+    for(const p of P.polys){
+      const z = zm[p.zoneId]; if(!z || !z.visible) continue;
+      let minx=1e12,maxx=-1e12,miny=1e12,maxy=-1e12;
+      p.pts.forEach(([x,y])=>{ minx=Math.min(minx,X(x));maxx=Math.max(maxx,X(x));miny=Math.min(miny,Y(y));maxy=Math.max(maxy,Y(y)); });
+      if(maxx-minx < 34*u || maxy-miny < 16*u) continue;
+      const [lx,ly] = labelPoint(p.pts);
+      drawLabelText(c, z.name + (p.ai && !p.approved ? " (AI)" : ""), X(lx), Y(ly), u);
+    }
+  }
+
+  if(o.interactive){
+    // Tanlangan polygon
+    if(tool === "select" && S.poly){
+      const pl = getPoly(S.poly);
+      if(pl && zm[pl.zoneId] && zm[pl.zoneId].visible){
+        c.beginPath();
+        pl.pts.forEach(([x,y],i)=> i ? c.lineTo(X(x),Y(y)) : c.moveTo(X(x),Y(y)));
+        c.closePath();
+        c.lineJoin = "round"; c.lineWidth = 4.5; c.strokeStyle = "rgba(255,255,255,.9)"; c.stroke();
+        c.lineWidth = 2; c.strokeStyle = theme.accent; c.stroke();
+        const n = pl.pts.length;
+        for(let i=0;i<n;i++){
+          const a = pl.pts[i], b = pl.pts[(i+1)%n];
+          const ax=X(a[0]),ay=Y(a[1]),bx=X(b[0]),by=Y(b[1]);
+          if(Math.hypot(ax-bx,ay-by) < 28) continue;
+          c.beginPath(); c.arc((ax+bx)/2,(ay+by)/2,4,0,7);
+          c.fillStyle="rgba(255,255,255,.55)"; c.fill(); c.lineWidth=1.5; c.strokeStyle=theme.accent; c.stroke();
+        }
+        pl.pts.forEach(([x,y],i)=>{
+          c.beginPath(); c.arc(X(x),Y(y), i===S.vertex?7:5.5, 0, 7);
+          c.fillStyle = i===S.vertex ? theme.accent : "#fff"; c.fill();
+          c.lineWidth = 2; c.strokeStyle = i===S.vertex ? "#fff" : theme.accent; c.stroke();
+        });
+      }
+    }
+    // Chizilayotgan polygon
+    if(D){
+      const z = curZone(); const col = z ? z.color : "#ffffff";
+      const pts = D.pts.map(p => [X(p[0]), Y(p[1])]);
+      if(pts.length >= 3){
+        c.beginPath(); pts.forEach((p,i)=> i ? c.lineTo(p[0],p[1]) : c.moveTo(p[0],p[1])); c.closePath();
+        c.fillStyle = rgba(col, .28); c.fill();
+      }
+      if(pts.length){
+        c.beginPath(); pts.forEach((p,i)=> i ? c.lineTo(p[0],p[1]) : c.moveTo(p[0],p[1]));
+        if(D.hover) c.lineTo(X(D.hover.x), Y(D.hover.y));
+        c.lineJoin="round"; c.lineWidth = 4; c.strokeStyle = "rgba(255,255,255,.85)"; c.stroke();
+        c.lineWidth = 2; c.strokeStyle = col; c.stroke();
+        pts.forEach((p,i)=>{
+          const first = i===0 && pts.length>=3;
+          c.beginPath(); c.arc(p[0],p[1], first?8:4.5, 0, 7);
+          c.fillStyle = first ? rgba(col,.35) : "#fff"; c.fill();
+          c.lineWidth = 2; c.strokeStyle = col; c.stroke();
+        });
+      }
+    }
+    // Masshtab chizig‘i
+    const sp = SC.pts.length ? SC.pts.slice() : (P.scale ? [P.scale.p1, P.scale.p2] : []);
+    if(sp.length){
+      const warn = "#e08a1e";
+      const a = sp[0], b = sp[1];
+      if(b){
+        c.beginPath(); c.moveTo(X(a[0]),Y(a[1])); c.lineTo(X(b[0]),Y(b[1]));
+        c.lineWidth = 4; c.strokeStyle = "rgba(255,255,255,.85)"; c.stroke();
+        c.lineWidth = 2; c.strokeStyle = warn; c.stroke();
+        if(P.scale && !SC.pts.length){
+          drawLabelText(c, `${P.scale.meters} m`, (X(a[0])+X(b[0]))/2, (Y(a[1])+Y(b[1]))/2 - 12, 1);
+        }
+      }
+      sp.forEach(p=>{ c.beginPath(); c.arc(X(p[0]),Y(p[1]),5,0,7); c.fillStyle=warn; c.fill(); c.lineWidth=2; c.strokeStyle="#fff"; c.stroke(); });
+    }
+  }
+
+  // 4) LEGEND layer
+  if(o.showLegend) drawLegend(c, o.W, o.H, P.legend.pos, u);
+  if(!o.interactive) return;
+}
+
+/* ---------- Legenda, shimol belgisi, masshtab chizig‘i, sarlavha ---------- */
+function legendBox(c, W, H, pos, u){
+  const items = legendItems(); if(!items.length) return null;
+  const pad = 10*u, sw = 14*u, gap = 8*u, rh = 21*u, title = "FUNKSIONAL ZONALASH";
+  c.font = `600 ${11*u}px "IBM Plex Sans",system-ui,sans-serif`;
+  let tw = c.measureText(title).width;
+  c.font = `400 ${12.5*u}px "IBM Plex Sans",system-ui,sans-serif`;
+  items.forEach(z => { tw = Math.max(tw, sw + gap + c.measureText(z.name).width); });
+  const bw = tw + pad*2, bh = pad*2 + 18*u + items.length*rh;
+  const m = 14*u;
+  const x = pos[1]==="l" ? m : W - bw - m;
+  const y = pos[0]==="t" ? m : H - bh - m;
+  return {x,y,bw,bh,items,pad,sw,gap,rh,title,u};
+}
+function drawLegend(c, W, H, pos, u){
+  const b = legendBox(c, W, H, pos, u); if(!b) return;
+  const {x,y,bw,bh,items,pad,sw,gap,rh,title} = b;
+  c.save();
+  c.fillStyle = "rgba(255,255,255,.93)"; c.strokeStyle = "rgba(20,30,32,.45)"; c.lineWidth = 1*u;
+  roundRect(c, x, y, bw, bh, 5*u); c.fill(); c.stroke();
+  c.fillStyle = "#1c272b"; c.textAlign = "left"; c.textBaseline = "middle";
+  c.font = `600 ${11*u}px "IBM Plex Sans",system-ui,sans-serif`;
+  c.fillText(title, x+pad, y+pad+7*u);
+  c.font = `400 ${12.5*u}px "IBM Plex Sans",system-ui,sans-serif`;
+  items.forEach((z,i) => {
+    const ry = y + pad + 18*u + i*rh + rh/2;
+    c.fillStyle = rgba(z.color, .85); c.fillRect(x+pad, ry-sw/2, sw, sw);
+    c.strokeStyle = "rgba(0,0,0,.45)"; c.lineWidth = 1*u; c.strokeRect(x+pad, ry-sw/2, sw, sw);
+    c.fillStyle = "#1c272b"; c.fillText(z.name, x+pad+sw+gap, ry);
+  });
+  c.restore();
+}
+function roundRect(c,x,y,w,h,r){
+  c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+}
+function drawNorth(c, x, y, u){
+  const w = 44*u, h = 64*u;
+  c.save();
+  c.fillStyle = "rgba(255,255,255,.93)"; c.strokeStyle = "rgba(20,30,32,.45)"; c.lineWidth = 1*u;
+  roundRect(c, x, y, w, h, 5*u); c.fill(); c.stroke();
+  const cx = x + w/2;
+  c.fillStyle = "#1c272b"; c.font = `700 ${14*u}px "IBM Plex Sans",system-ui,sans-serif`; c.textAlign="center"; c.textBaseline="middle";
+  c.fillText("N", cx, y + 12*u);
+  c.beginPath(); c.moveTo(cx, y+22*u); c.lineTo(cx-10*u, y+54*u); c.lineTo(cx, y+47*u); c.closePath(); c.fillStyle="#1c272b"; c.fill();
+  c.beginPath(); c.moveTo(cx, y+22*u); c.lineTo(cx+10*u, y+54*u); c.lineTo(cx, y+47*u); c.closePath(); c.fillStyle="#fff"; c.fill(); c.strokeStyle="#1c272b"; c.lineWidth=1.2*u; c.stroke();
+  c.restore();
+}
+function drawTitle(c, W, u, name){
+  c.save();
+  c.font = `600 ${20*u}px "IBM Plex Sans",system-ui,sans-serif`;
+  let t = name; const maxW = W*0.5;
+  while(c.measureText(t).width > maxW && t.length > 4) t = t.slice(0,-2);
+  if(t !== name) t += "…";
+  const tw = c.measureText(t).width;
+  const sub = "Funksional zonalash xaritasi";
+  c.font = `400 ${11.5*u}px "IBM Plex Sans",system-ui,sans-serif`;
+  const sw = c.measureText(sub).width;
+  const bw = Math.max(tw, sw) + 32*u, bh = 54*u, x = (W-bw)/2, y = 14*u;
+  c.fillStyle = "rgba(255,255,255,.93)"; c.strokeStyle = "rgba(20,30,32,.45)"; c.lineWidth = 1*u;
+  roundRect(c, x, y, bw, bh, 5*u); c.fill(); c.stroke();
+  c.fillStyle = "#1c272b"; c.textAlign="center"; c.textBaseline="middle";
+  c.font = `600 ${20*u}px "IBM Plex Sans",system-ui,sans-serif`; c.fillText(t, W/2, y+22*u);
+  c.fillStyle = "#5b6b70"; c.font = `400 ${11.5*u}px "IBM Plex Sans",system-ui,sans-serif`; c.fillText(sub, W/2, y+41*u);
+  c.restore();
+}
+function drawScaleBar(c, W, H, u, outPxPerM){
+  const nice = [0.5,1,2,5,10,20,25,50,100,200,250,500,1000,2000,2500,5000,10000,20000,50000,100000];
+  const target = W*0.17; let len = nice[0];
+  for(const n of nice){ if(n*outPxPerM <= target) len = n; }
+  const bw = len*outPxPerM, lab = v => v>=1000 ? (v/1000)+" km" : v+" m";
+  const pad = 10*u, bh = 8*u;
+  const boxW = bw + pad*2 + 40*u, boxH = pad*2 + bh + 16*u;
+  const x = (W-boxW)/2, y = H - boxH - 14*u;
+  c.save();
+  c.fillStyle = "rgba(255,255,255,.93)"; c.strokeStyle = "rgba(20,30,32,.45)"; c.lineWidth = 1*u;
+  roundRect(c, x, y, boxW, boxH, 5*u); c.fill(); c.stroke();
+  const bx = x + pad + 20*u, by = y + pad + 14*u;
+  c.fillStyle = "#1c272b"; c.fillRect(bx, by, bw/2, bh);
+  c.fillStyle = "#fff"; c.fillRect(bx+bw/2, by, bw/2, bh);
+  c.strokeStyle = "#1c272b"; c.lineWidth = 1.2*u; c.strokeRect(bx, by, bw, bh);
+  c.fillStyle = "#1c272b"; c.font = `500 ${11*u}px "IBM Plex Sans",system-ui,sans-serif`; c.textBaseline="alphabetic"; c.textAlign="center";
+  c.fillText("0", bx, by-4*u); c.fillText(lab(len/2), bx+bw/2, by-4*u); c.fillText(lab(len), bx+bw, by-4*u);
+  c.restore();
+}
+
+/* =====================================================================
+   OSM (Leaflet) xarita dvigateli — "rasm" rejimidagi bilan bir xil
+   ma'lumot modeli (P.zones / P.polys) ustida ishlaydi, faqat nuqtalar
+   piksel o‘rniga [lat,lng] sifatida saqlanadi.
+   ===================================================================== */
+const ONLINE = /^https?:$/.test(location.protocol);   // sayt orqali ochilganda rasmiy OSM ishlaydi
+const DEF_BASE = ONLINE ? "osm" : "osmfr";
+const BASEMAPS = {
+  osm:{name:"OSM standart (rasmiy)"+(ONLINE?"":" — faqat sayt orqali ochilganda"), url:"https://tile.openstreetmap.org/{z}/{x}/{y}.png", opts:{maxZoom:19}, attr:"&copy; OpenStreetMap contributors", cors:true},
+  osmfr:{name:"OSM xaritasi (OSM Fransiya) — tavsiya", url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", opts:{subdomains:"abc", maxZoom:20}, attr:"&copy; OpenStreetMap contributors, OSM France", cors:true},
+  sat:{name:"Sun’iy yo‘ldosh (Esri)", url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", opts:{maxZoom:19}, attr:"Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community", cors:true},
+  hot:{name:"OSM Humanitar (HOT)", url:"https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", opts:{subdomains:"abc", maxZoom:20}, attr:"&copy; OpenStreetMap contributors, HOT"},
+  osmde:{name:"OSM xaritasi (OSM Germaniya)", url:"https://tile.openstreetmap.de/{z}/{x}/{y}.png", opts:{maxZoom:19}, attr:"&copy; OpenStreetMap contributors, openstreetmap.de"},
+  carto:{name:"Ko‘cha xaritasi (CARTO)", url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", opts:{subdomains:"abcd", maxZoom:20}, attr:"&copy; OpenStreetMap contributors, &copy; CARTO"}
+};
+function makeTiles(key, onFail){
+  const b = BASEMAPS[key] || BASEMAPS[DEF_BASE];
+  const t = L.tileLayer(b.url, Object.assign({attribution:b.attr}, b.cors ? {crossOrigin:true} : {}, b.opts));
+  if(key === "osm" && onFail){
+    fetch("https://tile.openstreetmap.org/0/0/0.png", {cache:"no-store"})
+      .then(r => { if(r.status === 403 || r.status === 418){ toast("Bu qurilmada rasmiy OSM bloklangan (Referer yo‘q) — OSM Fransiyaga o‘tildi.", true); onFail("osmfr"); } })
+      .catch(() => {});
+  }
+  let n = 0;
+  t.on("tileerror", () => {
+    if(++n !== (key === "osm" ? 2 : 4)) return;
+    if(navigator.onLine === false){ toast("Internet ulanishi yo‘q — xarita plitkalari yuklanmayapti.", true); return; }
+    if(key !== "osmfr"){
+      toast(key === "osm" ? "Rasmiy OSM faqat sayt (https) orqali ochilganda ishlaydi — OSM Fransiyaga o‘tildi." : `“${b.name}” ochilmadi — OSM Fransiyaga o‘tildi.`, true);
+      if(onFail) onFail("osmfr");
+    }else toast("Xarita plitkalari yuklanmayapti. Internetni tekshiring yoki sun’iy yo‘ldosh xaritasini tanlang.", true);
+  });
+  return t;
+}
+const curBaseKey = () => osmTempBase || P.view.base || DEF_BASE;
+function setBasemap(key, temp){
+  if(!osmMap) return;
+  if(temp) osmTempBase = key; else { osmTempBase = null; P.view.base = key; scheduleSave(); }
+  if(osmTiles && osmMap.hasLayer(osmTiles)) osmMap.removeLayer(osmTiles);
+  osmTiles = makeTiles(key, k => { setBasemap(k, true); renderRight(); });
+  if(L_.base) osmTiles.addTo(osmMap);
+}
+let osmMap = null, osmTiles = null, osmZonesGrp = null, osmDrawGrp = null, osmVertGrp = null, osmPolyLayers = {}, osmHoverLine = null, osmTempBase = null;
+function initOsm(){
+  teardownOsm();
+  osmMap = L.map("osmMap", {attributionControl:true, zoomControl:false})
+    .setView([P.view.lat, P.view.lng], P.view.zoom);
+  if(!isMobile()) L.control.zoom({position:"bottomright"}).addTo(osmMap);
+  osmTempBase = null;
+  osmTiles = makeTiles(P.view.base || DEF_BASE, k => { setBasemap(k, true); renderRight(); }).addTo(osmMap);
+  osmZonesGrp = L.layerGroup().addTo(osmMap);
+  osmDrawGrp = L.layerGroup().addTo(osmMap);
+  osmVertGrp = L.layerGroup().addTo(osmMap);
+  osmMap._fzmZones = osmZonesGrp;
+  osmMap.on("click", osmMapClick);
+  osmMap.on("dblclick", e => { if(tool === "draw" && D && D.pts.length >= 3){ L.DomEvent.stop(e); finishDraw(); } });
+  osmMap.on("mousemove", e => { if(tool === "draw" && D && D.pts.length){ D.hover = [e.latlng.lat, e.latlng.lng]; if(osmHoverLine) osmHoverLine.setLatLngs([D.pts[D.pts.length-1], D.hover]); else invalidate(); } });
+  osmMap.getContainer().addEventListener("mouseleave", () => { if(D){ D.hover = null; invalidate(); } });
+  osmMap.on("moveend zoomend", () => { Object.assign(P.view, {lat:osmMap.getCenter().lat, lng:osmMap.getCenter().lng, zoom:osmMap.getZoom()}); scheduleSave(); });
+  osmMap.on("move zoom moveend zoomend", () => { if(printOn) layoutPrint(); });
+  syncOsm();
+}
+function teardownOsm(){
+  if(osmMap){ osmMap.off(); osmMap.remove(); }
+  osmMap = osmTiles = osmZonesGrp = osmDrawGrp = osmVertGrp = null; osmPolyLayers = {}; osmHoverLine = null;
+}
+function osmMapClick(e){
+  if(spaceDown) return;
+  if(tool === "select"){
+    if(!e.originalEvent._fzmPoly){ S.poly = null; S.vertex = -1; renderLeft(); renderRight(); syncOsm(); }
+    return;
+  }
+  if(tool !== "draw") return;
+  if(!S.zone){ toast("Avval zonani tanlang yoki yangi zona yarating.", true); if(isMobile()) toggleSheet("left"); return; }
+  if(!D) D = {pts:[], hover:null, last:null};
+  const pt = [e.latlng.lat, e.latlng.lng];
+  const cp = osmMap.latLngToContainerPoint(e.latlng);
+  const now = performance.now();
+  if(D.last && now - D.last.t < 350 && D.last.cp.distanceTo(cp) < 12){ D.last = null; return; }
+  D.last = {t: now, cp: cp};
+  D.pts.push(pt);
+  updateTopUI(); invalidate();
+}
+function osmVertexIcon(cls, closeable){
+  const first = cls === "first";
+  return L.divIcon({
+    className:"",
+    html: first ? `<div class="vtx first${closeable?" closeable":""}"><i></i></div>` : `<div class="vtx ${cls||""}"></div>`,
+    iconSize: first ? [36,36] : (cls==="mid" ? [11,11] : [15,15]),
+    iconAnchor: first ? [18,18] : (cls==="mid" ? [5,5] : [7,7])
+  });
+}
+function syncOsm(){
+  if(!osmMap) return;
+  const zm = zoneMap();
+  osmZonesGrp.clearLayers(); osmVertGrp.clearLayers(); osmDrawGrp.clearLayers(); osmPolyLayers = {}; osmHoverLine = null;
+  if(L_.base){ if(!osmMap.hasLayer(osmTiles)) osmTiles.addTo(osmMap); } else if(osmMap.hasLayer(osmTiles)) osmMap.removeLayer(osmTiles);
+
+  if(L_.zones){
+    for(const pl of P.polys){
+      const z = zm[pl.zoneId]; if(!z || !z.visible) continue;
+      const sel = pl.id === S.poly;
+      const poly = L.polygon(pl.pts, {
+        color: z.color, weight: sel ? 3 : 1.6, opacity:.95, fillColor:z.color, fillOpacity:z.opacity,
+        dashArray: pl.ai && !pl.approved ? "7 4" : null
+      });
+      if(L_.labels && P.legend.labels){
+        poly.bindTooltip(esc((z.icon?z.icon+" ":"") + z.name + (pl.ai && !pl.approved ? " (AI)" : "")), {permanent:true, direction:"center", className:"", opacity:.95});
+      }
+      poly.on("click", ev => {
+        ev.originalEvent._fzmPoly = true;
+        if(tool !== "select") return;
+        L.DomEvent.stop(ev);
+        S.poly = pl.id; S.vertex = -1; S.zone = pl.zoneId;
+        renderLeft(); renderRight(); syncOsm();
+      });
+      poly.addTo(osmZonesGrp); osmPolyLayers[pl.id] = poly;
+    }
+  }
+
+  // Tanlangan poligon uchun tepalik/o‘rta-nuqta belgilar
+  const selPl = S.poly && getPoly(S.poly);
+  if(tool === "select" && selPl && zm[selPl.zoneId] && zm[selPl.zoneId].visible){
+    const n = selPl.pts.length;
+    for(let i=0;i<n;i++){
+      const a = selPl.pts[i], b = selPl.pts[(i+1)%n];
+      const mid = [(a[0]+b[0])/2, (a[1]+b[1])/2];
+      L.marker(mid, {icon:osmVertexIcon("mid"), draggable:false})
+        .on("click", ev => { L.DomEvent.stop(ev); selPl.pts.splice(i+1, 0, mid); S.vertex = i+1; commit(); refreshAll(); })
+        .addTo(osmVertGrp);
+    }
+    selPl.pts.forEach((pt,i) => {
+      const mk = L.marker(pt, {icon:osmVertexIcon(i===S.vertex?"first":""), draggable:true});
+      mk.on("drag", ev => {
+        const ll = ev.target.getLatLng();
+        selPl.pts[i] = [ll.lat, ll.lng];
+        const lay = osmPolyLayers[selPl.id]; if(lay) lay.setLatLngs(selPl.pts);
+        updateAreaUI();
+      });
+      mk.on("dragend", () => { commit(); updateAreaUI(); setTimeout(invalidate, 0); });
+      mk.on("click", ev => { L.DomEvent.stop(ev); S.vertex = i; renderRight(); syncOsm(); });
+      mk.on("dblclick", ev => { L.DomEvent.stop(ev); S.vertex = i; deleteVertex(); });
+      mk.addTo(osmVertGrp);
+    });
+  }
+
+  // Chizilayotgan poligon
+  if(D && D.pts.length){
+    const z = curZone(); const col = z ? z.color : "#ffffff";
+    if(D.pts.length >= 2) L.polyline(D.pts, {color:col, weight:3}).addTo(osmDrawGrp);
+    if(D.hover) osmHoverLine = L.polyline([D.pts[D.pts.length-1], D.hover], {color:col, weight:2, dashArray:"6 6", interactive:false}).addTo(osmDrawGrp);
+    if(D.pts.length >= 3) L.polygon(D.pts, {color:col, weight:2, fillColor:col, fillOpacity:.18, interactive:false}).addTo(osmDrawGrp);
+    D.pts.forEach((pt,i) => {
+      const mk = L.marker(pt, {icon:osmVertexIcon(i===0?"first":"", D.pts.length>=3), interactive:i===0 && D.pts.length>=3});
+      if(i === 0 && D.pts.length >= 3) mk.on("click", ev => { L.DomEvent.stop(ev); finishDraw(); });
+      mk.addTo(osmDrawGrp);
+    });
+  }
+
+  // Legenda (HUD)
+  const hud = $("#hudLegend");
+  if(hud){
+    const items = legendItems();
+    if(L_.labels && P.legend.visible && items.length && !printOn){
+      hud.style.display = "block";
+      hud.innerHTML = `<b>FUNKSIONAL ZONALASH</b>` + items.map(z => `<div class="li"><span class="sw" style="background:${esc(z.color)}"></span>${esc(z.icon)} ${esc(z.name)}</div>`).join("");
+      const pos = P.legend.pos, m = "14px";
+      hud.style.top = pos[0]==="t" ? m : ""; hud.style.bottom = pos[0]==="b" ? m : "";
+      hud.style.left = pos[1]==="l" ? m : ""; hud.style.right = pos[1]==="r" ? m : "";
+    }else hud.style.display = "none";
+  }
+  $("#zPct").textContent = "Zoom " + osmMap.getZoom();
+}
+
+/* =====================================================================
+   CHOP ETISH (Print layout) — faqat OSM rejimi uchun.
+   Foydalanuvchi qog‘oz o‘lchami/yo‘nalishini tanlaydi, ramka xarita
+   ustida ko‘rinadi, ramka ichida xaritani pan/zoom qilib joylashtiradi,
+   legendani erkin joyga sudraydi. Masshtab va shimol belgisi tanlangan
+   qog‘oz+zoom darajasiga qarab avtomatik hisoblanadi.
+   ===================================================================== */
+const PAPER_SIZES = {
+  A4:[210,297], A3:[297,420], A2:[420,594], A1:[594,841], A0:[841,1189], Letter:[216,279]
+};
+let printOn = false;
+function printDefaults(){
+  if(!P.print) P.print = {paper:"A4", orientation:"portrait"};
+  if(!P.legend.title) P.legend.title = true;
+}
+function paperPxWH(){
+  const [w,h] = PAPER_SIZES[P.print.paper] || PAPER_SIZES.A4;
+  return P.print.orientation === "landscape" ? [h,w] : [w,h];
+}
+function frameRect(){
+  const stage = $("#stage").getBoundingClientRect();
+  const [mw,mh] = paperPxWH();
+  const pad = 56, barH = 64;
+  const availW = stage.width - pad*2, availH = stage.height - pad*2 - barH;
+  const s = Math.max(0.15, Math.min(availW/mw, availH/mh));
+  const w = mw*s, h = mh*s;
+  // x/y — brauzer oynasiga nisbatan (clientX/clientY, getBoundingClientRect bilan bir xil tizim).
+  // CSS left/top yozishda stage.left/stage.top ayirib, stage-ichki koordinataga o'tkaziladi.
+  const x = stage.left + (stage.width - w)/2, y = stage.top + barH + (availH - h)/2 + pad*0.3;
+  return {x, y, w, h, s, mw, mh, stageLeft: stage.left, stageTop: stage.top};
+}
+function openPrint(){
+  if(P.mode !== "osm"){ toast("Chop etish rejimi hozircha faqat OSM rejimida ishlaydi.", true); return; }
+  printDefaults();
+  printOn = true; invalidate();
+  $("#printLayer").hidden = false;
+  const sel = $("#ppPaper");
+  sel.innerHTML = Object.entries(PAPER_SIZES).map(([k,d]) => `<option value="${k}">${k} (${d[0]}×${d[1]} mm)</option>`).join("");
+  sel.value = P.print.paper;
+  $("#ppOrient").textContent = P.print.orientation === "landscape" ? "Gorizontal" : "Vertikal";
+  $$("#printLayer .pv-item").forEach(el => el.hidden = false);
+  layoutPrint();
+  toast("Ramka ichida xaritani surib/kattalashtirib joylashtiring, legendani sudrab ko‘chiring.");
+}
+function closePrint(){
+  printOn = false; invalidate();
+  $("#printLayer").hidden = true;
+}
+function fmtMM(v){ return v >= 1000 ? (v/1000).toFixed(v%1000?1:0)+" m" : Math.round(v)+" mm"; }
+const SCALE_STEPS = [1,2,5,10,20,25,50,100,200,250,500,1000,2000,2500,5000,10000,20000,50000,100000,200000,500000];
+function niceScaleLen(targetM){
+  let best = SCALE_STEPS[0];
+  for(const s of SCALE_STEPS) if(s <= targetM) best = s;
+  return best;
+}
+// Elementning "tabiiy" (scale qo'llanmagan) o'lchami — offsetWidth/Height transformga bog'liq emas.
+function itemNat(el){ return {w: el.offsetWidth || 1, h: el.offsetHeight || 1}; }
+// Yuqori-chap burchakdan joylashtirish: element hech qachon ramkadan tashqariga chiqmaydi.
+function placeTL(el, fr, frac, scale){
+  const nat = itemNat(el), w = nat.w*scale, h = nat.h*scale;
+  const availW = Math.max(0, fr.w - w), availH = Math.max(0, fr.h - h);
+  const left = fr.x + availW*clamp(frac.xf,0,1), top = fr.y + availH*clamp(frac.yf,0,1);
+  el.style.left = (left - fr.stageLeft)+"px"; el.style.top = (top - fr.stageTop)+"px";
+  el.style.transform = `scale(${scale})`; el.style.transformOrigin = "top left";
+  return {left, top, w, h, availW, availH};
+}
+// Markazdan joylashtirish (sarlavha uchun): translate(-50%,-50%) bilan birga.
+function placeCenter(el, fr, frac, scale){
+  const nat = itemNat(el), w = nat.w*scale, h = nat.h*scale;
+  const availW = Math.max(0, fr.w - w), availH = Math.max(0, fr.h - h);
+  const cx = fr.x + w/2 + availW*clamp(frac.xf,0,1), cy = fr.y + h/2 + availH*clamp(frac.yf,0,1);
+  el.style.left = (cx - fr.stageLeft)+"px"; el.style.top = (cy - fr.stageTop)+"px";
+  el.style.transform = `translate(-50%,-50%) scale(${scale})`;
+  return {cx, cy, w, h, availW, availH};
+}
+function layoutPrint(){
+  if(!printOn || !osmMap) return;
+  const fr = frameRect();
+  const frame = $("#printFrame");
+  frame.style.left = (fr.x-fr.stageLeft)+"px"; frame.style.top = (fr.y-fr.stageTop)+"px"; frame.style.width = fr.w+"px"; frame.style.height = fr.h+"px";
+  const [pmw, pmh] = PAPER_SIZES[P.print.paper] || PAPER_SIZES.A4;
+  $("#ppInfo").textContent = `${P.print.paper} · ${P.print.orientation==="landscape"?"gorizontal":"vertikal"} · ${pmw}×${pmh} mm`;
+
+  // Real yer masshtabi: ramkaning markaziy nuqtasidan 120 ekran-px chap/o'ngga mos haqiqiy masofa
+  const c = osmMap.getContainer().getBoundingClientRect();
+  const p1 = osmMap.containerPointToLatLng([fr.x - c.left + fr.w*0.5 - 60, fr.y - c.top + fr.h*0.5]);
+  const p2 = osmMap.containerPointToLatLng([fr.x - c.left + fr.w*0.5 + 60, fr.y - c.top + fr.h*0.5]);
+  const metersPer120px = osmMap.distance ? osmMap.distance(p1, p2) : 0;
+  const mPerPx = metersPer120px / 120 || 0.001;
+  const targetPx = clamp(P.legend.scaleTargetPx || Math.min(fr.w*0.32, 170), 40, Math.max(60, fr.w*0.9));
+  const maxBarPx = Math.max(60, fr.w*0.9);
+  let len = niceScaleLen(mPerPx * targetPx) || 100;
+  let barPx = len / mPerPx;
+  if(barPx > maxBarPx){
+    // Bar kenglikni yolg'on ko'rsatmasligi uchun, torroq sig'adigan "chiroyli" qiymatga tushamiz.
+    const idx = SCALE_STEPS.indexOf(len);
+    let found = false;
+    for(let i = idx; i >= 0; i--){
+      if(SCALE_STEPS[i]/mPerPx <= maxBarPx){ len = SCALE_STEPS[i]; barPx = len/mPerPx; found = true; break; }
+    }
+    if(!found){ len = SCALE_STEPS[0]; barPx = Math.min(len/mPerPx, maxBarPx); }
+  }
+  barPx = Math.max(40, barPx);
+
+  const sb = $("#printScaleBar");
+  $(".pv-content", sb).innerHTML = `<div class="bar2" style="width:${barPx}px">${Array.from({length:4}).map(()=>"<i></i>").join("")}</div><div class="lbl"><span>0</span><span>${esc(len >= 1000 ? (len/1000)+" km" : len+" m")}</span></div>`;
+  const sf = P.legend.scaleFree || {xf:.5, yf:.9};
+  placeTL(sb, fr, sf, 1);
+
+  const north = $("#printNorth");
+  const ns = clamp(P.legend.northScale || 1, .5, 3);
+  placeTL(north, fr, P.legend.northFree || {xf:.9, yf:.04}, ns);
+
+  const legend = $("#printLegend");
+  const items = legendItems();
+  const ls = clamp(P.legend.freeScale || 1, .5, 3);
+  if(items.length){
+    legend.hidden = false;
+    $(".pv-content", legend).innerHTML = `<b>FUNKSIONAL ZONALASH</b>` + items.map(z => `<div class="li"><span class="sw" style="background:${esc(z.color)}"></span>${esc(z.icon)} ${esc(z.name)}</div>`).join("");
+    placeTL(legend, fr, P.legend.free || {xf:.03, yf:.06}, ls);
+  }else legend.hidden = true;
+
+  const title = $("#printTitle");
+  const ts = clamp(P.legend.titleScale || 1, .5, 3);
+  if(P.legend.title){
+    title.hidden = false;
+    $(".pv-content", title).innerHTML = `<b>${esc(P.name)}</b><span>Funksional zonalash xaritasi</span>`;
+    placeCenter(title, fr, P.legend.titleFree || {xf:.5, yf:.06}, ts);
+  }else title.hidden = true;
+}
+function addResizeHandle(el, key, opts){
+  const h = $(".pv-resize", el); if(!h) return;
+  const min = (opts && opts.min) || .5, max = (opts && opts.max) || 3, def = (opts && opts.def) || 1;
+  h.addEventListener("pointerdown", e => {
+    if(!printOn) return;
+    e.stopPropagation();
+    h.setPointerCapture(e.pointerId);
+    const rect = el.getBoundingClientRect();
+    const anchorCenter = el.id === "printTitle";
+    const cx = anchorCenter ? rect.left + rect.width/2 : rect.left;
+    const cy = anchorCenter ? rect.top + rect.height/2 : rect.top;
+    const d0 = Math.max(20, Math.hypot(e.clientX - cx, e.clientY - cy));
+    const s0 = P.legend[key] || def;
+    const move = ev => {
+      const d1 = Math.hypot(ev.clientX - cx, ev.clientY - cy);
+      P.legend[key] = clamp(s0 * (d1/d0), min, max);
+      layoutPrint();
+    };
+    const up = (ev) => { try{ h.releasePointerCapture(ev.pointerId); }catch(_){} h.removeEventListener("pointermove", move); h.removeEventListener("pointerup", up); commit(); };
+    h.addEventListener("pointermove", move); h.addEventListener("pointerup", up);
+  });
+  h.addEventListener("dblclick", e => { e.stopPropagation(); P.legend[key] = def; layoutPrint(); commit(); });
+}
+addResizeHandle($("#printLegend"), "freeScale");
+addResizeHandle($("#printNorth"), "northScale");
+addResizeHandle($("#printTitle"), "titleScale");
+// Masshtab chizig'ining o'lchamini o'zgartirish geografik jihatdan to'g'ri qoladi:
+// tutqich harakati ko'rsatiladigan piksel kengligini o'zgartiradi, "dumaloq" metr/km
+// qiymati esa shu kenglikdan qaytadan hisoblanadi (yasama emas, haqiqiy masshtab).
+{
+  const sb = $("#printScaleBar"), sbHandle = $(".pv-resize", sb);
+  sbHandle.addEventListener("pointerdown", e => {
+    if(!printOn) return;
+    e.stopPropagation();
+    sbHandle.setPointerCapture(e.pointerId);
+    const fr0 = frameRect();
+    const rect = sb.getBoundingClientRect();
+    const startPx = clamp(P.legend.scaleTargetPx || Math.min(fr0.w*0.32, 170), 40, fr0.w*0.9);
+    const startDist = Math.max(10, e.clientX - rect.left);
+    const move = ev => {
+      const fr = frameRect();
+      const d = Math.max(10, ev.clientX - rect.left);
+      P.legend.scaleTargetPx = clamp(startPx * (d/startDist), 40, Math.max(60, fr.w*0.9));
+      layoutPrint();
+    };
+    const up = (ev) => { try{ sbHandle.releasePointerCapture(ev.pointerId); }catch(_){} sbHandle.removeEventListener("pointermove", move); sbHandle.removeEventListener("pointerup", up); commit(); };
+    sbHandle.addEventListener("pointermove", move); sbHandle.addEventListener("pointerup", up);
+  });
+  sbHandle.addEventListener("dblclick", e => { e.stopPropagation(); delete P.legend.scaleTargetPx; layoutPrint(); commit(); });
+}
+function dragPvItem(el, key, anchor){
+  el.addEventListener("pointerdown", e => {
+    if(!printOn) return;
+    el.setPointerCapture(e.pointerId); el.classList.add("dragging");
+    const fr = frameRect();
+    const scaleKey = el.id === "printLegend" ? "freeScale" : el.id === "printNorth" ? "northScale" : el.id === "printTitle" ? "titleScale" : null;
+    const scale = scaleKey ? clamp(P.legend[scaleKey] || 1, .5, 3) : 1;
+    const nat = itemNat(el);
+    const w = nat.w*scale, h = nat.h*scale;
+    const availW = Math.max(0, fr.w - w), availH = Math.max(0, fr.h - h);
+    const rect = el.getBoundingClientRect();
+    const offX = e.clientX - rect.left, offY = e.clientY - rect.top;
+    const move = ev => {
+      let left = clamp(ev.clientX - offX, fr.x, fr.x + availW);
+      let top = clamp(ev.clientY - offY, fr.y, fr.y + availH);
+      const xf = availW > 0 ? (left - fr.x) / availW : 0.5;
+      const yf = availH > 0 ? (top - fr.y) / availH : 0.5;
+      P.legend[key] = {xf: clamp(xf,0,1), yf: clamp(yf,0,1)};
+      layoutPrint();
+    };
+    const up = (ev) => { el.classList.remove("dragging"); try{ el.releasePointerCapture(ev.pointerId); }catch(_){} el.removeEventListener("pointermove", move); el.removeEventListener("pointerup", up); commit(); };
+    el.addEventListener("pointermove", move); el.addEventListener("pointerup", up);
+  });
+}
+dragPvItem($("#printLegend"), "free");
+dragPvItem($("#printNorth"), "northFree");
+dragPvItem($("#printTitle"), "titleFree");
+dragPvItem($("#printScaleBar"), "scaleFree");
+new ResizeObserver(() => { if(printOn) layoutPrint(); }).observe($("#stage"));
+$("#ppPaper").addEventListener("change", e => { P.print.paper = e.target.value; commit(); layoutPrint(); });
+$("#ppOrient").addEventListener("click", () => {
+  P.print.orientation = P.print.orientation === "landscape" ? "portrait" : "landscape";
+  commit(); layoutPrint();
+});
+$("#ppExport").addEventListener("click", openPrintExport);
+$("#ppClose").addEventListener("click", closePrint);
+
+function openPrintExport(){
+  openModal({
+    title:"Eksport", wide:true,
+    html:`<p style="margin-top:0">Yakunlangan loyihani tanlagan formatda yuklab oling.</p>
+      <div style="display:grid;gap:8px">
+        <button class="btn primary block" id="exOsmPng">🖼️ PNG rasm</button>
+        <button class="btn block" id="exOsmPdf">📄 PDF (${esc(P.print.paper)}, ${P.print.orientation==="landscape"?"gorizontal":"vertikal"})</button>
+        <button class="btn block" id="exOsmHtml">🌐 HTML (boshqa qurilmada ochib tahrirlash uchun)</button>
+      </div>
+      <p class="help">PNG/PDF joriy ekranda ko‘rinayotgan xarita tasvirini oladi — ba’zi xarita provayderlarida xavfsizlik siyosati sababli bazaviy xarita eksportga qo‘shilmasligi mumkin; shunda faqat zonalar/legenda bilan yuklanadi. HTML format har doim to‘liq va tahrirlanadigan holda ishlaydi.</p>
+      <p class="err" id="exOsmErr"></p>`,
+    actions:[{label:"Yopish"}],
+    onMount(ov){
+      $("#exOsmPng", ov).addEventListener("click", async () => { $("#exOsmErr",ov).textContent="Tayyorlanmoqda…"; try{ await exportOsmRaster("png"); $("#exOsmErr",ov).textContent=""; }catch(e){ $("#exOsmErr",ov).textContent = e.message || "Xatolik yuz berdi."; } });
+      $("#exOsmPdf", ov).addEventListener("click", async () => { $("#exOsmErr",ov).textContent="Tayyorlanmoqda…"; try{ await exportOsmRaster("pdf"); $("#exOsmErr",ov).textContent=""; }catch(e){ $("#exOsmErr",ov).textContent = e.message || "Xatolik yuz berdi."; } });
+      $("#exOsmHtml", ov).addEventListener("click", async () => { $("#exOsmErr",ov).textContent="Tayyorlanmoqda…"; try{ await exportPortableHtml(); $("#exOsmErr",ov).textContent=""; }catch(e){ $("#exOsmErr",ov).textContent = "HTML yaratib bo‘lmadi."; } });
+    }
+  });
+}
+
+/* ---------- PNG / PDF: ramka ichidagi ko‘rinishni canvasga tushirish ---------- */
+/* Yuqori aniqlik: xaritaning ramka ichidagi qismi 2^d marta kattaroq zoom darajasidagi plitkalardan qayta yig'iladi */
+function planHiRes(fr){
+  if(!L_.base || !osmTiles || !osmMap) return null;
+  const z = osmMap.getZoom(); if(!Number.isInteger(z)) return null;
+  const zmax = Math.min(osmMap.getMaxZoom(), 19);
+  for(let d=3; d>=1; d--){
+    const zt = z + d; if(zt > zmax) continue;
+    const M = 1 << d;
+    if(fr.w*fr.h*M*M > 16e6 || Math.max(fr.w, fr.h)*M > 8192) continue;
+    if(Math.ceil(fr.w*M/256 + 1) * Math.ceil(fr.h*M/256 + 1) > 120) continue;
+    return {zt, M, c: osmMap.getContainer().getBoundingClientRect()};
+  }
+  return null;
+}
+async function drawHiResTiles(ctx, fr, hi){
+  const {zt, M, c} = hi, bm = BASEMAPS[curBaseKey()] || BASEMAPS[DEF_BASE];
+  const tl = osmMap.containerPointToLatLng([fr.x - c.left, fr.y - c.top]);
+  const o = osmMap.project(tl, zt), n = Math.pow(2, zt);
+  const x0 = Math.floor(o.x/256), x1 = Math.floor((o.x + fr.w*M - 1)/256);
+  const y0 = Math.floor(o.y/256), y1 = Math.floor((o.y + fr.h*M - 1)/256);
+  const jobs = [];
+  for(let ty=y0; ty<=y1; ty++){ if(ty < 0 || ty >= n) continue; for(let tx=x0; tx<=x1; tx++) jobs.push({tx, ty}); }
+  if(!jobs.length) return false;
+  const subs = bm.opts && bm.opts.subdomains;
+  const url = j => {
+    const x = ((j.tx % n) + n) % n;
+    return L.Util.template(bm.url, {s: subs ? subs[Math.abs(x + j.ty) % subs.length] : "", x, y:j.ty, z:zt, r:""});
+  };
+  const load = j => new Promise(res => {
+    const im = new Image(); im.crossOrigin = "anonymous";
+    const t = setTimeout(() => res(null), 15000);
+    im.onload = () => { clearTimeout(t); res(im); };
+    im.onerror = () => { clearTimeout(t); res(null); };
+    im.src = url(j);
+  });
+  let ok = 0;
+  for(let i=0; i<jobs.length; i+=8){
+    const part = jobs.slice(i, i+8), ims = await Promise.all(part.map(load));
+    ims.forEach((im, k) => {
+      if(!im) return;
+      ctx.drawImage(im, (part[k].tx*256 - o.x)/M, (part[k].ty*256 - o.y)/M, 257/M, 257/M); ok++;
+    });
+  }
+  ctx.getImageData(0, 0, 1, 1);
+  return ok === jobs.length;
+}
+async function exportOsmRaster(kind){
+  const fr = frameRect();
+  const hi = planHiRes(fr);
+  const dpr = hi ? hi.M : clamp(window.devicePixelRatio || 1, 1, 2.5);
+  const c = document.createElement("canvas");
+  c.width = Math.round(fr.w*dpr); c.height = Math.round(fr.h*dpr);
+  const ctx = c.getContext("2d");
+  ctx.scale(dpr, dpr);
+  ctx.fillStyle = "#eef1ee"; ctx.fillRect(0,0,fr.w,fr.h);
+
+  let basemapOk = false;
+  if(hi){
+    try{ basemapOk = await drawHiResTiles(ctx, fr, hi); }catch(e){ basemapOk = false; }
+    if(!basemapOk){ ctx.clearRect(0,0,fr.w,fr.h); ctx.fillStyle = "#eef1ee"; ctx.fillRect(0,0,fr.w,fr.h); }
+  }
+  if(!basemapOk) try{
+    const mapRect = osmMap.getContainer().getBoundingClientRect();
+    const tiles = osmMap.getContainer().querySelectorAll(".leaflet-tile-loaded");
+    for(const img of tiles){
+      const r = img.getBoundingClientRect();
+      const x = r.left - fr.x, y = r.top - fr.y;
+      if(x+r.width < 0 || y+r.height < 0 || x > fr.w || y > fr.h) continue;
+      ctx.drawImage(img, x, y, r.width, r.height);
+    }
+    ctx.getImageData(0,0,1,1); // CORS tekshiruvi — tainted bo'lsa shu yerda xato beradi
+    basemapOk = true;
+  }catch(e){
+    ctx.clearRect(0,0,fr.w,fr.h);
+    ctx.fillStyle = "#eef1ee"; ctx.fillRect(0,0,fr.w,fr.h);
+  }
+
+  // Zonalar
+  const zm = zoneMap(), mapC = osmMap.getContainer().getBoundingClientRect();
+  const toXY = ll => { const pt = osmMap.latLngToContainerPoint(ll); return [pt.x + mapC.left - fr.x, pt.y + mapC.top - fr.y]; };
+  for(const pl of P.polys){
+    const z = zm[pl.zoneId]; if(!z || !z.visible) continue;
+    ctx.beginPath();
+    pl.pts.forEach((pt,i) => { const [x,y] = toXY(pt); i ? ctx.lineTo(x,y) : ctx.moveTo(x,y); });
+    ctx.closePath();
+    ctx.fillStyle = rgba(z.color, z.opacity); ctx.fill();
+    ctx.lineWidth = 1.6; ctx.strokeStyle = rgba(z.color,.95); ctx.stroke();
+    if(P.legend.labels){
+      const [lx,ly] = labelPoint(pl.pts.map(toXY));
+      drawLabelText(ctx, z.icon+" "+z.name, lx, ly, 1);
+    }
+  }
+  ctx.strokeStyle = "rgba(20,30,32,.5)"; ctx.lineWidth = 2; ctx.strokeRect(1,1,fr.w-2,fr.h-2);
+
+  // Legenda / sarlavha / masshtab / shimol — HUD elementlaridan joy va matnni olib chizamiz
+  drawHtmlCard(ctx, $("#printTitle"), fr, clamp(P.legend.titleScale || 1, .5, 3));
+  drawHtmlCard(ctx, $("#printLegend"), fr, clamp(P.legend.freeScale || 1, .5, 3));
+  drawHtmlCard(ctx, $("#printScaleBar"), fr, 1);
+  drawHtmlCard(ctx, $("#printNorth"), fr, clamp(P.legend.northScale || 1, .5, 3));
+  if(basemapOk && L_.base) drawAttribution(ctx, fr);
+
+  if(!basemapOk) toast("Bazaviy xarita eksportga qo‘shilmadi (provayder xavfsizlik siyosati). Faqat zonalar bilan saqlandi.", true);
+
+  const safe = (P.name || "zonalash").replace(/[\\/:*?"<>|]+/g, "_").trim() || "zonalash";
+  if(kind === "png"){
+    const blob = await new Promise(r => c.toBlob(r, "image/png"));
+    if(!blob) throw new Error("PNG yaratib bo‘lmadi.");
+    await saveBlob(blob, safe+".png");
+  }else{
+    if(typeof window.jspdf === "undefined") throw new Error("PDF kutubxonasi yuklanmadi. Internetni tekshiring.");
+    const { jsPDF } = window.jspdf;
+    const [mw, mh] = paperPxWH();
+    const pdf = new jsPDF({orientation:P.print.orientation, unit:"mm", format:[mw, mh]});
+    pdf.addImage(c.toDataURL("image/png"), "PNG", 0, 0, mw, mh);
+    pdf.save(safe+".pdf");
+    toast("PDF tayyor.");
+  }
+}
+function drawHtmlCard(ctx, el, fr, scale){
+  if(!el || el.hidden) return;
+  const sc = scale || 1;
+  const R = n => { const r = n.getBoundingClientRect(); return {x:r.left-fr.x, y:r.top-fr.y, w:r.width, h:r.height}; };
+  const F = (wt, px) => `${wt} ${px*sc}px "IBM Plex Sans",system-ui,sans-serif`;
+  const card = R(el), content = el.querySelector(".pv-content");
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,.93)"; ctx.strokeStyle = "rgba(20,30,32,.45)"; ctx.lineWidth = 1;
+  roundRect(ctx, card.x, card.y, card.w, card.h, 6*sc); ctx.fill(); ctx.stroke();
+  ctx.textBaseline = "middle";
+  if(el.id === "printScaleBar"){
+    const bar = content.querySelector(".bar2"), b = R(bar), n = bar.children.length || 4;
+    for(let i=0;i<n;i++){ ctx.fillStyle = i%2===0 ? "#1c272b" : "#ffffff"; ctx.fillRect(b.x + b.w/n*i, b.y, b.w/n, b.h); }
+    ctx.strokeStyle = "#1c272b"; ctx.lineWidth = 1; ctx.strokeRect(b.x+.5, b.y+.5, b.w-1, b.h-1);
+    const lb = content.querySelectorAll(".lbl span");
+    ctx.fillStyle = "#1c272b"; ctx.font = F(400, 10);
+    if(lb[0]){ const r = R(lb[0]); ctx.textAlign = "left"; ctx.fillText(lb[0].textContent, r.x, r.y + r.h/2); }
+    if(lb[1]){ const r = R(lb[1]); ctx.textAlign = "right"; ctx.fillText(lb[1].textContent, r.x + r.w, r.y + r.h/2); }
+  }else if(el.id === "printNorth"){
+    const sp = R(content.querySelector("span")), t = R(content.querySelector("i"));
+    ctx.fillStyle = "#1c272b"; ctx.textAlign = "center"; ctx.font = F(700, 12);
+    ctx.fillText("N", sp.x + sp.w/2, sp.y + sp.h/2);
+    ctx.beginPath(); ctx.moveTo(t.x + t.w/2, t.y); ctx.lineTo(t.x, t.y + t.h); ctx.lineTo(t.x + t.w, t.y + t.h); ctx.closePath(); ctx.fill();
+  }else{
+    const centered = el.id === "printTitle";
+    for(const node of content.children){
+      const r = R(node), tag = node.tagName;
+      if(node.classList.contains("li")){
+        const sw = node.querySelector(".sw"), s = R(sw);
+        ctx.fillStyle = getComputedStyle(sw).backgroundColor; ctx.fillRect(s.x, s.y, s.w, s.h);
+        ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 1; ctx.strokeRect(s.x+.5, s.y+.5, s.w-1, s.h-1);
+        ctx.fillStyle = "#1c272b"; ctx.textAlign = "left"; ctx.font = F(400, 12.5);
+        ctx.fillText(node.textContent.trim(), s.x + s.w + 7*sc, r.y + r.h/2);
+      }else if(tag === "B"){
+        ctx.fillStyle = "#1c272b"; ctx.font = F(600, centered ? 15 : 11);
+        ctx.textAlign = centered ? "center" : "left";
+        ctx.fillText(node.textContent, centered ? r.x + r.w/2 : r.x, r.y + r.h/2);
+      }else if(tag === "SPAN"){
+        ctx.fillStyle = "#5b6b70"; ctx.font = F(400, 10.5);
+        ctx.textAlign = centered ? "center" : "left";
+        ctx.fillText(node.textContent, centered ? r.x + r.w/2 : r.x, r.y + r.h/2);
+      }
+    }
+  }
+  ctx.restore();
+}
+function drawAttribution(ctx, fr){
+  const bm = BASEMAPS[curBaseKey()] || BASEMAPS[DEF_BASE];
+  const txt = String(bm.attr).replace(/&copy;/g, "©").replace(/<[^>]+>/g, "").trim();
+  ctx.save();
+  let fs = 10; ctx.font = `400 ${fs}px "IBM Plex Sans",system-ui,sans-serif`;
+  while(ctx.measureText(txt).width > fr.w - 16 && fs > 5){ fs -= .5; ctx.font = `400 ${fs}px "IBM Plex Sans",system-ui,sans-serif`; }
+  const w = ctx.measureText(txt).width + 8, h = fs + 6;
+  ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.fillRect(fr.w - w - 3, fr.h - h - 3, w, h);
+  ctx.fillStyle = "#1c272b"; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+  ctx.fillText(txt, fr.w - 7, fr.h - h/2 - 3);
+  ctx.restore();
+}
+
+/* ---------- HTML (portativ, tahrirlanadigan) eksport ---------- */
+async function exportPortableHtml(){
+  if(!P || P.mode !== "osm") throw new Error("faqat OSM");
+  const doc = document.documentElement.cloneNode(true);
+  // Joriy ish holatini olib tashlab, ilovaning boshlang'ich holatiga qaytaramiz
+  doc.querySelectorAll(".overlay, #fzm-embed").forEach(n => n.remove());
+  const q = sel => doc.querySelector(sel);
+  const hide = (sel, on) => { const n = q(sel); if(n){ if(on) n.setAttribute("hidden",""); else n.removeAttribute("hidden"); } };
+  hide("#home", false); hide("#editor", true); hide("#cv", false); hide("#osmMap", true);
+  hide("#printLayer", true); hide("#drawbar", true);
+  const cvEl = q("#cv"); if(cvEl){ cvEl.removeAttribute("style"); cvEl.removeAttribute("width"); cvEl.removeAttribute("height"); }
+  const mp = q("#osmMap"); if(mp){ mp.innerHTML = ""; mp.removeAttribute("class"); mp.removeAttribute("style"); mp.removeAttribute("tabindex"); }
+  doc.querySelectorAll("#printLayer .pv-item").forEach(n => { n.setAttribute("hidden",""); n.removeAttribute("style"); n.classList.remove("dragging"); });
+  ["#printLegend","#printScaleBar","#printTitle"].forEach(sel => { const c = q(sel + " .pv-content"); if(c) c.innerHTML = ""; });
+  const fr = q("#printFrame"); if(fr) fr.removeAttribute("style");
+  const hud = q("#hudLegend"); if(hud){ hud.innerHTML = ""; hud.setAttribute("style","display:none"); }
+  ["#zlist","#right","#recent","#dbInfo","#stHint","#stCoord","#stScale","#stSave","#ppInfo"].forEach(sel => { const n = q(sel); if(n) n.textContent = ""; });
+  const tt = q("#toast"); if(tt){ tt.textContent = ""; tt.className = ""; }
+  doc.querySelectorAll(".panel.open").forEach(n => n.classList.remove("open"));
+  const ex = q("#bExport"); if(ex) ex.textContent = "PNG sifatida yuklab olish";
+  doc.querySelectorAll("[data-tool=scale], #z11").forEach(n => n.removeAttribute("hidden"));
+  // Loyiha ma'lumoti: "<" belgisi \u003c ga almashtiriladi — nomdagi script tegi faylni buzmasligi uchun
+  const holder = document.createElement("script");
+  holder.type = "application/json"; holder.id = "fzm-embed";
+  holder.textContent = JSON.stringify(P).replace(/</g, "\\u003c");
+  const head = q("head"); head.insertBefore(holder, head.firstChild);
+  const html = "<!DOCTYPE html>\n" + doc.outerHTML;
+  const blob = new Blob([html], {type:"text/html"});
+  const safe = (P.name || "zonalash").replace(/[\\/:*?"<>|]+/g, "_").trim() || "zonalash";
+  await saveBlob(blob, safe + "-HART-GIS.html");
+}
+
+/* =====================================================================
+   Ko‘rinish: zoom / pan
+   ===================================================================== */
+function fitView(){
+  if(P && P.mode === "osm"){
+    if(!osmMap) return;
+    const layers = osmMap._fzmZones ? osmMap._fzmZones.getLayers() : [];
+    if(layers.length){ osmMap.fitBounds(L.featureGroup(layers).getBounds().pad(.15)); }
+    return;
+  }
+  if(!P || W<=0 || H<=0) return;
+  const pad = 24;
+  const s = Math.max(0.001, Math.min((W-pad*2)/P.imgW, (H-pad*2)/P.imgH));
+  V.s = s; V.tx = (W - P.imgW*s)/2; V.ty = (H - P.imgH*s)/2; V.fitted = true;
+  invalidate();
+}
+function zoomAt(px, py, f){
+  const minS = Math.min(0.02, (Math.min(W,H)/Math.max(P.imgW,P.imgH))*0.2), maxS = 64;
+  const ns = clamp(V.s*f, minS, maxS); const r = ns/V.s;
+  V.tx = px - (px - V.tx)*r; V.ty = py - (py - V.ty)*r; V.s = ns; V.fitted = false;
+  invalidate();
+}
+const zoomCenter = f => zoomAt(W/2, H/2, f);
+
+/* =====================================================================
+   Kursor / pointer boshqaruvi
+   ===================================================================== */
+const ptrs = new Map(); let g = null; let lastVT = null;
+const localPt = e => { const r = cv.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; };
+
+function updateCursor(){
+  const c = spaceDown ? "grab" : (tool === "select" ? "default" : "crosshair");
+  cv.style.cursor = c;
+  const el = $("#osmMap"); if(el) el.style.cursor = c;
+}
+function hitHandle(pl, sx, sy, type){
+  const r = type === "mouse" ? 9 : 17; let best = null;
+  pl.pts.forEach((pt,i)=>{ const [x,y]=toScr(pt[0],pt[1]); const d=Math.hypot(x-sx,y-sy); if(d<=r && (!best||d<best.d)) best={kind:"v",i,d}; });
+  if(best) return best;
+  const n = pl.pts.length;
+  for(let i=0;i<n;i++){
+    const a=pl.pts[i], b=pl.pts[(i+1)%n];
+    const [ax,ay]=toScr(a[0],a[1]),[bx,by]=toScr(b[0],b[1]);
+    if(Math.hypot(ax-bx,ay-by) < 28) continue;
+    if(Math.hypot((ax+bx)/2-sx,(ay+by)/2-sy) <= r) return {kind:"mid", i, pt:[(a[0]+b[0])/2,(a[1]+b[1])/2]};
+  }
+  return null;
+}
+function polyAt(ix, iy){
+  const zm = zoneMap();
+  for(let i=P.polys.length-1;i>=0;i--){
+    const p = P.polys[i], z = zm[p.zoneId];
+    if(!z || !z.visible || !L_.zones) continue;
+    if(pointInPoly(ix,iy,p.pts)) return p;
+  }
+  return null;
+}
+
+cv.addEventListener("contextmenu", e => e.preventDefault());
+cv.addEventListener("pointerdown", e => {
+  if(!P || !IMG) return;
+  try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+  const p = localPt(e);
+  ptrs.set(e.pointerId, {x:p.x, y:p.y, type:e.pointerType});
+  if(ptrs.size === 2){
+    const a = Array.from(ptrs.values());
+    g = {type:"pinch", d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y), mx:(a[0].x+a[1].x)/2, my:(a[0].y+a[1].y)/2};
+    return;
+  }
+  if(ptrs.size > 2) return;
+  if(e.button === 1 || (e.button === 0 && spaceDown)){ g = {type:"pan", lx:p.x, ly:p.y}; cv.style.cursor="grabbing"; return; }
+  if(e.button === 2){
+    if(tool === "select" && S.poly){
+      const hit = hitHandle(getPoly(S.poly), p.x, p.y, "mouse");
+      if(hit && hit.kind === "v"){ S.vertex = hit.i; deleteVertex(); }
+    }
+    return;
+  }
+  if(e.button !== 0 && e.pointerType === "mouse") return;
+  if(tool === "select" && S.poly){
+    const pl = getPoly(S.poly);
+    const hit = pl && hitHandle(pl, p.x, p.y, e.pointerType);
+    if(hit){
+      if(hit.kind === "mid"){ pl.pts.splice(hit.i+1, 0, hit.pt); S.vertex = hit.i+1; g = {type:"vertex", changed:true, sx:p.x, sy:p.y, i:S.vertex}; }
+      else { S.vertex = hit.i; g = {type:"vertex", changed:false, sx:p.x, sy:p.y, i:hit.i}; }
+      renderRight(); invalidate(); return;
+    }
+  }
+  g = {type:"tap", sx:p.x, sy:p.y, lx:p.x, ly:p.y, moved:false};
+});
+
+cv.addEventListener("pointermove", e => {
+  if(!P || !IMG) return;
+  const p = localPt(e);
+  if(ptrs.has(e.pointerId)) ptrs.set(e.pointerId, {x:p.x, y:p.y, type:e.pointerType});
+  const ip = toImg(p.x, p.y);
+  $("#stCoord").textContent = `x: ${ip.x.toFixed(1)}  y: ${ip.y.toFixed(1)} px`;
+  if(D && e.pointerType !== "touch" && !g){ D.hover = {x:clamp(ip.x,0,P.imgW), y:clamp(ip.y,0,P.imgH)}; invalidate(); }
+  if(!g) return;
+  if(g.type === "pinch"){
+    if(ptrs.size < 2) return;
+    const a = Array.from(ptrs.values());
+    const d = Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y), mx=(a[0].x+a[1].x)/2, my=(a[0].y+a[1].y)/2;
+    V.tx += mx - g.mx; V.ty += my - g.my;
+    if(g.d > 0) zoomAt(mx, my, d/g.d);
+    g.d = d; g.mx = mx; g.my = my; V.fitted = false; invalidate();
+  }else if(g.type === "vertex"){
+    if(!g.changed && Math.hypot(p.x-g.sx,p.y-g.sy) < 3) return;
+    g.changed = true;
+    const pl = getPoly(S.poly);
+    if(pl){ pl.pts[S.vertex] = [clamp(ip.x,0,P.imgW), clamp(ip.y,0,P.imgH)]; }
+    updateAreaUI(); invalidate();
+  }else if(g.type === "pan"){
+    V.tx += p.x - g.lx; V.ty += p.y - g.ly; g.lx = p.x; g.ly = p.y; V.fitted = false; invalidate();
+  }else if(g.type === "tap"){
+    if(!g.moved && Math.hypot(p.x-g.sx,p.y-g.sy) > (e.pointerType === "mouse" ? 4 : 9)) g.moved = true;
+    if(g.moved){ V.tx += p.x - g.lx; V.ty += p.y - g.ly; V.fitted = false; invalidate(); }
+    g.lx = p.x; g.ly = p.y;
+  }
+});
+
+function endPointer(e, cancelled){
+  const p = localPt(e);
+  ptrs.delete(e.pointerId);
+  if(!g) return;
+  if(g.type === "pinch"){ if(ptrs.size < 2) g = null; return; }
+  const gg = g; g = null;
+  updateCursor();
+  if(cancelled) return;
+  if(gg.type === "vertex"){
+    if(gg.changed){ commit(); updateAreaUI(); }
+    else{
+      const now = performance.now();
+      if(lastVT && now - lastVT.t < 420 && lastVT.i === gg.i){ lastVT = null; S.vertex = gg.i; deleteVertex(); }
+      else lastVT = {t:now, i:gg.i};
+    }
+  }else if(gg.type === "tap" && !gg.moved){
+    handleTap(p, e.pointerType);
+  }
+}
+cv.addEventListener("pointerup", e => endPointer(e, false));
+cv.addEventListener("pointercancel", e => endPointer(e, true));
+cv.addEventListener("pointerleave", e => { if(D && e.pointerType !== "touch"){ D.hover = null; invalidate(); } });
+cv.addEventListener("wheel", e => {
+  if(!P || !IMG) return;
+  e.preventDefault();
+  const p = localPt(e);
+  zoomAt(p.x, p.y, Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0016)));
+}, {passive:false});
+
+function handleTap(p, ptype){
+  const ip = toImg(p.x, p.y);
+  if(tool === "select"){
+    const hit = polyAt(ip.x, ip.y);
+    if(hit){ S.poly = hit.id; S.vertex = -1; S.zone = hit.zoneId; }
+    else { S.poly = null; S.vertex = -1; }
+    renderLeft(); renderRight(); invalidate();
+    return;
+  }
+  const x = clamp(ip.x, 0, P.imgW), y = clamp(ip.y, 0, P.imgH);
+  if(tool === "draw"){
+    if(!S.zone){ toast("Avval zonani tanlang yoki yangi zona yarating.", true); if(isMobile()) toggleSheet("left"); return; }
+    if(!D) D = {pts:[], hover:null, last:null};
+    const now = performance.now();
+    if(D.pts.length >= 3){
+      const [fx,fy] = toScr(D.pts[0][0], D.pts[0][1]);
+      if(Math.hypot(fx-p.x, fy-p.y) < (ptype === "mouse" ? 12 : 20)){ finishDraw(); return; }
+    }
+    if(D.last && now - D.last.t < 350 && Math.hypot(D.last.x-p.x, D.last.y-p.y) < 12){
+      if(D.pts.length >= 3) finishDraw(); else D.last = null;
+      return;
+    }
+    D.last = {t:now, x:p.x, y:p.y};
+    D.pts.push([x,y]);
+    updateTopUI(); invalidate();
+  }else if(tool === "scale"){
+    if(SC.pts.length >= 2) SC.pts = [];
+    SC.pts.push([x,y]);
+    invalidate();
+    if(SC.pts.length === 2) askScale();
+    else toast("Ikkinchi nuqtani belgilang.");
+  }
+}
+
+/* =====================================================================
+   Amallar
+   ===================================================================== */
+function finishDraw(){
+  if(!D || D.pts.length < 3){ toast("Zona yaratish uchun kamida 3 ta nuqta belgilang.", true); return; }
+  if(!S.zone){ toast("Avval zonani tanlang.", true); return; }
+  const pl = {id:uid("g"), zoneId:S.zone, pts:D.pts.map(p=>[p[0],p[1]]), ai:false, approved:true};
+  P.polys.push(pl); D = null;
+  commit(); refreshAll();
+}
+function cancelDraw(){
+  D = null; SC.pts = []; updateTopUI(); invalidate();
+}
+function deletePoly(){
+  if(!S.poly) return;
+  P.polys = P.polys.filter(p => p.id !== S.poly);
+  S.poly = null; S.vertex = -1; commit(); refreshAll();
+}
+function deleteVertex(){
+  const pl = S.poly && getPoly(S.poly); if(!pl || S.vertex < 0) return;
+  if(pl.pts.length <= 3){ toast("Poligonda kamida 3 ta nuqta bo‘lishi kerak. Butun poligonni o‘chirishingiz mumkin.", true); return; }
+  pl.pts.splice(S.vertex, 1); S.vertex = -1; commit(); refreshAll();
+}
+function setActiveZone(id){
+  S.zone = id;
+  if(S.poly){ const pl = getPoly(S.poly); if(pl && pl.zoneId !== id){ S.poly = null; S.vertex = -1; } }
+  renderLeft(); renderRight(); updateTopUI(); invalidate();
+  if(isMobile() && tool === "draw") closeSheets();
+}
+function setTool(t){
+  if(tool !== t){ D = null; SC.pts = []; }
+  tool = t;
+  if(t !== "select"){ S.vertex = -1; }
+  if(osmMap){ if(t === "draw") osmMap.doubleClickZoom.disable(); else osmMap.doubleClickZoom.enable(); }
+  updateCursor(); updateTopUI(); invalidate(); renderRight();
+  if(t === "draw" && !S.zone) toast("Avval zonani tanlang yoki yangi zona yarating.", true);
+}
+function toggleZoneVisible(id){
+  const z = P.zones.find(z => z.id === id); if(!z) return;
+  z.visible = !z.visible; scheduleSave(); renderLeft(); invalidate();
+}
+function askDeleteZone(){
+  const z = curZone(); if(!z) return;
+  const n = P.polys.filter(p => p.zoneId === z.id).length;
+  confirmBox(`“${z.name}” zonasi${n ? ` va uning ${n} ta poligoni` : ""} o‘chiriladi. Davom etasizmi?`, "O‘chirish", () => {
+    P.zones = P.zones.filter(q => q.id !== z.id);
+    P.polys = P.polys.filter(p => p.zoneId !== z.id);
+    if(S.poly && !getPoly(S.poly)){ S.poly = null; S.vertex = -1; }
+    S.zone = P.zones[0] ? P.zones[0].id : null;
+    commit(); refreshAll();
+  });
+}
+
+/* =====================================================================
+   Modal oynalar
+   ===================================================================== */
+let modalEl = null;
+function closeModal(){ if(modalEl){ modalEl.remove(); modalEl = null; } }
+function openModal({title, html, actions = [], onMount, wide}){
+  closeModal();
+  const ov = document.createElement("div"); ov.className = "overlay";
+  ov.innerHTML = `<div class="modal${wide?" wide":""}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><h2>${esc(title)}</h2><div class="mbody">${html}</div><div class="mact"></div></div>`;
+  const act = $(".mact", ov);
+  actions.forEach(a => {
+    const b = document.createElement("button"); b.className = "btn " + (a.cls || ""); b.textContent = a.label;
+    b.addEventListener("click", () => { const r = a.onClick ? a.onClick(ov) : null; if(r !== false && !a.keep) closeModal(); });
+    act.appendChild(b);
+  });
+  ov.addEventListener("mousedown", e => { if(e.target === ov) closeModal(); });
+  document.body.appendChild(ov); modalEl = ov;
+  if(onMount) onMount(ov);
+  const first = ov.querySelector("input:not([type=file]),select,textarea") || ov.querySelector("button");
+  if(first) first.focus();
+  return ov;
+}
+function confirmBox(text, okLabel, onOk){
+  openModal({title:"Tasdiqlang", html:`<p style="margin:0">${esc(text)}</p>`, actions:[{label:"Bekor qilish"},{label:okLabel, cls:"primary", onClick:()=>{ onOk(); }}]});
+}
+function fmtDate(t){
+  try{ return new Date(t).toLocaleString("en-GB", {dateStyle:"short", timeStyle:"short"}); }catch(e){ return ""; }
+}
+
+/* ---------- Yangi loyiha ---------- */
+function openNewProject(){
+  let src = "image", pickMap = null, pickTiles = null;
+  openModal({
+    title:"Yangi loyiha", wide:true,
+    html:`<label class="f">Loyiha nomi<input type="text" id="npName" placeholder="Masalan: Yashnobod hududi" maxlength="80"></label>
+      <div class="f">Manba
+        <div class="srcCards">
+          <div class="srcCard sel" data-src="image"><b>🖼️ Rasm yuklash</b><span>Sun’iy yo‘ldosh/xarita rasmi — offline ishlaydi</span></div>
+          <div class="srcCard" data-src="osm"><b>🗺️ OSM xaritasi</b><span>Ochiq internet xaritasi — masshtab avtomatik</span></div>
+        </div></div>
+      <div id="npImageBlock"><label class="f">Hudud rasmi
+        <input class="field" type="file" id="npFile" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"></label>
+        <p class="help">Qo‘llab-quvvatlanadigan formatlar: PNG, JPG, JPEG, WEBP. Rasm original holida saqlanadi va o‘zgartirilmaydi.</p></div>
+      <div id="npOsmBlock" hidden>
+        <label class="f">Hududni qidirish<input type="text" id="npOsmSearch" placeholder="Masalan: Yashnobod, Toshkent"></label>
+        <label class="f">Xarita turi<select id="npBase">${Object.entries(BASEMAPS).map(([k,b])=>`<option value="${k}"${k===DEF_BASE?" selected":""}>${b.name}</option>`).join("")}</select></label>
+        <div id="npOsmPick"></div>
+        <p class="help">Kartani surib/zoom qilib boshlang‘ich ko‘rinishni tanlang. Xarita turini loyiha ichida ham almashtirish mumkin. Internet ulanishi kerak.</p>
+      </div>
+      <p class="err" id="npErr"></p>`,
+    onMount(ov){
+      $$(".srcCard", ov).forEach(c => c.addEventListener("click", () => {
+        src = c.dataset.src;
+        $$(".srcCard", ov).forEach(x => x.classList.toggle("sel", x === c));
+        $("#npImageBlock", ov).hidden = src !== "image";
+        $("#npOsmBlock", ov).hidden = src !== "osm";
+        if(src === "osm" && !pickMap){
+          pickMap = L.map("npOsmPick", {attributionControl:false}).setView([41.311, 69.279], 12);
+          pickTiles = makeTiles($("#npBase", ov).value, k => { $("#npBase", ov).value = k; if(pickTiles) pickMap.removeLayer(pickTiles); pickTiles = makeTiles(k).addTo(pickMap); }).addTo(pickMap);
+          setTimeout(() => pickMap.invalidateSize(), 60);
+        }else if(pickMap) setTimeout(() => pickMap.invalidateSize(), 60);
+      }));
+      $("#npBase", ov).addEventListener("change", e => {
+        if(!pickMap) return;
+        if(pickTiles) pickMap.removeLayer(pickTiles);
+        pickTiles = makeTiles(e.target.value, k => { $("#npBase").value = k; if(pickTiles) pickMap.removeLayer(pickTiles); pickTiles = makeTiles(k).addTo(pickMap); }).addTo(pickMap);
+      });
+      $("#npOsmSearch", ov).addEventListener("keydown", async e => {
+        if(e.key !== "Enter") return;
+        e.preventDefault();
+        const q = e.target.value.trim(); if(!q || !pickMap) return;
+        try{
+          const r = await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(q));
+          const arr = await r.json();
+          if(arr && arr[0]) pickMap.setView([+arr[0].lat, +arr[0].lon], 13);
+          else toast("Hudud topilmadi.", true);
+        }catch(err){ toast("Qidiruv ishlamadi. Kartani qo‘lda surib hududni toping.", true); }
+      });
+    },
+    actions:[{label:"Bekor qilish", onClick:()=>{ if(pickMap){ pickMap.remove(); pickMap = null; } }},{label:"Loyihani yaratish", cls:"primary", keep:true, onClick:async(ov)=>{
+      const err = $("#npErr", ov);
+      err.textContent = "";
+      const nm = ($("#npName", ov).value || "").trim() || "Nomsiz loyiha";
+      if(src === "image"){
+        const f = $("#npFile", ov).files[0];
+        if(!f){ err.textContent = "Avval hudud rasmini yuklang."; return false; }
+        const okType = /^image\/(png|jpeg|webp)$/.test(f.type) || /\.(png|jpe?g|webp)$/i.test(f.name);
+        if(!okType){ err.textContent = "Faqat PNG, JPG, JPEG yoki WEBP formatlari qo‘llab-quvvatlanadi."; return false; }
+        err.style.color = "var(--mute)"; err.textContent = "Rasm yuklanmoqda…";
+        try{ await createImageProject(nm, f); closeModal(); }
+        catch(e){ err.style.color = ""; err.textContent = "Rasmni ochib bo‘lmadi. Boshqa fayl tanlang."; }
+      }else{
+        const c = pickMap.getCenter();
+        await createOsmProject(nm, c.lat, c.lng, pickMap.getZoom(), $("#npBase", ov).value);
+        closeModal();
+      }
+      return false;
+    }}]
+  });
+}
+function loadImg(blob){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(blob), im = new Image();
+    im.onload = () => res({im, url});
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error("img")); };
+    im.src = url;
+  });
+}
+async function createImageProject(name, file){
+  const {im, url} = await loadImg(file);
+  P = newProjectData(name, im.naturalWidth, im.naturalHeight);
+  IMG = im; IMG_URL = url;
+  try{ await dbPut("images", {id:P.id, blob:file}); await dbPut("projects", JSON.parse(JSON.stringify(P))); }
+  catch(e){ toast("Diqqat: brauzer xotirasiga saqlab bo‘lmadi. Loyiha faqat shu sessiyada ishlaydi.", true); }
+  startSession();
+}
+async function createOsmProject(name, lat, lng, zoom, base){
+  P = newOsmProjectData(name, lat, lng, zoom);
+  P.view.base = base || DEF_BASE;
+  try{ await dbPut("projects", JSON.parse(JSON.stringify(P))); }
+  catch(e){ toast("Diqqat: brauzer xotirasiga saqlab bo‘lmadi. Loyiha faqat shu sessiyada ishlaydi.", true); }
+  startSession();
+}
+async function loadProject(id){
+  const rec = await dbGet("projects", id);
+  if(!rec) throw new Error("missing");
+  if(rec.mode === "osm"){
+    P = rec; IMG = null; IMG_URL = null;
+  }else{
+    const im = await dbGet("images", id);
+    if(!im) throw new Error("missing");
+    const {im:img, url} = await loadImg(im.blob);
+    P = rec; IMG = img; IMG_URL = url;
+  }
+  P.zones.forEach(z => { if(z.visible === undefined) z.visible = true; });
+  P.legend = Object.assign({pos:"tr", visible:true, labels:true}, P.legend || {});
+  startSession();
+}
+function startSession(){
+  S = {poly:null, vertex:-1, zone:P.zones[0] ? P.zones[0].id : null};
+  D = null; SC.pts = []; tool = "select"; V.fitted = true;
+  L_.base = L_.zones = L_.labels = true;
+  LS.set("fzm-last", P.id);
+  resetHistory();
+  $("#home").hidden = true; $("#editor").hidden = false;
+  $("#pname").value = P.name;
+  $("#stSave").textContent = "Saqlandi ✓";
+  closeSheets(); closePrint(); updateCursor();
+  $$(".topbar [data-tool=scale]").forEach(b => b.hidden = P.mode === "osm");
+  $("#bExport").textContent = P.mode === "osm" ? "Chop etish" : "PNG sifatida yuklab olish";
+  if(P.mode === "osm"){
+    $("#cv").hidden = true; $("#osmMap").hidden = false;
+    initOsm();
+    requestAnimationFrame(() => { if(osmMap) osmMap.invalidateSize(); });
+  }else{
+    teardownOsm(); $("#osmMap").hidden = true; $("#cv").hidden = false;
+    requestAnimationFrame(() => { resize(); fitView(); });
+  }
+  refreshAll();
+}
+async function leaveProject(){
+  await saveNow();
+  LS.del("fzm-last");
+  if(IMG_URL) URL.revokeObjectURL(IMG_URL);
+  teardownOsm();
+  P = null; IMG = null; IMG_URL = null; D = null;
+  $("#editor").hidden = true; $("#home").hidden = false;
+  refreshRecent();
+}
+
+/* ---------- Loyihani ochish ---------- */
+async function listProjects(){
+  try{ const all = await dbAll("projects"); return all.sort((a,b)=>b.updatedAt-a.updatedAt); }catch(e){ return []; }
+}
+async function refreshRecent(){
+  const list = (await listProjects()).slice(0,4);
+  $("#recent").innerHTML = list.length ? `<h2>So‘nggi loyihalar</h2>` + list.map(p =>
+    `<button class="rec" data-open="${esc(p.id)}"><b>${esc(p.name)}</b><span>${fmtDate(p.updatedAt)}</span></button>`).join("") : "";
+}
+async function openProjectList(){
+  const list = await listProjects();
+  const render = () => list.length ? list.map(p => `<div class="mrow"><div class="grow"><b>${esc(p.name)}</b><small>${p.polys.length} ta poligon · ${fmtDate(p.updatedAt)}</small></div>
+      <button class="btn primary" data-open="${esc(p.id)}">Ochish</button><button class="btn danger" data-del="${esc(p.id)}" aria-label="O‘chirish">O‘chirish</button></div>`).join("")
+    : `<p class="help" style="font-size:14px">Saqlangan loyihalar yo‘q. “+ Yangi loyiha” bilan boshlang.</p>`;
+  openModal({title:"Loyihani ochish", wide:true, html:`<div id="plist">${render()}</div>`, actions:[{label:"Yopish"}], onMount(ov){
+    ov.addEventListener("click", async e => {
+      const b = e.target.closest("button"); if(!b) return;
+      if(b.dataset.open){ try{ await loadProject(b.dataset.open); closeModal(); }catch(_){ toast("Loyihani ochib bo‘lmadi.", true); } }
+      else if(b.dataset.del){
+        const id = b.dataset.del;
+        if(b.dataset.sure !== "1"){ b.dataset.sure = "1"; b.textContent = "Ishonchingiz komilmi?"; return; }
+        try{ await dbDel("projects", id); await dbDel("images", id); }catch(_){}
+        LS.del("fzm-imported-" + id);
+        const i = list.findIndex(p => p.id === id); if(i >= 0) list.splice(i,1);
+        $("#plist", ov).innerHTML = render(); refreshRecent();
+      }
+    });
+  }});
+}
+
+/* ---------- Yangi zona ---------- */
+function openNewZone(){
+  openModal({
+    title:"Yangi zona",
+    html:`<label class="f">Zona nomi<input type="text" id="nzName" maxlength="60" placeholder="Masalan: Aralash hudud"></label>
+      <div class="f">Rang<div class="row"><input type="color" id="nzColor" value="#e67e22"><input class="field" id="nzHex" value="#E67E22" maxlength="7" style="max-width:110px"></div></div>
+      <label class="f">Belgi<select id="nzIcon">${ICONS.map(i=>`<option>${i}</option>`).join("")}</select></label>
+      <label class="f">Qisqa izoh<textarea id="nzNote" rows="2"></textarea></label>
+      <p class="err" id="nzErr"></p>`,
+    onMount(ov){
+      $("#nzColor", ov).addEventListener("input", e => { $("#nzHex", ov).value = e.target.value.toUpperCase(); });
+      $("#nzHex", ov).addEventListener("input", e => { if(validHex(e.target.value)) $("#nzColor", ov).value = normHex(e.target.value).toLowerCase(); });
+    },
+    actions:[{label:"Bekor qilish"},{label:"Zonani yaratish", cls:"primary", keep:true, onClick:(ov)=>{
+      const name = $("#nzName", ov).value.trim();
+      if(!name){ $("#nzErr", ov).textContent = "Zona nomini kiriting."; return false; }
+      const hex = validHex($("#nzHex", ov).value) ? normHex($("#nzHex", ov).value) : "#E67E22";
+      const z = {id:uid("z"), name, color:hex, icon:$("#nzIcon", ov).value, note:$("#nzNote", ov).value.trim(), opacity:.4, visible:true};
+      P.zones.push(z); S.zone = z.id; S.poly = null; S.vertex = -1;
+      commit(); refreshAll(); closeModal();
+      toast(`“${name}” zonasi yaratildi. “Zona chizish” orqali xaritada belgilang.`);
+      return false;
+    }}]
+  });
+}
+
+/* ---------- Masshtab ---------- */
+function askScale(){
+  const [a,b] = SC.pts; const d = Math.hypot(a[0]-b[0], a[1]-b[1]);
+  openModal({
+    title:"Masshtabni sozlash",
+    html:`<p style="margin-top:0">Belgilangan ikki nuqta orasidagi haqiqiy masofa qancha?</p>
+      <label class="f">Masofa (metr)<input type="number" id="scM" min="0.01" step="any" value="${P.scale ? P.scale.meters : 100}"></label>
+      <p class="help">Rasmdagi masofa: ${d.toFixed(1)} px. Masshtab faqat siz kiritgan masofaga asoslanadi — ilova uni o‘zi taxmin qilmaydi.</p>
+      <p class="err" id="scErr"></p>`,
+    actions:[{label:"Bekor qilish", onClick:()=>{ SC.pts = []; invalidate(); }},{label:"Saqlash", cls:"primary", keep:true, onClick:(ov)=>{
+      const m = parseFloat($("#scM", ov).value);
+      if(!(m > 0) || d < 1){ $("#scErr", ov).textContent = "Masofani metrda musbat son sifatida kiriting."; return false; }
+      P.scale = {p1:a, p2:b, meters:m, pxPerM:d/m}; SC.pts = [];
+      commit(); setTool("select"); refreshAll(); closeModal();
+      toast(`Masshtab o‘rnatildi: 1 px = ${(m/d).toFixed(3)} m`);
+      return false;
+    }}],
+    onMount(){ }
+  });
+}
+
+/* ---------- Statistika ---------- */
+function openStats(){
+  const st = computeStats();
+  const nZ = st.rows.length, nP = P.polys.length;
+  const osm = P.mode === "osm";
+  const hasScale = osm || !!P.scale;
+  const totalM2 = hasScale ? st.rows.reduce((a,r)=>a+r.m2,0) : null;
+  const cover = osm ? null : Math.min(100, st.totalPx / (P.imgW*P.imgH) * 100);
+  const rows = st.rows.map(r => {
+    const pct = st.totalPx ? r.px/st.totalPx*100 : 0;
+    return `<div class="srow"><div class="l"><span class="sw" style="background:${esc(r.z.color)}"></span><span class="n">${esc(r.z.icon)} ${esc(r.z.name)}</span>
+      <span class="v">${r.count} ta${hasScale ? " · " + fmtArea(r.m2) : ""}</span><span class="p">${pct.toFixed(0)}%</span></div>
+      <div class="bar"><i style="width:${pct.toFixed(1)}%;background:${esc(r.z.color)}"></i></div></div>`;
+  }).join("");
+  openModal({
+    title:"Statistika", wide:true,
+    html:`<div class="stat-top"><div><b>${nZ}</b><span>Zonalar (poligonli)</span></div><div><b>${nP}</b><span>Poligonlar</span></div>
+      <div><b>${hasScale ? fmtArea(totalM2) : "—"}</b><span>Umumiy maydon</span></div></div>
+      ${nP ? rows : `<p class="help" style="font-size:14px">Hali poligon yo‘q. ${osm ? "Xarita" : "Rasm"} ustida zona chizing.</p>`}
+      ${nP && cover!=null ? `<p class="help">Ulush zonalangan hududning umumiy maydoniga nisbatan hisoblanadi (zonalangan qism rasmning taxminan ${cover.toFixed(0)}% ini tashkil etadi). Bir-birining ustiga tushgan poligonlar ikki marta sanaladi.</p>` : ""}
+      ${nP && osm ? `<p class="help">OSM rejimida maydon xaritaning haqiqiy koordinatalaridan avtomatik hisoblanadi — masshtab qo‘lda kiritilmaydi.</p>` : ""}
+      ${hasScale || !nP ? "" : `<p class="help">Maydon hisoblash uchun avval masshtabni belgilang (yuqoridagi “Masshtab” vositasi).</p>`}`,
+    actions:[{label:"Yopish", cls:"primary"}]
+  });
+}
+
+/* ---------- AI (tayyor ulanish nuqtasi) ---------- */
+function pendingAI(){ return P.polys.filter(p => p.ai && !p.approved); }
+function openAI(){
+  if(P.mode === "osm"){ toast("AI orqali tahlil qilish OSM rejimida hali qo‘shilmagan.", true); return; }
+  const n = pendingAI().length;
+  openModal({
+    title:"AI orqali tahlil qilish", wide:true,
+    html:`<p style="margin-top:0">AI turar-joy, sanoat, transport, yashil hudud, suv va yirik jamoat obyektlarini <b>taxminiy</b> aniqlashi mumkin. Natija hech qachon “aniq” deb hisoblanmaydi: poligonlar <i>“AI tomonidan taxminiy aniqlangan”</i> deb belgilanadi va sizning tasdig‘ingizni kutadi.</p>
+      <button class="btn primary" id="aiRun">AI tahlilini boshlash</button>
+      <p class="err" id="aiMsg" style="color:var(--mute)"></p>
+      <label class="f" style="margin-top:10px">Tashqi AI natijasini qo‘shish (JSON)
+        <textarea class="field" id="aiJson" spellcheck="false" placeholder='[{"zone":"Turar-joy hududi","points":[[0.10,0.20],[0.30,0.20],[0.25,0.40]]}]'></textarea></label>
+      <p class="help">Nuqtalar 0–1 oralig‘ida (rasm o‘lchamiga nisbatan) yoki piksellarda bo‘lishi mumkin. Integratsiya uchun <code>window.FZM_AI({blob, width, height, zones})</code> funksiyasini belgilash kifoya.</p>
+      <button class="btn" id="aiAdd">Natijani qo‘shish</button>
+      <div id="aiPend" style="margin-top:14px">${n ? aiPendHtml(n) : ""}</div>`,
+    actions:[{label:"Yopish"}],
+    onMount(ov){
+      $("#aiRun", ov).addEventListener("click", async () => {
+        const msg = $("#aiMsg", ov);
+        if(typeof window.FZM_AI !== "function"){ msg.textContent = "AI xizmati hozircha ulanmagan. Qo‘lda zonalash to‘liq ishlaydi."; return; }
+        msg.textContent = "Tahlil qilinmoqda…";
+        try{
+          const res = await window.FZM_AI({blob: null, width:P.imgW, height:P.imgH, zones:P.zones.map(z=>z.name)});
+          const k = importAI(res); msg.textContent = `${k} ta poligon qo‘shildi (AI tomonidan taxminiy aniqlangan).`;
+          $("#aiPend", ov).innerHTML = aiPendHtml(pendingAI().length);
+        }catch(e){ msg.textContent = "AI tahlili bajarilmadi. Qo‘lda zonalashni davom ettiring."; }
+      });
+      $("#aiAdd", ov).addEventListener("click", () => {
+        const msg = $("#aiMsg", ov);
+        try{
+          const k = importAI(JSON.parse($("#aiJson", ov).value));
+          msg.textContent = k ? `${k} ta poligon qo‘shildi (AI tomonidan taxminiy aniqlangan).` : "Qo‘shiladigan poligon topilmadi.";
+          $("#aiPend", ov).innerHTML = aiPendHtml(pendingAI().length);
+        }catch(e){ msg.textContent = "JSON formati noto‘g‘ri."; }
+      });
+      ov.addEventListener("click", e => {
+        const b = e.target.closest("button"); if(!b) return;
+        if(b.id === "aiOkAll"){ pendingAI().forEach(p => p.approved = true); commit(); refreshAll(); $("#aiPend", ov).innerHTML = ""; }
+        if(b.id === "aiDelAll"){ const ids = new Set(pendingAI().map(p=>p.id)); P.polys = P.polys.filter(p => !ids.has(p.id)); S.poly = null; commit(); refreshAll(); $("#aiPend", ov).innerHTML = ""; }
+      });
+    }
+  });
+}
+function aiPendHtml(n){
+  return n ? `<div class="ai-tag">${n} ta poligon tasdiqlanmagan — AI tomonidan taxminiy aniqlangan</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="aiOkAll">Hammasini tasdiqlash</button><button class="btn danger" id="aiDelAll">Hammasini o‘chirish</button></div>
+    <p class="help">Alohida poligonni xaritada tanlab, tasdiqlash, o‘zgartirish yoki o‘chirish mumkin.</p>` : "";
+}
+function importAI(list){
+  if(!Array.isArray(list)) throw new Error("bad");
+  let k = 0;
+  for(const it of list){
+    const pts = (it.points || it.pts || []).filter(p => Array.isArray(p) && p.length >= 2 && isFinite(p[0]) && isFinite(p[1]));
+    if(pts.length < 3) continue;
+    const norm = pts.every(p => p[0] >= 0 && p[0] <= 1 && p[1] >= 0 && p[1] <= 1);
+    const abs = pts.map(p => norm ? [p[0]*P.imgW, p[1]*P.imgH] : [clamp(+p[0],0,P.imgW), clamp(+p[1],0,P.imgH)]);
+    const nm = String(it.zone || "Boshqa").toLowerCase();
+    let z = P.zones.find(z => z.name.toLowerCase() === nm) || P.zones.find(z => z.name === "Boshqa") || P.zones[0];
+    if(!z){ z = {id:uid("z"), name:String(it.zone||"Boshqa"), color:"#8E6E53", icon:"•", note:"", opacity:.4, visible:true}; P.zones.push(z); }
+    P.polys.push({id:uid("g"), zoneId:z.id, pts:abs, ai:true, approved:false}); k++;
+  }
+  if(k){ commit(); refreshAll(); }
+  return k;
+}
+
+/* ---------- PNG eksport ---------- */
+function exportSize(q){
+  const iw = P.imgW, ih = P.imgH, long = Math.max(iw, ih);
+  let f = q === "std" ? Math.min(1, 1600/long) : q === "high" ? Math.min(1, 3200/long) : 1;
+  const IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  f = Math.min(f, 16384/long, Math.sqrt((IOS ? 16e6 : 120e6)/(iw*ih)), 1);
+  return {f, w:Math.round(iw*f), h:Math.round(ih*f)};
+}
+function openExport(){
+  if(P.mode === "osm"){ openPrint(); return; }
+  if(!IMG){ toast("Avval hudud rasmini yuklang.", true); return; }
+  if(!P.polys.length){ toast("Eksport qilishdan oldin kamida bitta funksional zona yarating.", true); return; }
+  const q = {std:exportSize("std"), high:exportSize("high"), max:exportSize("max")};
+  openModal({
+    title:"PNG sifatida yuklab olish",
+    html:`<div class="chk-group">
+        <label class="chk"><input type="checkbox" id="exLegend" checked> Legenda</label>
+        <label class="chk"><input type="checkbox" id="exNames" checked> Zona nomlari</label>
+        <label class="chk"><input type="checkbox" id="exScale" ${P.scale ? "checked" : "disabled"}> Masshtab${P.scale ? "" : " (masshtab belgilanmagan)"}</label>
+        <label class="chk"><input type="checkbox" id="exNorth" checked> Shimol belgisi</label>
+        <label class="chk"><input type="checkbox" id="exTitle" checked> Loyiha nomi</label>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--mute)">Sifat</div>
+      <label class="qopt"><input type="radio" name="exq" value="std"> Standard <span class="help" style="margin:0">— ${q.std.w}×${q.std.h} px</span></label>
+      <label class="qopt"><input type="radio" name="exq" value="high" checked> High Quality <span class="help" style="margin:0">— ${q.high.w}×${q.high.h} px</span></label>
+      <label class="qopt"><input type="radio" name="exq" value="max"> Maximum Quality <span class="help" style="margin:0">— ${q.max.w}×${q.max.h} px${q.max.f < 1 ? " (brauzer chegarasi)" : " (original o‘lcham)"}</span></label>
+      <p class="help">Rasmning nisbati (aspect ratio) saqlanadi. Yashirilgan zonalar eksportga kirmaydi.</p>
+      <p class="err" id="exErr"></p>`,
+    actions:[{label:"Bekor qilish"},{label:"PNG sifatida yuklab olish", cls:"primary", keep:true, onClick:async(ov)=>{
+      const o = {
+        legend:$("#exLegend",ov).checked, names:$("#exNames",ov).checked, scale:$("#exScale",ov).checked,
+        north:$("#exNorth",ov).checked, title:$("#exTitle",ov).checked, q:$('input[name=exq]:checked',ov).value
+      };
+      $("#exErr", ov).style.color = "var(--mute)"; $("#exErr", ov).textContent = "PNG tayyorlanmoqda…";
+      try{
+        await new Promise(r => setTimeout(r, 30));
+        const ok = await doExport(o);
+        if(ok) closeModal(); else $("#exErr", ov).textContent = "";
+      }catch(e){
+        $("#exErr", ov).style.color = ""; $("#exErr", ov).textContent = "PNG yaratib bo‘lmadi. Pastroq sifatni tanlab ko‘ring.";
+      }
+      return false;
+    }}]
+  });
+}
+async function doExport(o){
+  const {f, w, h} = exportSize(o.q);
+  const u = clamp(Math.sqrt(w*h)/1000, .6, 10);
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const g2 = c.getContext("2d");
+  g2.fillStyle = "#fff"; g2.fillRect(0,0,w,h);
+  paintMap(g2, {s:f, tx:0, ty:0, W:w, H:h, u, interactive:false, showBase:true, showZones:true, showNames:o.names, showLegend:false});
+  g2.strokeStyle = "rgba(20,30,32,.6)"; g2.lineWidth = 2*u; g2.strokeRect(u, u, w-2*u, h-2*u);
+  const showLegend = o.legend && legendItems().length > 0;
+  if(showLegend) drawLegend(g2, w, h, P.legend.pos, u);
+  if(o.title) drawTitle(g2, w, u, P.name);
+  if(o.north){
+    const corners = ["tr","tl","br","bl"].filter(k => !showLegend || k !== P.legend.pos);
+    const k = corners[0], m = 14*u, bw = 44*u, bh = 64*u;
+    drawNorth(g2, k[1]==="l" ? m : w - bw - m, k[0]==="t" ? m : h - bh - m, u);
+  }
+  if(o.scale && P.scale) drawScaleBar(g2, w, h, u, P.scale.pxPerM * f);
+  const blob = await new Promise(r => c.toBlob(r, "image/png"));
+  if(!blob) throw new Error("blob");
+  const safe = (P.name || "zonalash").replace(/[\\/:*?"<>|]+/g, "_").trim() || "zonalash";
+  return await saveBlob(blob, safe + ".png");
+}
+async function saveBlob(blob, filename){
+  const ext = (filename.split(".").pop() || "").toUpperCase(), done = () => toast(ext + " tayyor.");
+  let dl = null;
+  try{ if(window.claude && window.claude.use) dl = await window.claude.use("downloads"); }catch(e){ dl = null; }
+  if(dl){
+    try{ await dl.save({filename, data:blob}); done(); return true; }
+    catch(e){
+      if(e && e.code === "declined"){ toast("Yuklab olish bekor qilindi."); return false; }
+      toast("Faylni saqlab bo‘lmadi" + (e && e.message ? ": " + e.message : "."), true); return false;
+    }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  done(); return true;
+}
+
+/* =====================================================================
+   Panellar (chap / o‘ng)
+   ===================================================================== */
+const EYE = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
+const EYE_OFF = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7c2 0 3.8.6 5.3 1.5M23 12s-4 7-11 7c-2 0-3.8-.6-5.3-1.5"/><path d="M3 3l18 18"/></svg>`;
+
+function renderLeft(){
+  if(!P) return;
+  const cnt = {}; P.polys.forEach(p => cnt[p.zoneId] = (cnt[p.zoneId]||0)+1);
+  $("#zlist").innerHTML = P.zones.length ? P.zones.map(z =>
+    `<div class="zrow${z.id===S.zone?" sel":""}" data-z="${esc(z.id)}">
+      <button class="eye${z.visible?"":" off"}" data-eye="${esc(z.id)}" title="${z.visible?"Yashirish":"Ko‘rsatish"}" aria-label="${z.visible?"Zonani yashirish":"Zonani ko‘rsatish"}">${z.visible?EYE:EYE_OFF}</button>
+      <span class="sw" style="background:${esc(z.color)}"></span>
+      <span class="zname" title="${esc(z.name)}">${esc(z.icon)} ${esc(z.name)}</span>
+      <span class="zcnt">${cnt[z.id]||0} ta</span></div>`).join("")
+    : `<p class="hint" style="padding:12px">Zona yo‘q. “+ Yangi zona” tugmasini bosing.</p>`;
+}
+$("#left").addEventListener("click", e => {
+  const eye = e.target.closest("[data-eye]");
+  if(eye){ toggleZoneVisible(eye.dataset.eye); return; }
+  if(e.target.closest("[data-close]")){ closeSheets(); return; }
+  if(e.target.closest("#zAdd")){ openNewZone(); return; }
+  const row = e.target.closest("[data-z]"); if(row) setActiveZone(row.dataset.z);
+});
+
+function zoneInfoText(z){
+  const ps = P.polys.filter(p => p.zoneId === z.id);
+  if(!hasArea()) return `${ps.length} ta poligon`;
+  const m2 = P.mode === "osm" ? ps.reduce((a,p)=>a+geoAreaM2(p.pts),0) : m2of(ps.reduce((a,p)=>a+polyAreaPx(p.pts),0));
+  return `${ps.length} ta poligon · ${fmtArea(m2)}`;
+}
+function polyAreaText(pl){
+  return hasArea() ? fmtArea(polyM2(pl)) : "Maydon hisoblash uchun avval masshtabni belgilang";
+}
+function updateAreaUI(){
+  const pl = S.poly && getPoly(S.poly);
+  if(pl){ const a = $("#pArea"), n = $("#pPts"); if(a) a.textContent = polyAreaText(pl); if(n) n.textContent = pl.pts.length; }
+  const z = curZone(); const zi = $("#zInfo"); if(z && zi) zi.textContent = zoneInfoText(z);
+}
+function renderRight(){
+  if(!P) return;
+  const z = curZone(), pl = S.poly ? getPoly(S.poly) : null;
+  let h = `<div class="ph"><h2>Sozlamalar</h2><button class="btn mob" data-close aria-label="Yopish">✕</button></div>`;
+
+  if(pl){
+    const zo = P.zones.map(q => `<option value="${esc(q.id)}"${q.id===pl.zoneId?" selected":""}>${esc(q.icon)} ${esc(q.name)}</option>`).join("");
+    h += `<section class="sec"><h3>Tanlangan poligon</h3>
+      <label class="f">Zona turi<select id="pZone">${zo}</select></label>
+      <div class="kv"><span>Maydon</span><b id="pArea">${esc(polyAreaText(pl))}</b></div>
+      <div class="kv"><span>Nuqtalar</span><b id="pPts">${pl.pts.length}</b></div>
+      ${pl.ai && !pl.approved ? `<div class="ai-tag">AI tomonidan taxminiy aniqlangan</div><button class="btn primary block" id="pApprove">Tasdiqlash</button>` : ""}
+      ${S.vertex >= 0 ? `<button class="btn block" id="pDelV">Nuqtani o‘chirish</button>` : `<p class="hint" style="margin-top:8px">Nuqtani sudrab ko‘chiring · chetdagi kichik doirani bosib nuqta qo‘shing · nuqtani ikki marta bosib o‘chiring.</p>`}
+      <button class="btn danger block" id="pDel">Poligonni o‘chirish</button></section>`;
+  }else{
+    h += `<section class="sec"><p class="hint">Poligonni tahrirlash uchun “Tanlash” rejimida uni xaritada bosing.</p></section>`;
+  }
+
+  if(z){
+    const [r,gg,b] = hexToRgb(z.color);
+    const icons = ICONS.includes(z.icon) ? ICONS : [z.icon, ...ICONS];
+    h += `<section class="sec"><h3>Zona sozlamalari</h3>
+      <label class="f">Nomi<input type="text" id="zName" value="${esc(z.name)}" maxlength="60"></label>
+      <label class="f">Belgi<select id="zIcon">${icons.map(i=>`<option${i===z.icon?" selected":""}>${esc(i)}</option>`).join("")}</select></label>
+      <div class="f">Rang
+        <div class="row"><input type="color" id="zColor" value="${esc(z.color.toLowerCase())}" aria-label="Rang tanlash"><input class="field" id="zHex" value="${esc(z.color)}" maxlength="7" aria-label="HEX kodi" style="max-width:110px"></div>
+        <div class="row rgb"><label>R<input class="field" type="number" min="0" max="255" id="zR" value="${r}"></label><label>G<input class="field" type="number" min="0" max="255" id="zG" value="${gg}"></label><label>B<input class="field" type="number" min="0" max="255" id="zB" value="${b}"></label></div>
+      </div>
+      <label class="f">Shaffoflik (opacity): <b id="zOpV" style="color:var(--ink)">${Math.round(z.opacity*100)}%</b><input type="range" id="zOp" min="10" max="100" step="1" value="${Math.round(z.opacity*100)}"></label>
+      <label class="f">Izoh<textarea id="zNote" rows="2">${esc(z.note||"")}</textarea></label>
+      <div class="kv"><span>Zona bo‘yicha</span><b id="zInfo">${esc(zoneInfoText(z))}</b></div>
+      ${hasArea() ? "" : `<p class="hint">Maydon hisoblash uchun avval masshtabni belgilang.</p>`}
+      <button class="btn danger block" id="zDel">Zonani o‘chirish</button></section>`;
+  }
+
+  const osm = P.mode === "osm";
+  h += `<section class="sec"><h3>Qatlamlar</h3>
+      <label class="chk"><input type="checkbox" id="lyBase" ${L_.base?"checked":""}> ${osm ? "OSM XARITA" : "BASE IMAGE"}</label>
+      ${osm ? `<label class="f" style="margin:4px 0 8px">Xarita turi<select id="bmSel">${Object.entries(BASEMAPS).map(([k,b])=>`<option value="${k}"${curBaseKey()===k?" selected":""}>${b.name}</option>`).join("")}</select></label>` : ""}
+      <label class="chk"><input type="checkbox" id="lyZones" ${L_.zones?"checked":""}> ZONE LAYER</label>
+      <label class="chk"><input type="checkbox" id="lyLabels" ${L_.labels?"checked":""}> LABEL / LEGEND LAYER</label></section>`;
+
+  const pos = [["tl","Yuqori chap"],["tr","Yuqori o‘ng"],["bl","Pastki chap"],["br","Pastki o‘ng"]];
+  h += `<section class="sec"><h3>Legenda</h3>
+      <label class="chk"><input type="checkbox" id="lgShow" ${P.legend.visible?"checked":""}> Legendani ko‘rsatish</label>
+      <label class="chk"><input type="checkbox" id="lgNames" ${P.legend.labels?"checked":""}> Zona nomlarini xaritada ko‘rsatish</label>
+      <div class="pos">${pos.map(([k,t])=>`<button class="btn${P.legend.pos===k?" active":""}" data-pos="${k}">${t}</button>`).join("")}</div></section>`;
+
+  h += osm
+    ? `<section class="sec"><h3>Masshtab</h3><p class="hint">OSM rejimida masshtab xarita zoom darajasidan avtomatik hisoblanadi — qo‘lda belgilash shart emas.</p></section>`
+    : `<section class="sec"><h3>Masshtab</h3>
+      <div class="kv"><span>Holati</span><b>${P.scale ? `1 px = ${(1/P.scale.pxPerM).toFixed(3)} m` : "belgilanmagan"}</b></div>
+      <button class="btn block" id="scSet">Masshtabni sozlash</button>
+      ${P.scale ? `<button class="btn block" id="scClear">Masshtabni o‘chirish</button>` : ""}</section>`;
+
+  $("#right").innerHTML = h;
+}
+
+function setZoneColor(z, hex, src){
+  z.color = hex;
+  if(src !== "zColor"){ const el = $("#zColor"); if(el) el.value = hex.toLowerCase(); }
+  if(src !== "zHex"){ const el = $("#zHex"); if(el) el.value = hex; }
+  if(!["zR","zG","zB"].includes(src)){ const [r,g,b] = hexToRgb(hex); [["zR",r],["zG",g],["zB",b]].forEach(([id,v])=>{ const el = $("#"+id); if(el) el.value = v; }); }
+  renderLeft(); invalidate();
+}
+const rightEl = $("#right");
+rightEl.addEventListener("input", e => {
+  if(!P) return;
+  const id = e.target.id, z = curZone();
+  if(z){
+    if(id === "zName"){ z.name = e.target.value; renderLeft(); invalidate(); }
+    else if(id === "zNote"){ z.note = e.target.value; scheduleSave(); }
+    else if(id === "zColor") setZoneColor(z, e.target.value.toUpperCase(), "zColor");
+    else if(id === "zHex"){ if(validHex(e.target.value)) setZoneColor(z, normHex(e.target.value), "zHex"); }
+    else if(["zR","zG","zB"].includes(id)){
+      const r = +$("#zR").value, gg = +$("#zG").value, b = +$("#zB").value;
+      if([r,gg,b].every(v => Number.isFinite(v) && v >= 0 && v <= 255)) setZoneColor(z, rgbToHex(r,gg,b), id);
+    }
+    else if(id === "zOp"){ z.opacity = clamp(+e.target.value/100, .1, 1); $("#zOpV").textContent = Math.round(z.opacity*100) + "%"; invalidate(); }
+  }
+});
+rightEl.addEventListener("change", e => {
+  if(!P) return;
+  const id = e.target.id, z = curZone();
+  if(z && ["zName","zNote","zColor","zHex","zR","zG","zB","zOp"].includes(id)){
+    if(id === "zName" && !e.target.value.trim()){ z.name = "Nomsiz zona"; e.target.value = z.name; renderLeft(); invalidate(); }
+    if(id === "zHex" && !validHex(e.target.value)) e.target.value = z.color;
+    commit(); return;
+  }
+  if(z && id === "zIcon"){ z.icon = e.target.value; commit(); renderLeft(); return; }
+  if(id === "pZone" && S.poly){ const pl = getPoly(S.poly); pl.zoneId = e.target.value; S.zone = pl.zoneId; commit(); refreshAll(); return; }
+  if(id === "bmSel"){ setBasemap(e.target.value); return; }
+  if(id === "lyBase"){ L_.base = e.target.checked; invalidate(); }
+  else if(id === "lyZones"){ L_.zones = e.target.checked; invalidate(); }
+  else if(id === "lyLabels"){ L_.labels = e.target.checked; invalidate(); }
+  else if(id === "lgShow"){ P.legend.visible = e.target.checked; commit(); invalidate(); }
+  else if(id === "lgNames"){ P.legend.labels = e.target.checked; commit(); invalidate(); }
+});
+rightEl.addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b || !P) return;
+  if(b.dataset.close !== undefined){ closeSheets(); return; }
+  if(b.dataset.pos){ P.legend.pos = b.dataset.pos; commit(); renderRight(); invalidate(); return; }
+  switch(b.id){
+    case "zDel": askDeleteZone(); break;
+    case "pDel": deletePoly(); break;
+    case "pDelV": deleteVertex(); break;
+    case "pApprove": { const pl = getPoly(S.poly); if(pl){ pl.approved = true; commit(); renderRight(); invalidate(); } break; }
+    case "scSet": setTool("scale"); toast("Xaritada ma’lum masofaning ikki uchini belgilang."); if(isMobile()) closeSheets(); break;
+    case "scClear": P.scale = null; commit(); refreshAll(); break;
+  }
+});
+
+/* ---------- Mobil panellar ---------- */
+function closeSheets(){ $("#left").classList.remove("open"); $("#right").classList.remove("open"); }
+function toggleSheet(which){
+  const el = $(which === "left" ? "#left" : "#right"), other = $(which === "left" ? "#right" : "#left");
+  other.classList.remove("open"); el.classList.toggle("open");
+}
+
+/* =====================================================================
+   Yuqori panel / holat paneli
+   ===================================================================== */
+function updateTopUI(){
+  if(!P) return;
+  $$(".topbar [data-tool]").forEach(b => b.classList.toggle("active", b.dataset.tool === tool));
+  $("#bUndo").disabled = !(hi > 0 || (D && D.pts.length));
+  $("#bRedo").disabled = !(hi < hist.length-1);
+  const db = $("#drawbar"); db.hidden = tool !== "draw";
+  if(tool === "draw"){
+    const z = curZone();
+    $("#dbInfo").innerHTML = z ? `<span class="sw" style="background:${esc(z.color)}"></span><span>${esc(z.name)} · ${D ? D.pts.length : 0} ta nuqta</span>` : "Zona tanlanmagan";
+    $("#dbBack").disabled = !(D && D.pts.length);
+    $("#dbDone").disabled = !(D && D.pts.length);
+    $("#dbCancel").disabled = !D;
+  }
+  $("#stHint").textContent = tool === "select" ? "Poligonni bosib tanlang · sudrab suring · g‘ildirak — zoom"
+    : tool === "draw" ? (P.mode === "osm" ? "Nuqtalarni bosing · birinchi nuqtani bosing yoki Enter — yakunlash · Esc — bekor" : "Nuqtalarni bosing · ikki marta bosing yoki Enter — yakunlash · Esc — bekor")
+    : "Ma’lum masofaning ikki uchini bosing";
+  $("#stScale").textContent = P.mode === "osm" ? "Masshtab: xaritadan avtomatik" : (P.scale ? `Masshtab: 1 px = ${(1/P.scale.pxPerM).toFixed(3)} m` : "Masshtab belgilanmagan");
+  const z11 = $("#z11"); if(z11) z11.hidden = P.mode === "osm";
+}
+function refreshAll(){ renderLeft(); renderRight(); updateTopUI(); invalidate(); }
+
+$$(".topbar [data-tool]").forEach(b => b.addEventListener("click", () => setTool(b.dataset.tool)));
+$("#bUndo").addEventListener("click", undo);
+$("#bRedo").addEventListener("click", redo);
+$("#bStats").addEventListener("click", openStats);
+$("#bAI").addEventListener("click", openAI);
+$("#bExport").addEventListener("click", openExport);
+$("#bHome").addEventListener("click", leaveProject);
+$("#bLeft").addEventListener("click", () => toggleSheet("left"));
+$("#bRight").addEventListener("click", () => toggleSheet("right"));
+$("#dbBack").addEventListener("click", () => { if(D && D.pts.length){ D.pts.pop(); updateTopUI(); invalidate(); } });
+$("#dbDone").addEventListener("click", finishDraw);
+$("#dbCancel").addEventListener("click", cancelDraw);
+$("#pname").addEventListener("input", e => { if(P) P.name = e.target.value; });
+$("#pname").addEventListener("change", e => { if(P){ if(!P.name.trim()){ P.name = "Nomsiz loyiha"; e.target.value = P.name; } commit(); } });
+$("#zOut").addEventListener("click", () => { if(P && P.mode === "osm"){ if(osmMap) osmMap.zoomOut(); } else zoomCenter(1/1.25); });
+$("#zIn").addEventListener("click", () => { if(P && P.mode === "osm"){ if(osmMap) osmMap.zoomIn(); } else zoomCenter(1.25); });
+$("#zFit").addEventListener("click", fitView);
+$("#z11").addEventListener("click", () => { const r = 1/V.s; zoomAt(W/2, H/2, r); });
+
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme", t);
+  LS.set("fzm-theme", t); readTheme(); invalidate();
+}
+$("#bTheme").addEventListener("click", () => applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark"));
+
+/* Bosh sahifa */
+$("#hNew").addEventListener("click", openNewProject);
+$("#hOpen").addEventListener("click", openProjectList);
+$("#recent").addEventListener("click", async e => {
+  const b = e.target.closest("[data-open]"); if(!b) return;
+  try{ await loadProject(b.dataset.open); }catch(_){ toast("Loyihani ochib bo‘lmadi.", true); }
+});
+
+/* =====================================================================
+   Klaviatura
+   ===================================================================== */
+window.addEventListener("keydown", e => {
+  if(modalEl){ if(e.key === "Escape") closeModal(); return; }
+  if(!P) return;
+  const tag = (e.target.tagName || "").toLowerCase();
+  const typing = (tag === "input" && !["checkbox","range","color","radio","button"].includes(e.target.type)) || tag === "textarea" || tag === "select";
+  if((e.ctrlKey || e.metaKey) && !typing){
+    const k = e.key.toLowerCase();
+    if(k === "z" && !e.shiftKey){ e.preventDefault(); undo(); return; }
+    if(k === "y" || (k === "z" && e.shiftKey)){ e.preventDefault(); redo(); return; }
+  }
+  if(typing || e.ctrlKey || e.metaKey || e.altKey) return;
+  switch(e.key){
+    case "Escape":
+      if(D || SC.pts.length) cancelDraw();
+      else if(tool !== "select") setTool("select");
+      else if(S.poly){ S.poly = null; S.vertex = -1; renderRight(); invalidate(); }
+      break;
+    case "Delete": if(S.poly && tool === "select"){ e.preventDefault(); deletePoly(); } break;
+    case "Backspace": if(D && D.pts.length){ e.preventDefault(); D.pts.pop(); updateTopUI(); invalidate(); } break;
+    case "Enter": if(D){ e.preventDefault(); finishDraw(); } break;
+    case " ": if(e.target === document.body || e.target === cv){ e.preventDefault(); spaceDown = true; updateCursor(); } break;
+    case "v": case "V": setTool("select"); break;
+    case "p": case "P": setTool("draw"); break;
+    case "s": case "S": if(P.mode !== "osm") setTool("scale"); break;
+    case "f": case "F": fitView(); break;
+    case "+": case "=": if(P.mode === "osm"){ if(osmMap) osmMap.zoomIn(); } else zoomCenter(1.25); break;
+    case "-": case "_": if(P.mode === "osm"){ if(osmMap) osmMap.zoomOut(); } else zoomCenter(1/1.25); break;
+  }
+});
+window.addEventListener("keyup", e => { if(e.key === " "){ spaceDown = false; updateCursor(); } });
+
+/* =====================================================================
+   Ishga tushirish
+   ===================================================================== */
+async function importEmbedded(proj, asCopy){
+  proj.zones.forEach(z => { if(z.visible === undefined) z.visible = true; });
+  proj.legend = Object.assign({pos:"tr", visible:true, labels:true}, proj.legend || {});
+  if(asCopy){ proj.id = uid("p"); proj.name = (proj.name || "Loyiha") + " (fayldan)"; proj.updatedAt = Date.now(); }
+  await dbPut("projects", proj);
+  P = proj; IMG = null; IMG_URL = null;
+  refreshRecent();
+  startSession();
+}
+(async function init(){
+  const saved = LS.get("fzm-theme");
+  applyTheme(saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+  const embed = $("#fzm-embed");
+  if(embed){
+    try{
+      const proj = JSON.parse(embed.textContent);
+      if(!proj || !proj.id || proj.mode !== "osm" || !Array.isArray(proj.zones) || !Array.isArray(proj.polys)) throw new Error("bad");
+      const rec = await dbGet("projects", proj.id).catch(() => null);
+      refreshRecent();
+      if(!rec){
+        await importEmbedded(proj, false);
+        toast("Loyiha shu qurilmaga import qilindi va davom ettirilmoqda.");
+        return;
+      }
+      if((proj.updatedAt || 0) > (rec.updatedAt || 0)){
+        openModal({
+          title:"Loyihaning ikki nusxasi bor",
+          html:`<p style="margin:0">Fayldagi nusxa (${esc(fmtDate(proj.updatedAt))}) qurilmadagidan (${esc(fmtDate(rec.updatedAt))}) yangiroq. Qaysi birini ochamiz?</p>
+            <p class="help">Fayldagi nusxa alohida yangi loyiha sifatida qo‘shiladi — qurilmadagi loyiha o‘zgarmaydi.</p>`,
+          actions:[
+            {label:"Qurilmadagini ochish", onClick:() => { loadProject(proj.id).catch(() => toast("Loyihani ochib bo‘lmadi.", true)); }},
+            {label:"Fayldagini ochish", cls:"primary", onClick:() => { importEmbedded(proj, true).catch(() => toast("Import qilib bo‘lmadi.", true)); }}
+          ]
+        });
+        return;
+      }
+      await loadProject(proj.id);
+      return;
+    }catch(e){ /* buzilgan bo'lsa, oddiy holatda davom etamiz */ }
+  }
+  refreshRecent();
+  const last = LS.get("fzm-last");
+  if(last) loadProject(last).catch(() => { LS.del("fzm-last"); });
+})();
+</script>
+</body>
+</html>
