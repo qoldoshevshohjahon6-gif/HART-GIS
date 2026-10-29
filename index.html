@@ -316,6 +316,16 @@ input[type=color]{width:42px;height:34px;padding:2px;border:1px solid var(--line
 }
 @media (prefers-reduced-motion:reduce){.ib{transition:none}.ib[data-st="saving"] svg{animation:none}}
 
+/* ---------- Entropiya ---------- */
+.ent{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.ent h3{margin:0 0 4px;font-size:16px}.ent .sub{margin:0 0 10px;color:var(--mute);font-size:12.5px}
+.ecards{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:12px 0}
+.ecards>div{padding:9px 11px;border-radius:10px;background:var(--panel2)}.ecards b{display:block;font-size:19px;font-variant-numeric:tabular-nums}.ecards span{font-size:11.5px;color:var(--mute)}
+.ecards .chip,.chip{display:inline-block;color:#fff!important;padding:3px 10px;border-radius:99px;font-weight:600;font-size:13px;color:#fff}.chip.hi{background:#1e9d5b}.chip.mid{background:#d99a0b}.chip.lo{background:#d64545}.chip.na{background:#7a8794}
+.etab{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0}.etab th{text-align:left;color:var(--mute);font-weight:500;padding:4px 6px;border-bottom:1px solid var(--line)}.etab td{padding:5px 6px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.etab .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.etab i.bar{display:block;height:5px;border-radius:3px;margin-top:3px}
+.etext{margin:10px 0;padding:10px 12px;border-radius:10px;background:rgba(26,86,168,.09);font-size:13px;line-height:1.5}
+.erow{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 2px}
 /* ---------- modal & toast ---------- */
 .overlay{position:fixed;inset:0;background:rgba(8,14,16,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:12px}
 .modal{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);width:min(480px,100%);max-height:90%;overflow:auto;padding:18px}
@@ -427,6 +437,7 @@ textarea.field{min-height:90px;font-size:12px}
       <hr>
       <button class="ib" data-tool="select" data-ic="select" data-tip="Tanlash (V)"></button>
       <button class="ib" data-tool="draw" data-ic="pencil" data-tip="Zona chizish (P)"></button>
+      <button class="ib" id="bArea" data-ic="target" data-tip="Tahlil hududini chizish"></button>
       <button class="ib" data-tool="scale" data-ic="ruler" data-tip="Masshtabni sozlash (S)"></button>
       <button class="ib" data-pn="zones" data-ic="zones" data-tip="Zonalar"></button>
       <button class="ib" data-pn="layers" data-ic="layers" data-tip="Qatlamlar va legenda"></button>
@@ -665,7 +676,7 @@ function fmtArea(m2){
 }
 function computeStats(){
   const osm = P.mode === "osm";
-  const rows = P.zones.map(z => {
+  const rows = P.zones.filter(z => !z.analysis).map(z => {
     const ps = P.polys.filter(p => p.zoneId === z.id);
     const px = osm ? ps.reduce((a,p)=>a+geoAreaM2(p.pts),0) : ps.reduce((a,p)=>a+polyAreaPx(p.pts),0);
     return {z, count:ps.length, px, m2: osm ? px : m2of(px)};
@@ -674,7 +685,7 @@ function computeStats(){
 }
 function legendItems(){
   const cnt = {}; P.polys.forEach(p => cnt[p.zoneId] = (cnt[p.zoneId]||0)+1);
-  return P.zones.filter(z => cnt[z.id] && z.visible);
+  return P.zones.filter(z => cnt[z.id] && z.visible && !z.analysis);
 }
 
 /* =====================================================================
@@ -1920,7 +1931,11 @@ async function loadProject(id){
   P.legend = Object.assign({pos:"tr", visible:true, labels:true}, P.legend || {});
   startSession();
 }
+function ensureAnalysisZone(){
+  if(!P.zones.some(z => z.analysis)) P.zones.push({id:uid("z"), name:"Tahlil hududi", color:"#E11D48", icon:"🎯", note:"Entropiya va boshqa tahlillar uchun chegara", opacity:.06, visible:true, analysis:true});
+}
 function startSession(){
+  ensureAnalysisZone();
   S = {poly:null, vertex:-1, zone:P.zones[0] ? P.zones[0].id : null};
   D = null; SC.pts = []; tool = "select"; V.fitted = true;
   L_.base = L_.zones = L_.labels = true;
@@ -2039,9 +2054,215 @@ function askScale(){
 }
 
 /* ---------- Statistika ---------- */
+/* =====================================================================
+   Entropiya tahlili: E = −Σ pᵢ·ln(pᵢ)
+   ===================================================================== */
+const ENT_CATS = [
+  ["Turar-joy","#4A90E2",['nwr["building"~"^(residential|apartments|house|detached|semidetached_house|terrace|dormitory|bungalow)$"]']],
+  ["Biznes va savdo","#E67E22",['nwr["shop"]','nwr["office"]','nwr["amenity"~"^(marketplace|restaurant|cafe|fast_food|bar|bank|coworking_space)$"]','nwr["building"~"^(retail|commercial|office|supermarket|kiosk)$"]']],
+  ["Sanoat","#9B59B6",['nwr["landuse"="industrial"]','nwr["building"~"^(industrial|warehouse|factory)$"]','nwr["man_made"="works"]']],
+  ["Jamoat xizmatlari","#F1C40F",['nwr["amenity"~"^(school|kindergarten|college|university|hospital|clinic|doctors|dentist|pharmacy|townhall|police|fire_station|post_office|library|courthouse|community_centre|social_facility|place_of_worship|theatre|cinema)$"]','nwr["building"~"^(school|kindergarten|hospital|university|civic|public|government|church|mosque)$"]']],
+  ["Transport","#7F8C8D",['nwr["highway"="bus_stop"]','nwr["public_transport"~"^(platform|station|stop_position)$"]','nwr["railway"~"^(station|halt|tram_stop|subway_entrance)$"]','nwr["amenity"~"^(bus_station|fuel|parking|charging_station|taxi)$"]']],
+  ["Yashil hudud","#27AE60",['nwr["leisure"~"^(park|garden|playground|pitch|sports_centre|stadium|fitness_centre|swimming_pool|recreation_ground)$"]','nwr["landuse"~"^(forest|grass|recreation_ground|village_green|meadow)$"]','nwr["natural"="wood"]']]
+];
+const OVERPASS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
+let entSel = "all";
+function shannon(vals){
+  const tot = vals.reduce((a,b) => a+b, 0);
+  if(!(tot > 0)) return {E:0, m:0, Emax:0, J:0, p:vals.map(() => 0)};
+  const p = vals.map(v => v/tot); let E = 0, m = 0;
+  p.forEach(x => { if(x > 0){ E -= x*Math.log(x); m++; } });
+  const Emax = m > 1 ? Math.log(m) : 0;
+  return {E, m, Emax, J: Emax ? E/Emax : 0, p};
+}
+function rateEntropy(r){
+  if(!r.m) return {c:"na", t:"Ma’lumot yo‘q"};
+  if(r.m === 1) return {c:"lo", t:"Past — bitta funksiya"};
+  if(r.J >= .65 && r.m >= 3) return {c:"hi", t:"Yuqori — aralash, muvozanatli"};
+  if(r.J >= .35) return {c:"mid", t:"O‘rta — ba’zi funksiyalar ustun"};
+  return {c:"lo", t:"Past — monofunksional"};
+}
+const fmtPct = x => (x*100).toFixed(1) + "%";
+const entBoundaries = () => { const z = P.zones.find(z => z.analysis); return z ? P.polys.filter(p => p.zoneId === z.id) : []; };
+const entBName = (bp, i) => bp.name || ("Hudud " + (i+1));
+const ptsLocal = (pts, ref) => P.mode === "osm"
+  ? pts.map(([la,ln]) => [(ln - ref.lng)*111320*Math.cos(ref.lat*Math.PI/180), (la - ref.lat)*110574])
+  : pts.map(([x,y]) => { const k = P.scale ? 1/P.scale.pxPerM : 1; return [x*k, y*k]; });
+function pip(x, y, poly){
+  let c = false;
+  for(let i=0, j=poly.length-1; i<poly.length; j=i++){
+    const [xi,yi] = poly[i], [xj,yj] = poly[j];
+    if(((yi > y) !== (yj > y)) && x < (xj-xi)*(y-yi)/(yj-yi) + xi) c = !c;
+  }
+  return c;
+}
+function ringArea(r){ let a = 0; for(let i=0,j=r.length-1;i<r.length;j=i++) a += r[j][0]*r[i][1] - r[i][0]*r[j][1]; return Math.abs(a)/2; }
+const entUnitM2 = () => P.mode === "osm" || !!P.scale;
+const fmtA = v => entUnitM2() ? fmtArea(v) : Math.round(v).toLocaleString("en-US").replace(/,/g, " ") + " px²";
+
+/* Hisoblash: sel = "all" (butun loyiha) yoki chegara poligoni id si */
+function entCompute(sel){
+  const zs = P.zones.filter(z => !z.analysis && z.visible);
+  const bps = entBoundaries(), bp = sel === "all" ? null : bps.find(p => p.id === sel);
+  const ref = P.mode === "osm" ? (() => { const a = (bp ? bp.pts : P.polys.flatMap(p => p.pts)); return a.length ? {lat:a.reduce((s,p)=>s+p[0],0)/a.length, lng:a.reduce((s,p)=>s+p[1],0)/a.length} : {lat:0,lng:0}; })() : null;
+  const polys = P.polys.filter(p => zs.some(z => z.id === p.zoneId)).map(p => ({zid:p.zoneId, L:ptsLocal(p.pts, ref)}));
+  let areas, bArea, title, B = null;
+  if(!bp){
+    const st = computeStats(); const map = {}; st.rows.forEach(r => map[r.z.id] = P.mode === "osm" ? r.px : (P.scale ? r.m2 : r.px));
+    areas = zs.map(z => map[z.id] || 0); bArea = areas.reduce((a,b) => a+b, 0); title = "Butun loyiha";
+  }else{
+    B = ptsLocal(bp.pts, ref);
+    const xs = B.map(q => q[0]), ys = B.map(q => q[1]);
+    const minx = Math.min(...xs), maxx = Math.max(...xs), miny = Math.min(...ys), maxy = Math.max(...ys);
+    polys.forEach(q => { q.minx = Math.min(...q.L.map(a => a[0])); q.maxx = Math.max(...q.L.map(a => a[0])); q.miny = Math.min(...q.L.map(a => a[1])); q.maxy = Math.max(...q.L.map(a => a[1])); });
+    const cell = Math.max(maxx-minx, maxy-miny)/240, cnt = zs.map(() => 0); let inB = 0;
+    for(let y=miny+cell/2; y<maxy; y+=cell) for(let x=minx+cell/2; x<maxx; x+=cell){
+      if(!pip(x, y, B)) continue; inB++;
+      for(let k=polys.length-1; k>=0; k--){
+        const q = polys[k]; if(x<q.minx || x>q.maxx || y<q.miny || y>q.maxy) continue;
+        if(pip(x, y, q.L)){ cnt[zs.findIndex(z => z.id === q.zid)]++; break; }
+      }
+    }
+    bArea = P.mode === "osm" ? geoAreaM2(bp.pts) : ringArea(B);
+    const f = inB ? bArea/(inB*cell*cell) : 0;
+    areas = cnt.map(c => c*cell*cell*f); title = entBName(bp, bps.indexOf(bp));
+  }
+  const rows = zs.map((z, i) => ({z, area:areas[i]})).filter(r => r.area > 0).sort((a,b) => b.area - a.area);
+  const zoned = rows.reduce((a,r) => a+r.area, 0), ent = shannon(rows.map(r => r.area));
+  rows.forEach((r, i) => r.p = ent.p[i]);
+  const mapZ = P.zones.filter(z => !z.analysis && z.visible);
+  return {sel, bp, title, bArea, zoned, unzoned:Math.max(0, bArea - zoned), rows, ent, rate:rateEntropy(ent), ref,
+          mapPolys:P.polys.filter(p => mapZ.some(z => z.id === p.zoneId)).map(p => ({color:(mapZ.find(z => z.id === p.zoneId)||{}).color, L:ptsLocal(p.pts, ref)})),
+          mapB:B, poi:bp && bp.poi ? poiCompute(bp) : null};
+}
+function poiCompute(bp){
+  const km2 = geoAreaM2(bp.pts)/1e6, counts = bp.poi.counts, ent = shannon(counts);
+  return {t:bp.poi.t, km2, ent, rate:rateEntropy(ent), total:counts.reduce((a,b)=>a+b,0),
+          rows:ENT_CATS.map((c,i) => ({name:c[0], color:c[1], n:counts[i], p:ent.p[i], fd:km2 ? counts[i]/km2 : 0}))};
+}
+function entText(d){
+  if(!d.rows.length) return "Tanlangan hududda zonalangan maydon topilmadi. Avval hudud ichida zonalar chizing.";
+  const top = d.rows[0], e = d.ent;
+  let t = `Hududda ${e.m} ta funksional zona aniqlandi; eng katta ulush — ${top.z.name} (${fmtPct(top.p)}). Entropiya E = ${e.E.toFixed(3)}, eng yuqori mumkin qiymat ln ${e.m} = ${e.Emax.toFixed(3)}, muvozanat darajasi J = ${fmtPct(e.J)}. `;
+  t += d.rate.c === "hi" ? "Funksiyalar nisbatan teng taqsimlangan: hudud aralash (multifunksional) xarakterga ega." : d.rate.c === "mid" ? "Aralashuv mavjud, lekin ayrim funksiyalar ustun turadi." : "Bitta funksiya ustun: hudud monofunksional, funksiyalar xilma-xilligini oshirish maqsadga muvofiq.";
+  if(e.m <= 2 && e.m > 0) t += " Diqqat: faqat " + e.m + " ta toifa mavjud, shuning uchun J ko‘rsatkichi cheklangan ma’no beradi.";
+  if(d.poi){ const q = d.poi.ent; t += ` Obyektlar (OSM) bo‘yicha: ${d.poi.total} ta obyekt, E = ${q.E.toFixed(3)}, J = ${fmtPct(q.J)} (${d.poi.rate.t.split(" — ")[0].toLowerCase()}).`; }
+  return t;
+}
+function entHtml(d){
+  const e = d.ent, un = entUnitM2();
+  let h = `<div class="ecards"><div><b>${e.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${e.Emax.toFixed(3)}</b><span>Eₘₐₓ = ln m (m=${e.m})</span></div><div><b>${fmtPct(e.J)}</b><span>Muvozanat J = E/Eₘₐₓ</span></div><div><span class="chip ${d.rate.c}">${esc(d.rate.t)}</span><br><span>Baho (maydon)</span></div></div>`;
+  h += `<table class="etab"><tr><th>Funksiya</th><th>Maydon</th><th>pᵢ</th></tr>` + d.rows.map(r => `<tr><td><span class="sw" style="background:${esc(r.z.color)}"></span>${esc(r.z.icon)} ${esc(r.z.name)}<i class="bar" style="width:${(r.p*100).toFixed(1)}%;background:${esc(r.z.color)}"></i></td><td>${fmtA(r.area)}</td><td>${fmtPct(r.p)}</td></tr>`).join("") + `</table>`;
+  h += `<p class="help">Hudud maydoni: ${fmtA(d.bArea)}${d.unzoned > d.bArea*0.005 ? ` · zonalanmagan qism: ${fmtA(d.unzoned)} (${fmtPct(d.unzoned/d.bArea)}) — hisobga olinmaydi` : ""}. pᵢ — zonalangan maydon ichidagi ulush.${un ? "" : " Masshtab belgilanmagani uchun maydon piksellarda."}</p>`;
+  if(d.poi){
+    h += `<h3 style="margin:14px 0 4px;font-size:14px">OSM obyektlari bo‘yicha</h3><div class="ecards"><div><b>${d.poi.ent.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${fmtPct(d.poi.ent.J)}</b><span>Muvozanat J (m=${d.poi.ent.m})</span></div><div><b>${d.poi.total}</b><span>Obyektlar soni</span></div><div><span class="chip ${d.poi.rate.c}">${esc(d.poi.rate.t)}</span><br><span>Baho (obyektlar)</span></div></div>
+      <table class="etab"><tr><th>Toifa</th><th>Nᵢ</th><th>pᵢ</th><th>FD, ta/km²</th></tr>${d.poi.rows.map(r => `<tr><td><span class="sw" style="background:${esc(r.color)}"></span>${esc(r.name)}</td><td>${r.n}</td><td>${fmtPct(r.p)}</td><td>${r.fd.toFixed(1)}</td></tr>`).join("")}</table>
+      <p class="help">${new Date(d.poi.t).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"})} holatiga OpenStreetMap ma’lumoti. OSM to‘liq bo‘lmasligi mumkin; hisob obyektlar soniga asoslangan.</p>`;
+  }
+  return h + `<div class="etext">${esc(entText(d))}</div>`;
+}
+/* Overpass: obyektlar sonini toifalar bo'yicha olish */
+async function fetchPoi(bp){
+  if(geoAreaM2(bp.pts)/1e6 > 25) throw new Error("big");
+  let pts = bp.pts; if(pts.length > 300){ const st = Math.ceil(pts.length/300); pts = pts.filter((_, i) => i % st === 0); }
+  const ps = pts.map(([la,ln]) => la.toFixed(6) + " " + ln.toFixed(6)).join(" ");
+  const q = "[out:json][timeout:60];\n" + ENT_CATS.map(c => "(" + c[2].map(f => f + '(poly:"' + ps + '");').join("") + ");out count;").join("\n");
+  let last;
+  for(const url of OVERPASS){
+    try{
+      const ctrl = new AbortController(), tm = setTimeout(() => ctrl.abort(), 70000);
+      const r = await fetch(url, {method:"POST", body:"data=" + encodeURIComponent(q), headers:{"Content-Type":"application/x-www-form-urlencoded"}, signal:ctrl.signal});
+      clearTimeout(tm);
+      if(!r.ok) throw new Error("http" + r.status);
+      const j = await r.json(), cs = (j.elements || []).filter(e => e.type === "count").map(e => +(e.tags && e.tags.total) || 0);
+      if(cs.length !== ENT_CATS.length) throw new Error("fmt");
+      return cs;
+    }catch(e){ last = e; }
+  }
+  throw last;
+}
+/* Hisobot (alohida HTML fayl; PDF uchun brauzerdan chop etiladi) */
+function entMapSvg(d){
+  const all = [...d.mapPolys.flatMap(p => p.L), ...(d.mapB || [])]; if(!all.length) return "";
+  const xs = all.map(a => a[0]), ys = all.map(a => a[1]), minx = Math.min(...xs), maxx = Math.max(...xs), miny = Math.min(...ys), maxy = Math.max(...ys);
+  const w = 640, h = 420, pad = 16, sc = Math.min((w-2*pad)/((maxx-minx)||1), (h-2*pad)/((maxy-miny)||1)), flip = P.mode === "osm";
+  const X = x => (pad + (x-minx)*sc + (w-2*pad-(maxx-minx)*sc)/2).toFixed(1), Y = y => (flip ? pad + (maxy-y)*sc : pad + (y-miny)*sc) + (h-2*pad-(maxy-miny)*sc)/2;
+  const poly = (L, a) => `<polygon points="${L.map(q => X(q[0]) + "," + Y(q[1]).toFixed(1)).join(" ")}" ${a}/>`;
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;background:#f4f6f4;border:1px solid #cfd8d3;border-radius:8px"><g>${d.mapPolys.map(p => poly(p.L, `fill="${esc(p.color||"#888")}" fill-opacity=".55" stroke="${esc(p.color||"#888")}" stroke-width="1"`)).join("")}</g>${d.mapB ? poly(d.mapB, 'fill="none" stroke="#e11d48" stroke-width="2.5" stroke-dasharray="7 5"') : ""}</svg>`;
+}
+function entReportHtml(d){
+  const e = d.ent, dt = new Date().toLocaleString("en-GB", {dateStyle:"long", timeStyle:"short"});
+  const bar = (p, c) => `<div style="height:8px;background:#e6ebe8;border-radius:4px"><div style="height:8px;width:${(p*100).toFixed(1)}%;background:${esc(c)};border-radius:4px"></div></div>`;
+  const chip = r => `<span style="display:inline-block;padding:2px 10px;border-radius:99px;color:#fff;font-weight:600;background:${{hi:"#1e9d5b",mid:"#d99a0b",lo:"#d64545",na:"#7a8794"}[r.c]}">${esc(r.t)}</span>`;
+  return `<!DOCTYPE html><html lang="uz"><head><meta charset="utf-8"><title>Entropiya hisoboti — ${esc(P.name)}</title><style>
+  body{font:14px/1.5 "Lexend","IBM Plex Sans",Arial,sans-serif;color:#18232a;max-width:820px;margin:24px auto;padding:0 18px}
+  h1{font-size:22px;margin:0 0 2px}h2{font-size:16px;margin:22px 0 8px;border-bottom:2px solid #1a56a8;padding-bottom:3px}
+  .meta{color:#5b6b70;font-size:12.5px}table{width:100%;border-collapse:collapse;margin:6px 0}th{text-align:left;color:#5b6b70;font-weight:500;border-bottom:1px solid #cfd8d3;padding:5px 6px}td{padding:6px;border-bottom:1px solid #e6ebe8;vertical-align:middle}
+  .k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.k div{background:#f1f4f2;border-radius:8px;padding:8px 10px}.k b{display:block;font-size:19px}.k span{font-size:11.5px;color:#5b6b70}
+  .box{background:#eaf1fb;border-radius:8px;padding:10px 12px}.f{font-family:Georgia,serif;font-size:15px;margin:6px 0}.note{font-size:11.5px;color:#5b6b70}
+  @media print{body{margin:0;max-width:none}@page{size:A4;margin:14mm}}</style></head><body>
+  <h1>Hudud entropiyasi (funksional aralashuv) hisoboti</h1>
+  <div class="meta">HART GIS · Loyiha: <b>${esc(P.name)}</b> · Hudud: <b>${esc(d.title)}</b> · ${esc(dt)}</div>
+  <h2>1. Hudud sxemasi</h2>${entMapSvg(d)}
+  <h2>2. Maydon bo‘yicha entropiya</h2>
+  <div class="k"><div><b>${e.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${e.Emax.toFixed(3)}</b><span>Eₘₐₓ = ln m (m = ${e.m})</span></div><div><b>${fmtPct(e.J)}</b><span>Muvozanat J = E/Eₘₐₓ</span></div><div>${chip(d.rate)}<br><span>Baho</span></div></div>
+  <table><tr><th>Funksiya</th><th>Maydon</th><th>pᵢ</th><th style="width:28%"></th></tr>${d.rows.map(r => `<tr><td><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${esc(r.z.color)};margin-right:6px"></span>${esc(r.z.name)}</td><td>${esc(fmtA(r.area))}</td><td>${fmtPct(r.p)}</td><td>${bar(r.p, r.z.color)}</td></tr>`).join("")}</table>
+  <div class="note">Hudud maydoni: ${esc(fmtA(d.bArea))}; zonalanmagan qism: ${esc(fmtA(d.unzoned))} (${d.bArea ? fmtPct(d.unzoned/d.bArea) : "—"}) — hisobga olinmagan.</div>
+  ${d.poi ? `<h2>3. OSM obyektlari bo‘yicha (zichlik va entropiya)</h2>
+  <div class="k"><div><b>${d.poi.ent.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${fmtPct(d.poi.ent.J)}</b><span>Muvozanat J (m = ${d.poi.ent.m})</span></div><div><b>${d.poi.total}</b><span>Obyektlar soni</span></div><div>${chip(d.poi.rate)}<br><span>Baho</span></div></div>
+  <table><tr><th>Toifa</th><th>Nᵢ</th><th>pᵢ</th><th>FD = Nᵢ/A, ta/km²</th></tr>${d.poi.rows.map(r => `<tr><td><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${esc(r.color)};margin-right:6px"></span>${esc(r.name)}</td><td>${r.n}</td><td>${fmtPct(r.p)}</td><td>${r.fd.toFixed(1)}</td></tr>`).join("")}</table>
+  <div class="note">Hudud maydoni A = ${d.poi.km2.toFixed(3)} km². Ma’lumot manbasi: OpenStreetMap (${esc(new Date(d.poi.t).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"}))}). OSM ma’lumoti to‘liq bo‘lmasligi mumkin.</div>` : ""}
+  <h2>${d.poi ? "4" : "3"}. Xulosa</h2><div class="box">${esc(entText(d))}</div>
+  <h2>${d.poi ? "5" : "4"}. Usul</h2>
+  <div class="f">E = − Σ pᵢ · ln(pᵢ), &nbsp; Eₘₐₓ = ln(m), &nbsp; J = E / Eₘₐₓ</div>
+  <div class="note">pᵢ — i-funksiyaning ulushi (maydon bo‘yicha: Aᵢ/ΣA; obyektlar bo‘yicha: Nᵢ/ΣN), m — mavjud funksiyalar soni. Yuqori E funksiyalarning teng taqsimlanganini (aralash hudud), past E bitta funksiya ustunligini bildiradi. Baho chegaralari (J ≥ 65% yuqori, 35–65% o‘rta, &lt; 35% past) tavsiyaviy. Entropiya zonalarning fazoviy joylashuvini hisobga olmaydi va toifalar soniga bog‘liq.</div>
+  </body></html>`;
+}
+function entPrint(html){
+  const f = document.createElement("iframe"); f.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0";
+  document.body.appendChild(f); f.srcdoc = html;
+  f.onload = () => { try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){ toast("Chop etib bo‘lmadi.", true); } setTimeout(() => f.remove(), 60000); };
+}
+function entMount(ov){
+  const bps = entBoundaries(), osm = P.mode === "osm";
+  if(entSel !== "all" && !bps.some(b => b.id === entSel)) entSel = "all";
+  const box = $("#entBox", ov);
+  const draw = () => {
+    const bps2 = entBoundaries(), d = entCompute(entSel);
+    box.innerHTML = `<h3>Entropiya tahlili</h3><p class="sub">Hududning funksional aralashuv darajasi (Shannon entropiyasi).</p>
+      <div class="row"><select class="field" id="entSel" style="flex:1">${["<option value='all'" + (entSel === "all" ? " selected" : "") + ">Butun loyiha</option>", ...bps2.map((b, i) => `<option value="${esc(b.id)}"${entSel === b.id ? " selected" : ""}>${esc(entBName(b, i))} · ${esc(fmtA(osm ? geoAreaM2(b.pts) : (P.scale ? m2of(polyAreaPx(b.pts)) : polyAreaPx(b.pts))))}</option>`)].join("")}</select>
+        <button class="btn" id="entNew">+ Hudud chizish</button></div>
+      ${d.bp ? `<div class="row" style="margin-top:8px"><input class="field" id="entName" value="${esc(d.bp.name || "")}" placeholder="${esc(d.title)}" maxlength="40" style="flex:1"><button class="btn" id="entDel">Hududni o‘chirish</button></div>` : ""}
+      ${d.rows.length ? entHtml(d) : `<p class="help" style="font-size:13px">${bps2.length || entSel === "all" ? "Hisoblash uchun zonalar chizilgan bo‘lishi kerak." : ""}${!bps2.length ? " Avval “+ Hudud chizish” orqali tahlil chegarasini chizing: shundan keyin shu hudud ichidagi zonalar bo‘yicha entropiya hisoblanadi." : ""}</p>`}
+      <div class="erow">${osm && d.bp ? `<button class="btn" id="entPoi">${d.poi ? "OSM obyektlarini yangilash" : "OSM obyektlari bo‘yicha hisoblash"}</button>` : ""}
+        ${d.rows.length ? `<button class="btn primary" id="entRep">Hisobot yuklab olish</button><button class="btn" id="entPrint">PDF / chop etish</button>` : ""}</div>
+      ${osm && !d.bp ? `<p class="help">Obyektlar (OSM) bo‘yicha hisoblash uchun chizilgan hududni tanlang.</p>` : ""}`;
+    box._d = d;
+  };
+  draw();
+  box.addEventListener("change", e => {
+    if(e.target.id === "entSel"){ entSel = e.target.value; draw(); }
+    if(e.target.id === "entName"){ const bp = entBoundaries().find(b => b.id === entSel); if(bp){ bp.name = e.target.value.trim(); commit(); draw(); } }
+  });
+  box.addEventListener("click", async e => {
+    const id = e.target.closest("button") && e.target.closest("button").id; if(!id) return;
+    const d = box._d;
+    if(id === "entNew"){ closeModal(); $("#bArea").click(); }
+    else if(id === "entDel"){ if(d.bp){ P.polys = P.polys.filter(p => p.id !== d.bp.id); if(S.poly === d.bp.id){ S.poly = null; S.vertex = -1; } entSel = "all"; commit(); refreshAll(); draw(); } }
+    else if(id === "entRep"){ await saveBlob(new Blob([entReportHtml(d)], {type:"text/html"}), ((P.name || "loyiha") + "-entropiya-hisobot.html").replace(/[\\/:*?"<>|]+/g, "_")); }
+    else if(id === "entPrint"){ entPrint(entReportHtml(d)); }
+    else if(id === "entPoi"){
+      const b = e.target.closest("button"); b.disabled = true; b.textContent = "OSM dan olinmoqda…";
+      try{ d.bp.poi = {t:Date.now(), counts:await fetchPoi(d.bp)}; scheduleSave(); draw(); }
+      catch(err){ b.disabled = false; b.textContent = "OSM obyektlari bo‘yicha hisoblash"; toast(err && err.message === "big" ? "Hudud juda katta (25 km² gacha bo‘lsin)." : "OSM ma’lumotini olib bo‘lmadi (internet yoki server band). Keyinroq urinib ko‘ring.", true); }
+    }
+  });
+}
+
 function openStats(){
   const st = computeStats();
-  const nZ = st.rows.length, nP = P.polys.length;
+  const aZ0 = P.zones.find(z => z.analysis);
+  const nZ = st.rows.length, nP = P.polys.filter(p => !aZ0 || p.zoneId !== aZ0.id).length;
   const osm = P.mode === "osm";
   const hasScale = osm || !!P.scale;
   const totalM2 = hasScale ? st.rows.reduce((a,r)=>a+r.m2,0) : null;
@@ -2059,8 +2280,10 @@ function openStats(){
       ${nP ? rows : `<p class="help" style="font-size:14px">Hali poligon yo‘q. ${osm ? "Xarita" : "Rasm"} ustida zona chizing.</p>`}
       ${nP && cover!=null ? `<p class="help">Ulush zonalangan hududning umumiy maydoniga nisbatan hisoblanadi (zonalangan qism rasmning taxminan ${cover.toFixed(0)}% ini tashkil etadi). Bir-birining ustiga tushgan poligonlar ikki marta sanaladi.</p>` : ""}
       ${nP && osm ? `<p class="help">OSM rejimida maydon xaritaning haqiqiy koordinatalaridan avtomatik hisoblanadi — masshtab qo‘lda kiritilmaydi.</p>` : ""}
-      ${hasScale || !nP ? "" : `<p class="help">Maydon hisoblash uchun avval masshtabni belgilang (yuqoridagi “Masshtab” vositasi).</p>`}`,
-    actions:[{label:"Yopish", cls:"primary"}]
+      ${hasScale || !nP ? "" : `<p class="help">Maydon hisoblash uchun avval masshtabni belgilang (yuqoridagi “Masshtab” vositasi).</p>`}
+      <div class="ent" id="entBox"></div>`,
+    actions:[{label:"Yopish", cls:"primary"}],
+    onMount(ov){ entMount(ov); }
   });
 }
 
@@ -2374,6 +2597,9 @@ function updateTopUI(){
   if(!P) return;
   $$("[data-tool]").forEach(b => b.classList.toggle("active", b.dataset.tool === tool));
   $$("[data-pn]").forEach(b => b.classList.toggle("active", b.dataset.pn === curPanel));
+  { const cz = curZone(), ar = tool === "draw" && cz && cz.analysis;
+    $$("[data-tool=draw]").forEach(b => b.classList.toggle("active", tool === "draw" && !ar));
+    const ba = $("#bArea"); if(ba) ba.classList.toggle("active", !!ar); }
   $("#bUndo").disabled = !(hi > 0 || (D && D.pts.length));
   $("#bRedo").disabled = !(hi < hist.length-1);
   const db = $("#drawbar"); db.hidden = tool !== "draw";
@@ -2425,6 +2651,7 @@ const SVGI = {
   "hand":'<path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>',
   "select":'<path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z" fill="currentColor"/>',
   "pencil":'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+  "target":'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor"/>',
   "ruler":'<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
   "zones":'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
   "layers":'<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
@@ -2582,6 +2809,11 @@ $("#settingsBox").addEventListener("input", e => {
 hydrateIcons(); applyUI(false); updateThemeUI();
 window.addEventListener("resize", () => { refreshUiScale(); if(printOn) layoutPrint(); });
 
+$("#bArea").addEventListener("click", () => {
+  if(!P) return; ensureAnalysisZone();
+  const z = P.zones.find(z => z.analysis); S.zone = z.id; renderLeft(); setTool("draw");
+  toast("Tahlil hududi chegarasini chizing (tugatish: ikki marta bosing yoki Enter).");
+});
 /* Bosh sahifa */
 document.querySelectorAll(".h-b,.h-ic").forEach(el => {
   const on = () => el.classList.add("press"), off = () => el.classList.remove("press");
