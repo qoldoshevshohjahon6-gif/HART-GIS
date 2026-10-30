@@ -287,7 +287,7 @@ input[type=color]{width:42px;height:34px;padding:2px;border:1px solid var(--line
 .fpb{overflow-y:auto;overscroll-behavior:contain;border-radius:0 0 13px 13px;color:var(--ink);min-height:120px}
 #fpbody>*{display:none}
 #fpbody[data-view="zones"] #zonesBox,#fpbody[data-view="zones"] #right,#fpbody[data-view="layers"] #right,#fpbody[data-view="map"] #right{display:block}
-#fpbody[data-view="settings"] #settingsBox{display:block}
+#fpbody[data-view="settings"] #settingsBox,#fpbody[data-view="d3"] #d3Box{display:block}
 #right [data-sec]{display:none}
 #fpbody[data-view="zones"] #right [data-sec="poly"],#fpbody[data-view="zones"] #right [data-sec="zone"],
 #fpbody[data-view="layers"] #right [data-sec="layers"],#fpbody[data-view="layers"] #right [data-sec="legend"],#fpbody[data-view="layers"] #right [data-sec="scale"],
@@ -316,6 +316,13 @@ input[type=color]{width:42px;height:34px;padding:2px;border:1px solid var(--line
 }
 @media (prefers-reduced-motion:reduce){.ib{transition:none}.ib[data-st="saving"] svg{animation:none}}
 
+/* ---------- 3D ---------- */
+#map3d{position:absolute;inset:0;z-index:3;background:#dfe6ea}
+.stage.is3d #hudLegend,.stage.is3d #osmMap{visibility:hidden!important}
+#map3d .maplibregl-ctrl-attrib{font-size:10px}
+.d3sw{display:inline-block;width:14px;text-align:center;margin-right:2px}
+.d3grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.d3grid .btn{padding:6px 4px;font-size:12.5px}
 /* ---------- Entropiya ---------- */
 .ent{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
 .ent h3{margin:0 0 4px;font-size:16px}.ent .sub{margin:0 0 10px;color:var(--mute);font-size:12.5px}
@@ -394,6 +401,7 @@ textarea.field{min-height:90px;font-size:12px}
     <div class="stage" id="stage">
         <canvas id="cv"></canvas>
         <div id="osmMap" hidden></div>
+        <div id="map3d" hidden></div>
         <div id="hud"><div id="hudLegend" style="display:none"></div></div>
         <div id="printLayer" hidden>
           <div id="printFrame"></div>
@@ -441,6 +449,7 @@ textarea.field{min-height:90px;font-size:12px}
       <button class="ib" data-tool="scale" data-ic="ruler" data-tip="Masshtabni sozlash (S)"></button>
       <button class="ib" data-pn="zones" data-ic="zones" data-tip="Zonalar"></button>
       <button class="ib" data-pn="layers" data-ic="layers" data-tip="Qatlamlar va legenda"></button>
+      <button class="ib" id="b3d" data-ic="cube" data-tip="3D ko‘rinish" hidden></button>
       <hr>
       <button class="ib" data-pn="settings" data-ic="gear" data-tip="Sozlamalar"></button>
     </nav>
@@ -450,6 +459,7 @@ textarea.field{min-height:90px;font-size:12px}
         <div id="zonesBox"><div class="zadd"><button class="btn primary" id="zAdd">+ Yangi zona</button></div><div id="zlist"></div></div>
         <div id="right"></div>
         <div id="settingsBox"></div>
+        <div id="d3Box"></div>
       </div>
     </aside>
     <div class="zb" id="zoombar">
@@ -1532,7 +1542,7 @@ async function exportPortableHtml(){
   const q = sel => doc.querySelector(sel);
   const hide = (sel, on) => { const n = q(sel); if(n){ if(on) n.setAttribute("hidden",""); else n.removeAttribute("hidden"); } };
   hide("#home", false); hide("#editor", true); hide("#cv", false); hide("#osmMap", true);
-  hide("#printLayer", true); hide("#drawbar", true); hide("#fpanel", true);
+  hide("#printLayer", true); hide("#drawbar", true); hide("#fpanel", true); hide("#map3d", true);
   doc.querySelectorAll("#hArt .ill:not(:first-child)").forEach(n => n.remove());
   const cvEl = q("#cv"); if(cvEl){ cvEl.removeAttribute("style"); cvEl.removeAttribute("width"); cvEl.removeAttribute("height"); }
   const mp = q("#osmMap"); if(mp){ mp.innerHTML = ""; mp.removeAttribute("class"); mp.removeAttribute("style"); mp.removeAttribute("tabindex"); }
@@ -1540,7 +1550,7 @@ async function exportPortableHtml(){
   ["#printLegend","#printScaleBar","#printTitle"].forEach(sel => { const c = q(sel + " .pv-content"); if(c) c.innerHTML = ""; });
   const fr = q("#printFrame"); if(fr) fr.removeAttribute("style");
   const hud = q("#hudLegend"); if(hud){ hud.innerHTML = ""; hud.setAttribute("style","display:none"); }
-  ["#zlist","#right","#settingsBox","#recent","#hDots","#dbInfo","#stHint","#stCoord","#stScale","#stSave","#ppInfo"].forEach(sel => { const n = q(sel); if(n) n.textContent = ""; });
+  ["#zlist","#right","#settingsBox","#d3Box","#recent","#hDots","#dbInfo","#stHint","#stCoord","#stScale","#stSave","#ppInfo"].forEach(sel => { const n = q(sel); if(n) n.textContent = ""; });
   const tt = q("#toast"); if(tt){ tt.textContent = ""; tt.className = ""; }
   doc.querySelectorAll(".panel.open").forEach(n => n.classList.remove("open"));
   const ex = q("#bExport"); if(ex) ex.textContent = "PNG sifatida yuklab olish";
@@ -1770,6 +1780,7 @@ function setActiveZone(id){
   if(isMobile() && tool === "draw") closeSheets();
 }
 function setTool(t){
+  if(typeof M3 !== "undefined" && M3.on && t !== "pan"){ toast("3D ko‘rinishda chizib bo‘lmaydi. Avval 3D dan chiqing.", true); return; }
   if(tool !== t){ D = null; SC.pts = []; }
   tool = t;
   if(t !== "select"){ S.vertex = -1; }
@@ -1935,7 +1946,7 @@ function ensureAnalysisZone(){
   if(!P.zones.some(z => z.analysis)) P.zones.push({id:uid("z"), name:"Tahlil hududi", color:"#E11D48", icon:"🎯", note:"Entropiya va boshqa tahlillar uchun chegara", opacity:.06, visible:true, analysis:true});
 }
 function startSession(){
-  ensureAnalysisZone();
+  m3Reset(); ensureAnalysisZone();
   S = {poly:null, vertex:-1, zone:P.zones[0] ? P.zones[0].id : null};
   D = null; SC.pts = []; tool = "select"; V.fitted = true;
   L_.base = L_.zones = L_.labels = true;
@@ -1946,7 +1957,7 @@ function startSession(){
   setSaveUI("saved");
   closeSheets(); closePrint(); updateCursor();
   $$("[data-tool=scale]").forEach(b => b.hidden = P.mode === "osm");
-  $("#bMap").hidden = P.mode !== "osm";
+  $("#bMap").hidden = P.mode !== "osm"; $("#b3d").hidden = P.mode !== "osm";
   $("#bPrint").dataset.tip = P.mode === "osm" ? "Chop etish" : "Eksport (PNG)";
   if(curPanel === "map" && P.mode !== "osm") closePanel();
   if(P.mode === "osm"){
@@ -1960,6 +1971,7 @@ function startSession(){
   refreshAll();
 }
 async function leaveProject(){
+  m3Reset();
   await saveNow();
   LS.del("fzm-last");
   if(IMG_URL) URL.revokeObjectURL(IMG_URL);
@@ -2361,6 +2373,7 @@ function exportSize(q){
   return {f, w:Math.round(iw*f), h:Math.round(ih*f)};
 }
 function openExport(){
+  if(typeof M3 !== "undefined" && M3.on){ m3Png(); return; }
   if(P.mode === "osm"){ openPrint(); return; }
   if(!IMG){ toast("Avval hudud rasmini yuklang.", true); return; }
   if(!P.polys.length){ toast("Eksport qilishdan oldin kamida bitta funksional zona yarating.", true); return; }
@@ -2597,6 +2610,7 @@ function updateTopUI(){
   if(!P) return;
   $$("[data-tool]").forEach(b => b.classList.toggle("active", b.dataset.tool === tool));
   $$("[data-pn]").forEach(b => b.classList.toggle("active", b.dataset.pn === curPanel));
+  { const b3 = $("#b3d"); if(b3) b3.classList.toggle("active", !!M3.on); }
   { const cz = curZone(), ar = tool === "draw" && cz && cz.analysis;
     $$("[data-tool=draw]").forEach(b => b.classList.toggle("active", tool === "draw" && !ar));
     const ba = $("#bArea"); if(ba) ba.classList.toggle("active", !!ar); }
@@ -2652,6 +2666,7 @@ const SVGI = {
   "select":'<path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z" fill="currentColor"/>',
   "pencil":'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
   "target":'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor"/>',
+  "cube":'<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
   "ruler":'<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
   "zones":'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
   "layers":'<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
@@ -2729,7 +2744,7 @@ $("#bSave").addEventListener("click", async () => {
 });
 
 /* Funksiya oynasi (o'ngda) */
-const PANELS = {zones:["Zonalar","zones"], layers:["Qatlamlar va legenda","layers"], map:["Xarita turi","globe"], settings:["Sozlamalar","gear"]};
+const PANELS = {d3:["3D ko‘rinish","cube"], zones:["Zonalar","zones"], layers:["Qatlamlar va legenda","layers"], map:["Xarita turi","globe"], settings:["Sozlamalar","gear"]};
 let curPanel = null, lastSelPoly = null;
 function openPanel(name){
   if(!PANELS[name]) return;
@@ -2814,6 +2829,287 @@ $("#bArea").addEventListener("click", () => {
   const z = P.zones.find(z => z.analysis); S.zone = z.id; renderLeft(); setTool("draw");
   toast("Tahlil hududi chegarasini chizing (tugatish: ikki marta bosing yoki Enter).");
 });
+/* =====================================================================
+   3D ko'rinish (MapLibre GL): relyef, binolar, yo'llar, daraxtlar, suv, yashil hududlar
+   ===================================================================== */
+const M3 = {on:false, map:null, data:null, area:"all", exag:1.4, az:225, alt:40, base:"osm", busy:false, bb:null,
+  vis:{terrain:true, buildings:true, roads:true, trees:true, water:true, green:true, zones:true, boundary:true}};
+const M3_GROUPS = {terrain:["hill"], buildings:["bld"], roads:["road-casing-major","road-major","road-casing-minor","road-minor","road-path"],
+  trees:["tree-trunk","tree-crown"], water:["water","waterway"], green:["green"], zones:["zones","zones-line"], boundary:["boundary"]};
+const M3_NAMES = [["terrain","⛰️","Relyef"],["buildings","🏢","Binolar"],["roads","🛣️","Yo‘llar"],["trees","🌳","Daraxtlar"],["water","💧","Suv obyektlari"],["green","🌿","Yashil hududlar"],["zones","🎨","Loyiha zonalari"],["boundary","🎯","Tahlil hududi"]];
+const MAPLIBRE_JS = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js", MAPLIBRE_CSS = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css";
+const DEM_URL = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
+function loadMapLibre(){
+  return new Promise((res, rej) => {
+    if(window.maplibregl) return res();
+    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = MAPLIBRE_CSS; document.head.appendChild(l);
+    const sc = document.createElement("script"); sc.src = MAPLIBRE_JS; sc.onload = () => res(); sc.onerror = () => rej(new Error("lib")); document.head.appendChild(sc);
+  });
+}
+const m3num = v => { const m = String(v == null ? "" : v).replace(",", ".").match(/-?\d+(\.\d+)?/); return m ? +m[0] : null; };
+const m3rnd = (a, b) => { const x = Math.sin(a*12.9898 + b*78.233)*43758.5453; return x - Math.floor(x); };
+function m3circ(lon, lat, r, n){
+  const dl = r/110574, dg = r/(111320*Math.cos(lat*Math.PI/180)), c = [];
+  for(let i=0;i<n;i++){ const a = i/n*2*Math.PI; c.push([lon + dg*Math.cos(a), lat + dl*Math.sin(a)]); }
+  c.push(c[0]); return [c];
+}
+function m3pip(x, y, ring){
+  let c = false;
+  for(let i=0, j=ring.length-1; i<ring.length; j=i++){
+    const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+    if(((yi > y) !== (yj > y)) && x < (xj-xi)*(y-yi)/(yj-yi) + xi) c = !c;
+  }
+  return c;
+}
+/* poligon ichiga sxematik daraxtlar joylashtirish */
+function m3scatter(ring, sp, out, cap){
+  const xs = ring.map(q => q[0]), ys = ring.map(q => q[1]);
+  const minx = Math.min(...xs), maxx = Math.max(...xs), miny = Math.min(...ys), maxy = Math.max(...ys), la = (miny+maxy)/2;
+  const sl = sp/110574, sg = sp/(111320*Math.cos(la*Math.PI/180));
+  for(let y=miny+sl/2; y<maxy; y+=sl) for(let x=minx+sg/2; x<maxx; x+=sg){
+    if(out.length >= cap) return;
+    const jx = x + (m3rnd(x, y) - .5)*sg*.7, jy = y + (m3rnd(y, x) - .5)*sl*.7;
+    if(m3pip(jx, jy, ring)) out.push([jx, jy, null, null]);
+  }
+}
+const M3_DEF_H = {house:6, detached:6, semidetached_house:6, bungalow:4, terrace:7, residential:15, apartments:18, dormitory:15, commercial:12, retail:8, office:15, supermarket:7, kiosk:3, industrial:9, warehouse:8, factory:10, school:12, kindergarten:6, hospital:16, university:16, civic:12, public:12, government:14, church:12, mosque:12, garage:3, garages:3, shed:3, roof:4, service:4, yes:9};
+const m3bcol = b => /^(house|detached|semidetached_house|bungalow|terrace|residential|apartments|dormitory)$/.test(b) ? "#e9cfa8" : /^(commercial|retail|office|supermarket|kiosk)$/.test(b) ? "#a9bfe0" : /^(industrial|warehouse|factory)$/.test(b) ? "#b5b9bd" : /^(school|kindergarten|hospital|university|civic|public|government|church|mosque)$/.test(b) ? "#f0d97c" : "#ddd6c7";
+const FC = f => ({type:"FeatureCollection", features:f});
+/* Overpass javobini GeoJSON qatlamlariga aylantirish */
+function m3parse(j, userGreen){
+  const bld = [], road = [], water = [], waterway = [], green = [], trees = [], woods = [];
+  let est = 0;
+  const ll = g => g.map(p => [p.lon, p.lat]);
+  const closed = c => c.length >= 4 && c[0][0] === c[c.length-1][0] && c[0][1] === c[c.length-1][1];
+  for(const el of (j.elements || [])){
+    const t = el.tags || {};
+    if(el.type === "node"){ if(t.natural === "tree") trees.push([el.lon, el.lat, m3num(t.height), m3num(t.diameter_crown)]); continue; }
+    const rings = [];
+    if(el.type === "way" && el.geometry) rings.push(ll(el.geometry));
+    else if(el.type === "relation" && el.members) el.members.forEach(m => { if(m.type === "way" && m.geometry && (m.role === "outer" || m.role === "")) rings.push(ll(m.geometry)); });
+    if(!rings.length) continue;
+    if(t.building){
+      for(const c of rings){ if(!closed(c)) continue;
+        let h = m3num(t.height), known = h != null;
+        if(h == null){ const lv = m3num(t["building:levels"]); if(lv != null){ h = lv*3.2 + 1; known = true; } }
+        if(h == null){ h = M3_DEF_H[t.building] != null ? M3_DEF_H[t.building] : 9; est++; }
+        h = Math.max(2.5, h); let mh = m3num(t.min_height); if(mh == null){ const ml = m3num(t["building:min_level"]); mh = ml != null ? ml*3.2 : 0; } if(mh >= h) mh = 0;
+        bld.push({type:"Feature", properties:{h, mh, c:m3bcol(t.building)}, geometry:{type:"Polygon", coordinates:[c]}}); }
+      continue;
+    }
+    if(t.highway){
+      const h = t.highway, cls = /^(motorway|trunk|primary|secondary|tertiary)(_link)?$/.test(h) ? "major" : /^(residential|unclassified|living_street|service|road)$/.test(h) ? "minor" : /^(footway|path|cycleway|pedestrian|steps|track|bridleway)$/.test(h) ? "path" : null;
+      if(cls) for(const c of rings) if(c.length > 1) road.push({type:"Feature", properties:{cls}, geometry:{type:"LineString", coordinates:c}});
+      continue;
+    }
+    if(t.waterway && /^(river|stream|canal|drain|ditch)$/.test(t.waterway)){ for(const c of rings) if(c.length > 1) waterway.push({type:"Feature", properties:{}, geometry:{type:"LineString", coordinates:c}}); continue; }
+    if(t.natural === "water" || t.waterway === "riverbank" || t.landuse === "reservoir"){ for(const c of rings) if(closed(c)) water.push({type:"Feature", properties:{}, geometry:{type:"Polygon", coordinates:[c]}}); continue; }
+    const wood = t.natural === "wood" || t.landuse === "forest";
+    const k = wood ? "wood" : (/^(park|garden)$/.test(t.leisure || "") ? "park" : (/^(pitch|playground|recreation_ground)$/.test(t.leisure || "") || /^(grass|meadow|recreation_ground|village_green)$/.test(t.landuse || "") || /^(scrub|grassland)$/.test(t.natural || "") ? "grass" : null));
+    if(k) for(const c of rings) if(closed(c)){ green.push({type:"Feature", properties:{k}, geometry:{type:"Polygon", coordinates:[c]}}); if(wood) woods.push(c); }
+  }
+  // daraxtlar: OSM nuqtalari + o'rmonlar va ko'kalamzor zonalar ichida sxematik
+  const CAP = 6000, scattered = [];
+  let totalArea = 0; const all = [...woods, ...userGreen];
+  all.forEach(c => { const la = c[0][1], k = Math.cos(la*Math.PI/180); let a = 0; for(let i=0,jx=c.length-1;i<c.length;jx=i++) a += c[jx][0]*c[i][1] - c[i][0]*c[jx][1]; totalArea += Math.abs(a)/2*110574*111320*k; });
+  const room = Math.max(0, CAP - trees.length), sp = Math.max(14, Math.sqrt(totalArea/Math.max(1, room)));
+  all.forEach(c => m3scatter(c, sp, scattered, room));
+  const treePts = trees.concat(scattered).slice(0, CAP);
+  const trunk = [], crown = [], cc = ["#4f8f4a","#5da04f","#468246","#6aa857"];
+  treePts.forEach(([lon, lat, h, d]) => {
+    const r1 = m3rnd(lon, lat), r = d ? Math.max(1.2, d/2) : 2.4 + r1*1.2, ht = h || (6 + m3rnd(lat, lon)*4);
+    trunk.push({type:"Feature", properties:{h:Math.min(2.6, ht*.4)}, geometry:{type:"Polygon", coordinates:m3circ(lon, lat, .35, 6)}});
+    crown.push({type:"Feature", properties:{h:ht, mh:Math.min(2.6, ht*.4), c:cc[Math.floor(r1*cc.length) % cc.length]}, geometry:{type:"Polygon", coordinates:m3circ(lon, lat, r, 9)}});
+  });
+  return {bld:FC(bld), road:FC(road), water:FC(water), waterway:FC(waterway), green:FC(green), trunk:FC(trunk), crown:FC(crown),
+          stats:{bld:bld.length, est, road:road.length, trees:treePts.length, osmTrees:trees.length, water:water.length + waterway.length, green:green.length}};
+}
+/* Loyiha zonalari va tahlil chegarasi (GeoJSON) */
+function m3userGeo(){
+  const zs = P.zones.filter(z => !z.analysis && z.visible), az = P.zones.find(z => z.analysis);
+  const ring = pts => { const c = pts.map(([la, ln]) => [ln, la]); c.push(c[0]); return c; };
+  const zf = [], bf = [], green = [];
+  P.polys.forEach(pl => {
+    if(pl.pts.length < 3) return;
+    const z = zs.find(z => z.id === pl.zoneId);
+    if(z){ zf.push({type:"Feature", properties:{color:z.color, op:Math.max(.15, Math.min(.85, z.opacity != null ? z.opacity : .5))}, geometry:{type:"Polygon", coordinates:[ring(pl.pts)]}});
+      if(/^(Ko‘kalamzor|Rekreatsiya)/i.test(z.name)) green.push(ring(pl.pts)); }
+    else if(az && pl.zoneId === az.id) bf.push({type:"Feature", properties:{}, geometry:{type:"Polygon", coordinates:[ring(pl.pts)]}});
+  });
+  return {zones:FC(zf), boundary:FC(bf), green};
+}
+function m3Bounds(){
+  let pts = null;
+  if(M3.area !== "all"){ const bp = entBoundaries().find(b => b.id === M3.area); if(bp) pts = bp.pts; }
+  if(!pts){ const az = P.zones.find(z => z.analysis), a = P.polys.filter(p => !az || p.zoneId !== az.id).flatMap(p => p.pts); if(a.length) pts = a; }
+  let s, w, n, e;
+  if(pts){ s = Math.min(...pts.map(q => q[0])); n = Math.max(...pts.map(q => q[0])); w = Math.min(...pts.map(q => q[1])); e = Math.max(...pts.map(q => q[1])); const pd = .06; const dl = (n-s)*pd || .001, dg = (e-w)*pd || .001; s -= dl; n += dl; w -= dg; e += dg; }
+  else { const b = osmMap.getBounds(); s = b.getSouth(); n = b.getNorth(); w = b.getWest(); e = b.getEast(); }
+  return {s, w, n, e};
+}
+async function m3Overpass(q){
+  let last;
+  for(const url of OVERPASS){
+    try{
+      const ctrl = new AbortController(), tm = setTimeout(() => ctrl.abort(), 90000);
+      const r = await fetch(url, {method:"POST", body:"data=" + encodeURIComponent(q), headers:{"Content-Type":"application/x-www-form-urlencoded"}, signal:ctrl.signal});
+      clearTimeout(tm); if(!r.ok) throw new Error("http" + r.status);
+      return await r.json();
+    }catch(e){ last = e; }
+  }
+  throw last;
+}
+function m3Status(t, err){ const el = $("#d3Stat"); if(el){ el.textContent = t; el.style.color = err ? "#d64545" : ""; } }
+async function m3LoadData(){
+  if(M3.busy) return; M3.busy = true;
+  try{
+    const bb = m3Bounds(), km2 = (bb.n-bb.s)*110.574*(bb.e-bb.w)*111.32*Math.cos((bb.s+bb.n)/2*Math.PI/180);
+    if(km2 > 5){ m3Status("Hudud juda katta (" + km2.toFixed(1) + " km²). 5 km² gacha bo‘lgan hududni tanlang.", true); return; }
+    m3Status("OSM ma’lumoti yuklanmoqda… (" + km2.toFixed(2) + " km²)");
+    const bx = `(${bb.s.toFixed(6)},${bb.w.toFixed(6)},${bb.n.toFixed(6)},${bb.e.toFixed(6)})`;
+    const q = `[out:json][timeout:90];(way["building"]${bx};way["highway"]${bx};node["natural"="tree"]${bx};way["natural"~"^(wood|water|scrub|grassland)$"]${bx};way["waterway"]${bx};way["leisure"~"^(park|garden|pitch|playground|recreation_ground)$"]${bx};way["landuse"~"^(forest|grass|meadow|recreation_ground|village_green|reservoir)$"]${bx};relation["natural"~"^(water|wood)$"]${bx};relation["landuse"="forest"]${bx};);out geom qt;`;
+    const j = await m3Overpass(q), uo = m3userGeo();
+    M3.data = Object.assign(m3parse(j, uo.green), {zones:uo.zones, boundary:uo.boundary}); M3.bb = bb;
+    await m3Apply(true);
+    const st = M3.data.stats;
+    m3Status(`Binolar: ${st.bld} (balandligi taxminiy: ${st.est}) · Yo‘llar: ${st.road} · Daraxtlar: ${st.trees} (OSM: ${st.osmTrees}, qolgani sxematik) · Suv: ${st.water} · Yashil: ${st.green}`);
+  }catch(e){ m3Status("OSM ma’lumotini olib bo‘lmadi (internet yoki server band). Keyinroq urinib ko‘ring.", true); }
+  finally{ M3.busy = false; }
+}
+function m3BaseSource(kind){
+  const b = BASEMAPS[kind === "sat" ? "sat" : "osm"]; if(kind === "none") return null;
+  return {type:"raster", tiles:[b.url], tileSize:256, maxzoom:19, attribution:b.attr};
+}
+async function m3Init(){
+  await loadMapLibre();
+  const bb = M3.bb || m3Bounds(), base = m3BaseSource(M3.base);
+  const style = {version:8, sources:{dem:{type:"raster-dem", tiles:[DEM_URL], encoding:"terrarium", tileSize:256, maxzoom:15, attribution:"Relyef: AWS Terrain Tiles"}},
+    layers:[{id:"bg", type:"background", paint:{"background-color":"#e4eaee"}},
+            {id:"hill", type:"hillshade", source:"dem", paint:{"hillshade-exaggeration":.5, "hillshade-shadow-color":"#3b4a52", "hillshade-highlight-color":"#ffffff"}}]};
+  if(base){ style.sources.base = base; style.layers.splice(1, 0, {id:"base", type:"raster", source:"base"}); }
+  const map = new maplibregl.Map({container:"map3d", style, center:[(bb.w+bb.e)/2, (bb.s+bb.n)/2], zoom:15, pitch:60, bearing:-20, maxPitch:80, preserveDrawingBuffer:true});
+  M3.map = map;
+  await new Promise(r => map.once("load", r));
+  map.setTerrain({source:"dem", exaggeration:M3.exag}); m3Light();
+}
+function m3Light(){ if(M3.map) M3.map.setLight({anchor:"map", color:"#ffffff", intensity:.55, position:[1.5, M3.az, 90 - M3.alt]}); }
+const LW = (a) => ["interpolate", ["linear"], ["zoom"], ...a];
+async function m3Apply(fit){
+  const map = M3.map, d = M3.data; if(!map || !d) return;
+  const put = (id, data) => { const sc = map.getSource(id); if(sc) sc.setData(data); else map.addSource(id, {type:"geojson", data}); };
+  put("g-bld", d.bld); put("g-road", d.road); put("g-water", d.water); put("g-waterway", d.waterway); put("g-green", d.green);
+  put("g-trunk", d.trunk); put("g-crown", d.crown); put("g-zones", d.zones); put("g-boundary", d.boundary);
+  const L = (def) => { if(!map.getLayer(def.id)) map.addLayer(def); };
+  const rd = (id, cls, cas, w, col, extra) => L(Object.assign({id, type:"line", source:"g-road", filter:["==", ["get","cls"], cls], layout:{"line-cap":"round","line-join":"round"}, paint:Object.assign({"line-color":col, "line-width":LW(w)}, extra || {})}));
+  L({id:"green", type:"fill", source:"g-green", paint:{"fill-color":["match", ["get","k"], "wood", "#6f9a63", "park", "#b7dca0", "#c9e4ae"], "fill-opacity":.8}});
+  L({id:"water", type:"fill", source:"g-water", paint:{"fill-color":"#8ec5e8"}});
+  L({id:"waterway", type:"line", source:"g-waterway", paint:{"line-color":"#79b4de", "line-width":LW([12,1,18,5,20,9])}});
+  L({id:"zones", type:"fill", source:"g-zones", paint:{"fill-color":["get","color"], "fill-opacity":["get","op"]}});
+  L({id:"zones-line", type:"line", source:"g-zones", paint:{"line-color":["get","color"], "line-width":1.5}});
+  rd("road-casing-minor", "minor", 1, [13,.6,16,3,18,8,20,18], "#b9b9b9"); rd("road-minor", "minor", 0, [13,.3,16,2,18,6,20,15], "#ffffff");
+  rd("road-casing-major", "major", 1, [10,1.2,14,4,17,12,20,32], "#b08a4a"); rd("road-major", "major", 0, [10,.6,14,2.4,17,9,20,26], "#ffd98a");
+  rd("road-path", "path", 0, [15,.6,18,1.5,20,3], "#a8814f", {"line-dasharray":[2,1.5]});
+  L({id:"boundary", type:"line", source:"g-boundary", paint:{"line-color":"#e11d48", "line-width":3, "line-dasharray":[2,1.5]}});
+  L({id:"bld", type:"fill-extrusion", source:"g-bld", paint:{"fill-extrusion-color":["get","c"], "fill-extrusion-height":["get","h"], "fill-extrusion-base":["get","mh"], "fill-extrusion-opacity":.95}});
+  L({id:"tree-trunk", type:"fill-extrusion", source:"g-trunk", paint:{"fill-extrusion-color":"#7a5a3a", "fill-extrusion-height":["get","h"], "fill-extrusion-base":0}});
+  L({id:"tree-crown", type:"fill-extrusion", source:"g-crown", paint:{"fill-extrusion-color":["get","c"], "fill-extrusion-height":["get","h"], "fill-extrusion-base":["get","mh"], "fill-extrusion-opacity":.95}});
+  m3Vis();
+  if(fit && M3.bb) map.fitBounds([[M3.bb.w, M3.bb.s], [M3.bb.e, M3.bb.n]], {padding:70, pitch:60, bearing:-20, maxZoom:17, duration:0});
+}
+function m3Vis(){
+  const map = M3.map; if(!map) return;
+  Object.entries(M3_GROUPS).forEach(([g, ids]) => ids.forEach(id => { if(map.getLayer(id)) map.setLayoutProperty(id, "visibility", M3.vis[g] ? "visible" : "none"); }));
+  map.setTerrain(M3.vis.terrain ? {source:"dem", exaggeration:M3.exag} : null);
+}
+function m3SetBase(kind){
+  const map = M3.map; M3.base = kind; if(!map) return;
+  if(map.getLayer("base")) map.removeLayer("base"); if(map.getSource("base")) map.removeSource("base");
+  const src = m3BaseSource(kind); if(!src) return;
+  map.addSource("base", src); map.addLayer({id:"base", type:"raster", source:"base"}, "hill");
+}
+function m3Panel(){
+  if(!P) return;
+  const bps = entBoundaries(), sw = {terrain:"#8a8f95", buildings:"#e9cfa8", roads:"#ffd98a", trees:"#4f8f4a", water:"#8ec5e8", green:"#b7dca0", zones:"#4A90E2", boundary:"#e11d48"};
+  $("#d3Box").innerHTML = `<section class="sec"><h3>Hudud</h3>
+      <label class="f" style="margin-bottom:8px"><select id="d3Area"><option value="all"${M3.area === "all" ? " selected" : ""}>Butun loyiha</option>${bps.map((b, i) => `<option value="${esc(b.id)}"${M3.area === b.id ? " selected" : ""}>${esc(entBName(b, i))}</option>`).join("")}</select></label>
+      <button class="btn primary block" id="d3Load">${M3.data ? "OSM ma’lumotini qayta yuklash" : "OSM ma’lumotini yuklash"}</button>
+      <p class="hint" id="d3Stat" style="margin-top:8px"></p></section>
+    <section class="sec"><h3>Qatlamlar</h3>${M3_NAMES.map(([k, ic, nm]) => `<label class="chk"><input type="checkbox" data-d3v="${k}" ${M3.vis[k] ? "checked" : ""}> <span class="d3sw">${ic}</span> ${nm}</label>`).join("")}</section>
+    <section class="sec"><h3>Ko‘rinish</h3>
+      <label class="f">Relyef balandligi: <b id="d3ExV">×${M3.exag.toFixed(1)}</b><input type="range" id="d3Ex" min="0" max="3" step="0.1" value="${M3.exag}"></label>
+      <label class="f">Quyosh yo‘nalishi: <b id="d3AzV">${M3.az}°</b><input type="range" id="d3Az" min="0" max="360" step="5" value="${M3.az}"></label>
+      <label class="f">Quyosh balandligi: <b id="d3AltV">${M3.alt}°</b><input type="range" id="d3Alt" min="10" max="85" step="5" value="${M3.alt}"></label>
+      <label class="f">Xarita asosi<select id="d3Base"><option value="osm"${M3.base === "osm" ? " selected" : ""}>OpenStreetMap</option><option value="sat"${M3.base === "sat" ? " selected" : ""}>Sun’iy yo‘ldosh</option><option value="none"${M3.base === "none" ? " selected" : ""}>Asossiz</option></select></label>
+      <div class="d3grid"><button class="btn" data-cam="top">Tepadan</button><button class="btn" data-cam="tilt">Perspektiva</button><button class="btn" data-cam="left">⟲ 45°</button><button class="btn" data-cam="right">45° ⟳</button><button class="btn" data-cam="north">Shimolga</button><button class="btn" data-cam="fit">Hududga</button></div>
+      <button class="btn block" id="d3Png">PNG yuklab olish</button>
+      <p class="hint" style="margin-top:8px">Binolar balandligi OSM’dagi height/qavat ma’lumotidan olinadi, yo‘q bo‘lsa taxminiy qo‘yiladi. Daraxtlar OSM nuqtalari va o‘rmon, ko‘kalamzor zonalarda sxematik joylashadi.</p></section>`;
+  if(M3.data){ const st = M3.data.stats; m3Status(`Binolar: ${st.bld} (balandligi taxminiy: ${st.est}) · Yo‘llar: ${st.road} · Daraxtlar: ${st.trees} · Suv: ${st.water} · Yashil: ${st.green}`); }
+}
+function m3Reset(){
+  if(M3.map){ try{ M3.map.remove(); }catch(e){} M3.map = null; }
+  M3.on = false; M3.data = null; M3.bb = null; M3.area = "all";
+  const m = $("#map3d"); if(m){ m.hidden = true; m.innerHTML = ""; }
+  const st = $("#stage"); if(st) st.classList.remove("is3d");
+  const b = $("#b3d"); if(b) b.classList.remove("active");
+}
+async function m3Toggle(){
+  if(!P || P.mode !== "osm"){ toast("3D ko‘rinish faqat xarita (OSM) loyihalarida ishlaydi.", true); return; }
+  if(M3.on){
+    M3.on = false; $("#map3d").hidden = true; $("#stage").classList.remove("is3d"); $("#b3d").classList.remove("active");
+    if(curPanel === "d3") closePanel(); updateTopUI(); return;
+  }
+  const b = $("#b3d"); b.disabled = true;
+  try{
+    toast("3D kutubxona yuklanmoqda…");
+    $("#map3d").hidden = false;
+    if(!M3.map) await m3Init(); else { M3.map.resize(); }
+    M3.on = true; $("#stage").classList.add("is3d"); b.classList.add("active");
+    try{ if(tool !== "pan") setTool("pan"); }catch(e){}
+    curPanel = null; openPanel("d3"); m3Panel();
+    const uo = m3userGeo(); if(M3.data){ M3.data.zones = uo.zones; M3.data.boundary = uo.boundary; await m3Apply(false); m3Panel(); }
+    else await m3LoadData();
+    updateTopUI();
+  }catch(e){ $("#map3d").hidden = true; M3.on = false; $("#stage").classList.remove("is3d"); toast("3D kutubxonani yuklab bo‘lmadi (internet kerak).", true); }
+  finally{ b.disabled = false; }
+}
+async function m3Png(){
+  if(!M3.map) return;
+  M3.map.triggerRepaint();
+  await new Promise(r => M3.map.once("render", r));
+  M3.map.getCanvas().toBlob(async bl => { if(!bl){ toast("PNG yaratib bo‘lmadi.", true); return; } await saveBlob(bl, ((P.name || "loyiha") + "-3d.png").replace(/[\\/:*?"<>|]+/g, "_")); }, "image/png");
+}
+$("#b3d").addEventListener("click", m3Toggle);
+$("#d3Box").addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b || !M3.map) return;
+  if(b.id === "d3Load"){ m3LoadData().then(m3Panel); return; }
+  if(b.id === "d3Png"){ m3Png(); return; }
+  const c = b.dataset.cam, mp = M3.map; if(!c) return;
+  if(c === "top") mp.easeTo({pitch:0, duration:600});
+  else if(c === "tilt") mp.easeTo({pitch:60, duration:600});
+  else if(c === "left") mp.easeTo({bearing:mp.getBearing() - 45, duration:600});
+  else if(c === "right") mp.easeTo({bearing:mp.getBearing() + 45, duration:600});
+  else if(c === "north") mp.easeTo({bearing:0, duration:600});
+  else if(c === "fit" && M3.bb) mp.fitBounds([[M3.bb.w, M3.bb.s], [M3.bb.e, M3.bb.n]], {padding:70, pitch:60, bearing:-20, maxZoom:17, duration:700});
+});
+$("#d3Box").addEventListener("input", e => {
+  const id = e.target.id, v = e.target.value;
+  if(id === "d3Ex"){ M3.exag = +v; $("#d3ExV").textContent = "×" + (+v).toFixed(1); m3Vis(); }
+  else if(id === "d3Az"){ M3.az = +v; $("#d3AzV").textContent = v + "°"; m3Light(); }
+  else if(id === "d3Alt"){ M3.alt = +v; $("#d3AltV").textContent = v + "°"; m3Light(); }
+});
+$("#d3Box").addEventListener("change", e => {
+  const t = e.target;
+  if(t.dataset.d3v){ M3.vis[t.dataset.d3v] = t.checked; m3Vis(); }
+  else if(t.id === "d3Base") m3SetBase(t.value);
+  else if(t.id === "d3Area"){ M3.area = t.value; m3LoadData().then(m3Panel); }
+});
+/* 3D rejimida zoom tugmalari 3D xaritani boshqaradi */
+$("#zoombar").addEventListener("click", e => {
+  if(!M3.on || !M3.map) return; const b = e.target.closest("button"); if(!b) return; e.stopPropagation();
+  if(b.id === "zIn") M3.map.zoomIn(); else if(b.id === "zOut") M3.map.zoomOut();
+  else if(b.id === "zFit" && M3.bb) M3.map.fitBounds([[M3.bb.w, M3.bb.s], [M3.bb.e, M3.bb.n]], {padding:70, pitch:60, bearing:-20, maxZoom:17, duration:700});
+}, true);
+
 /* Bosh sahifa */
 document.querySelectorAll(".h-b,.h-ic").forEach(el => {
   const on = () => el.classList.add("press"), off = () => el.classList.remove("press");
