@@ -1957,6 +1957,7 @@ function startSession(){
   setSaveUI("saved");
   closeSheets(); closePrint(); updateCursor();
   $$("[data-tool=scale]").forEach(b => b.hidden = P.mode === "osm");
+  $("#bAI").dataset.tip = P.mode === "osm" ? "Avtomatik zonalash (OSM)" : "AI tahlili";
   $("#bMap").hidden = P.mode !== "osm"; $("#b3d").hidden = P.mode !== "osm";
   $("#bPrint").dataset.tip = P.mode === "osm" ? "Chop etish" : "Eksport (PNG)";
   if(curPanel === "map" && P.mode !== "osm") closePanel();
@@ -2079,21 +2080,25 @@ const ENT_CATS = [
 ];
 const OVERPASS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
 let entSel = "all";
-function shannon(vals){
+function shannon(vals, N){
   const tot = vals.reduce((a,b) => a+b, 0);
-  if(!(tot > 0)) return {E:0, m:0, Emax:0, J:0, p:vals.map(() => 0)};
+  if(!(tot > 0)) return {E:0, m:0, Emax:0, J:0, p:vals.map(() => 0), N:N || 0, EmaxN:0, LUM:0};
   const p = vals.map(v => v/tot); let E = 0, m = 0;
   p.forEach(x => { if(x > 0){ E -= x*Math.log(x); m++; } });
-  const Emax = m > 1 ? Math.log(m) : 0;
-  return {E, m, Emax, J: Emax ? E/Emax : 0, p};
+  const Emax = m > 1 ? Math.log(m) : 0;                 // mavjud toifalar bo'yicha (tenglik/evenness)
+  const NN = Math.max(N || m, m), EmaxN = NN > 1 ? Math.log(NN) : 0;   // o'zgarmas N bo'yicha (standart LUM)
+  return {E, m, Emax, J:Emax ? E/Emax : 0, p, N:NN, EmaxN, LUM:EmaxN ? E/EmaxN : 0};
 }
 function rateEntropy(r){
   if(!r.m) return {c:"na", t:"Ma’lumot yo‘q"};
   if(r.m === 1) return {c:"lo", t:"Past — bitta funksiya"};
-  if(r.J >= .65 && r.m >= 3) return {c:"hi", t:"Yuqori — aralash, muvozanatli"};
-  if(r.J >= .35) return {c:"mid", t:"O‘rta — ba’zi funksiyalar ustun"};
+  if(r.LUM >= .65 && r.m >= 3) return {c:"hi", t:"Yuqori — aralash, muvozanatli"};
+  if(r.LUM >= .35) return {c:"mid", t:"O‘rta — ba’zi funksiyalar ustun"};
   return {c:"lo", t:"Past — monofunksional"};
 }
+let entNUser = null;
+function entNAuto(){ const zs = P.zones.filter(z => !z.analysis && z.visible); return Math.max(2, zs.filter(z => P.polys.some(p => p.zoneId === z.id)).length); }
+const entNval = () => entNUser || entNAuto();
 const fmtPct = x => (x*100).toFixed(1) + "%";
 const entBoundaries = () => { const z = P.zones.find(z => z.analysis); return z ? P.polys.filter(p => p.zoneId === z.id) : []; };
 const entBName = (bp, i) => bp.name || ("Hudud " + (i+1));
@@ -2140,7 +2145,7 @@ function entCompute(sel){
     areas = cnt.map(c => c*cell*cell*f); title = entBName(bp, bps.indexOf(bp));
   }
   const rows = zs.map((z, i) => ({z, area:areas[i]})).filter(r => r.area > 0).sort((a,b) => b.area - a.area);
-  const zoned = rows.reduce((a,r) => a+r.area, 0), ent = shannon(rows.map(r => r.area));
+  const zoned = rows.reduce((a,r) => a+r.area, 0), ent = shannon(rows.map(r => r.area), entNval());
   rows.forEach((r, i) => r.p = ent.p[i]);
   const mapZ = P.zones.filter(z => !z.analysis && z.visible);
   return {sel, bp, title, bArea, zoned, unzoned:Math.max(0, bArea - zoned), rows, ent, rate:rateEntropy(ent), ref,
@@ -2148,26 +2153,26 @@ function entCompute(sel){
           mapB:B, poi:bp && bp.poi ? poiCompute(bp) : null};
 }
 function poiCompute(bp){
-  const km2 = geoAreaM2(bp.pts)/1e6, counts = bp.poi.counts, ent = shannon(counts);
+  const km2 = geoAreaM2(bp.pts)/1e6, counts = bp.poi.counts, ent = shannon(counts, ENT_CATS.length);
   return {t:bp.poi.t, km2, ent, rate:rateEntropy(ent), total:counts.reduce((a,b)=>a+b,0),
           rows:ENT_CATS.map((c,i) => ({name:c[0], color:c[1], n:counts[i], p:ent.p[i], fd:km2 ? counts[i]/km2 : 0}))};
 }
 function entText(d){
   if(!d.rows.length) return "Tanlangan hududda zonalangan maydon topilmadi. Avval hudud ichida zonalar chizing.";
   const top = d.rows[0], e = d.ent;
-  let t = `Hududda ${e.m} ta funksional zona aniqlandi; eng katta ulush — ${top.z.name} (${fmtPct(top.p)}). Entropiya E = ${e.E.toFixed(3)}, eng yuqori mumkin qiymat ln ${e.m} = ${e.Emax.toFixed(3)}, muvozanat darajasi J = ${fmtPct(e.J)}. `;
+  let t = `Hududda ${e.m} ta funksional zona aniqlandi; eng katta ulush — ${top.z.name} (${fmtPct(top.p)}). Entropiya E = ${e.E.toFixed(3)}; N = ${e.N} ta toifa bo‘yicha eng yuqori qiymat ln ${e.N} = ${e.EmaxN.toFixed(3)}, shuning uchun aralashuv indeksi LUM = E/ln N = ${fmtPct(e.LUM)}; mavjud ${e.m} ta funksiya ichidagi tenglik J = ${fmtPct(e.J)}. `;
   t += d.rate.c === "hi" ? "Funksiyalar nisbatan teng taqsimlangan: hudud aralash (multifunksional) xarakterga ega." : d.rate.c === "mid" ? "Aralashuv mavjud, lekin ayrim funksiyalar ustun turadi." : "Bitta funksiya ustun: hudud monofunksional, funksiyalar xilma-xilligini oshirish maqsadga muvofiq.";
-  if(e.m <= 2 && e.m > 0) t += " Diqqat: faqat " + e.m + " ta toifa mavjud, shuning uchun J ko‘rsatkichi cheklangan ma’no beradi.";
-  if(d.poi){ const q = d.poi.ent; t += ` Obyektlar (OSM) bo‘yicha: ${d.poi.total} ta obyekt, E = ${q.E.toFixed(3)}, J = ${fmtPct(q.J)} (${d.poi.rate.t.split(" — ")[0].toLowerCase()}).`; }
+  if(e.m <= 2 && e.m > 0) t += " Diqqat: faqat " + e.m + " ta toifa mavjud, shuning uchun tenglik (J) ko‘rsatkichi cheklangan ma’no beradi.";
+  if(d.poi){ const q = d.poi.ent; t += ` Obyektlar (OSM) bo‘yicha: ${d.poi.total} ta obyekt, E = ${q.E.toFixed(3)}, LUM = ${fmtPct(q.LUM)} (N = ${q.N}), J = ${fmtPct(q.J)} (${d.poi.rate.t.split(" — ")[0].toLowerCase()}).`; }
   return t;
 }
 function entHtml(d){
   const e = d.ent, un = entUnitM2();
-  let h = `<div class="ecards"><div><b>${e.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${e.Emax.toFixed(3)}</b><span>Eₘₐₓ = ln m (m=${e.m})</span></div><div><b>${fmtPct(e.J)}</b><span>Muvozanat J = E/Eₘₐₓ</span></div><div><span class="chip ${d.rate.c}">${esc(d.rate.t)}</span><br><span>Baho (maydon)</span></div></div>`;
+  let h = `<div class="ecards"><div><b>${e.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${e.EmaxN.toFixed(3)}</b><span>Eₘₐₓ = ln N (N=${e.N})</span></div><div><b>${fmtPct(e.LUM)}</b><span>Aralashuv LUM = E/ln N</span></div><div><b>${fmtPct(e.J)}</b><span>Tenglik J = E/ln m (m=${e.m})</span></div><div><span class="chip ${d.rate.c}">${esc(d.rate.t)}</span><br><span>Baho (LUM bo‘yicha)</span></div></div>`;
   h += `<table class="etab"><tr><th>Funksiya</th><th>Maydon</th><th>pᵢ</th></tr>` + d.rows.map(r => `<tr><td><span class="sw" style="background:${esc(r.z.color)}"></span>${esc(r.z.icon)} ${esc(r.z.name)}<i class="bar" style="width:${(r.p*100).toFixed(1)}%;background:${esc(r.z.color)}"></i></td><td>${fmtA(r.area)}</td><td>${fmtPct(r.p)}</td></tr>`).join("") + `</table>`;
   h += `<p class="help">Hudud maydoni: ${fmtA(d.bArea)}${d.unzoned > d.bArea*0.005 ? ` · zonalanmagan qism: ${fmtA(d.unzoned)} (${fmtPct(d.unzoned/d.bArea)}) — hisobga olinmaydi` : ""}. pᵢ — zonalangan maydon ichidagi ulush.${un ? "" : " Masshtab belgilanmagani uchun maydon piksellarda."}</p>`;
   if(d.poi){
-    h += `<h3 style="margin:14px 0 4px;font-size:14px">OSM obyektlari bo‘yicha</h3><div class="ecards"><div><b>${d.poi.ent.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${fmtPct(d.poi.ent.J)}</b><span>Muvozanat J (m=${d.poi.ent.m})</span></div><div><b>${d.poi.total}</b><span>Obyektlar soni</span></div><div><span class="chip ${d.poi.rate.c}">${esc(d.poi.rate.t)}</span><br><span>Baho (obyektlar)</span></div></div>
+    h += `<h3 style="margin:14px 0 4px;font-size:14px">OSM obyektlari bo‘yicha</h3><div class="ecards"><div><b>${d.poi.ent.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${fmtPct(d.poi.ent.LUM)}</b><span>LUM = E/ln N (N=${d.poi.ent.N})</span></div><div><b>${fmtPct(d.poi.ent.J)}</b><span>Tenglik J (m=${d.poi.ent.m})</span></div><div><b>${d.poi.total}</b><span>Obyektlar soni</span></div><div><span class="chip ${d.poi.rate.c}">${esc(d.poi.rate.t)}</span><br><span>Baho (obyektlar)</span></div></div>
       <table class="etab"><tr><th>Toifa</th><th>Nᵢ</th><th>pᵢ</th><th>FD, ta/km²</th></tr>${d.poi.rows.map(r => `<tr><td><span class="sw" style="background:${esc(r.color)}"></span>${esc(r.name)}</td><td>${r.n}</td><td>${fmtPct(r.p)}</td><td>${r.fd.toFixed(1)}</td></tr>`).join("")}</table>
       <p class="help">${new Date(d.poi.t).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"})} holatiga OpenStreetMap ma’lumoti. OSM to‘liq bo‘lmasligi mumkin; hisob obyektlar soniga asoslangan.</p>`;
   }
@@ -2210,24 +2215,26 @@ function entReportHtml(d){
   body{font:14px/1.5 "Lexend","IBM Plex Sans",Arial,sans-serif;color:#18232a;max-width:820px;margin:24px auto;padding:0 18px}
   h1{font-size:22px;margin:0 0 2px}h2{font-size:16px;margin:22px 0 8px;border-bottom:2px solid #1a56a8;padding-bottom:3px}
   .meta{color:#5b6b70;font-size:12.5px}table{width:100%;border-collapse:collapse;margin:6px 0}th{text-align:left;color:#5b6b70;font-weight:500;border-bottom:1px solid #cfd8d3;padding:5px 6px}td{padding:6px;border-bottom:1px solid #e6ebe8;vertical-align:middle}
-  .k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.k div{background:#f1f4f2;border-radius:8px;padding:8px 10px}.k b{display:block;font-size:19px}.k span{font-size:11.5px;color:#5b6b70}
+  .k{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.k div{background:#f1f4f2;border-radius:8px;padding:8px 10px}.k b{display:block;font-size:19px}.k span{font-size:11.5px;color:#5b6b70}
   .box{background:#eaf1fb;border-radius:8px;padding:10px 12px}.f{font-family:Georgia,serif;font-size:15px;margin:6px 0}.note{font-size:11.5px;color:#5b6b70}
   @media print{body{margin:0;max-width:none}@page{size:A4;margin:14mm}}</style></head><body>
   <h1>Hudud entropiyasi (funksional aralashuv) hisoboti</h1>
   <div class="meta">HART GIS · Loyiha: <b>${esc(P.name)}</b> · Hudud: <b>${esc(d.title)}</b> · ${esc(dt)}</div>
   <h2>1. Hudud sxemasi</h2>${entMapSvg(d)}
   <h2>2. Maydon bo‘yicha entropiya</h2>
-  <div class="k"><div><b>${e.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${e.Emax.toFixed(3)}</b><span>Eₘₐₓ = ln m (m = ${e.m})</span></div><div><b>${fmtPct(e.J)}</b><span>Muvozanat J = E/Eₘₐₓ</span></div><div>${chip(d.rate)}<br><span>Baho</span></div></div>
+  <div class="k"><div><b>${e.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${e.EmaxN.toFixed(3)}</b><span>Eₘₐₓ = ln N (N = ${e.N})</span></div><div><b>${fmtPct(e.LUM)}</b><span>Aralashuv LUM = E/ln N</span></div><div><b>${fmtPct(e.J)}</b><span>Tenglik J = E/ln m (m = ${e.m})</span></div><div>${chip(d.rate)}<br><span>Baho (LUM)</span></div></div>
   <table><tr><th>Funksiya</th><th>Maydon</th><th>pᵢ</th><th style="width:28%"></th></tr>${d.rows.map(r => `<tr><td><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${esc(r.z.color)};margin-right:6px"></span>${esc(r.z.name)}</td><td>${esc(fmtA(r.area))}</td><td>${fmtPct(r.p)}</td><td>${bar(r.p, r.z.color)}</td></tr>`).join("")}</table>
   <div class="note">Hudud maydoni: ${esc(fmtA(d.bArea))}; zonalanmagan qism: ${esc(fmtA(d.unzoned))} (${d.bArea ? fmtPct(d.unzoned/d.bArea) : "—"}) — hisobga olinmagan.</div>
   ${d.poi ? `<h2>3. OSM obyektlari bo‘yicha (zichlik va entropiya)</h2>
-  <div class="k"><div><b>${d.poi.ent.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${fmtPct(d.poi.ent.J)}</b><span>Muvozanat J (m = ${d.poi.ent.m})</span></div><div><b>${d.poi.total}</b><span>Obyektlar soni</span></div><div>${chip(d.poi.rate)}<br><span>Baho</span></div></div>
+  <div class="k"><div><b>${d.poi.ent.E.toFixed(3)}</b><span>Entropiya E</span></div><div><b>${fmtPct(d.poi.ent.LUM)}</b><span>LUM (N = ${d.poi.ent.N})</span></div><div><b>${fmtPct(d.poi.ent.J)}</b><span>Tenglik J (m = ${d.poi.ent.m})</span></div><div><b>${d.poi.total}</b><span>Obyektlar soni</span></div><div>${chip(d.poi.rate)}<br><span>Baho</span></div></div>
   <table><tr><th>Toifa</th><th>Nᵢ</th><th>pᵢ</th><th>FD = Nᵢ/A, ta/km²</th></tr>${d.poi.rows.map(r => `<tr><td><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${esc(r.color)};margin-right:6px"></span>${esc(r.name)}</td><td>${r.n}</td><td>${fmtPct(r.p)}</td><td>${r.fd.toFixed(1)}</td></tr>`).join("")}</table>
   <div class="note">Hudud maydoni A = ${d.poi.km2.toFixed(3)} km². Ma’lumot manbasi: OpenStreetMap (${esc(new Date(d.poi.t).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"}))}). OSM ma’lumoti to‘liq bo‘lmasligi mumkin.</div>` : ""}
   <h2>${d.poi ? "4" : "3"}. Xulosa</h2><div class="box">${esc(entText(d))}</div>
   <h2>${d.poi ? "5" : "4"}. Usul</h2>
-  <div class="f">E = − Σ pᵢ · ln(pᵢ), &nbsp; Eₘₐₓ = ln(m), &nbsp; J = E / Eₘₐₓ</div>
-  <div class="note">pᵢ — i-funksiyaning ulushi (maydon bo‘yicha: Aᵢ/ΣA; obyektlar bo‘yicha: Nᵢ/ΣN), m — mavjud funksiyalar soni. Yuqori E funksiyalarning teng taqsimlanganini (aralash hudud), past E bitta funksiya ustunligini bildiradi. Baho chegaralari (J ≥ 65% yuqori, 35–65% o‘rta, &lt; 35% past) tavsiyaviy. Entropiya zonalarning fazoviy joylashuvini hisobga olmaydi va toifalar soniga bog‘liq.</div>
+  <div class="f">E = − Σ pᵢ · ln(pᵢ), &nbsp; LUM = E / ln(N), &nbsp; J = E / ln(m)</div>
+  <div class="note">pᵢ — i-funksiyaning ulushi (maydon bo‘yicha: Aᵢ/ΣA; obyektlar bo‘yicha: Nᵢ/ΣN). <b>N</b> — tasnifdagi toifalarning jami soni (hamma hudud uchun o‘zgarmas; bu hisobotda N = ${e.N}), <b>m</b> — shu hududda mavjud toifalar soni. LUM (0–1) — standart aralashuv indeksi; J faqat mavjud funksiyalar orasidagi tenglikni ko‘rsatadi. Baho: LUM ≥ 65% yuqori, 35–65% o‘rta, &lt; 35% past — bu chegaralar tavsiyaviy, adabiyotda qat’iy me’yor yo‘q. Entropiya zonalarning fazoviy joylashuvini hisobga olmaydi va toifalar tasnifiga sezgir.</div>
+  <h2>Manbalar</h2>
+  <div class="note">Shannon, C. E. (1948). A mathematical theory of communication. · Cervero, R. (1989); Cervero, R. &amp; Kockelman, K. (1997). Travel demand and the 3Ds. · Frank, L. D. va b. (2004). Obesity relationships with community design, physical activity, and time spent in cars. · Hajna, S. va b. (2014). Misspecification of the land use mix entropy formula (N o‘zgarmas bo‘lishi kerak). · Manaugh, K. &amp; Kreider, T. (2013). What is mixed use? J. of Transport and Land Use.</div>
   </body></html>`;
 }
 function entPrint(html){
@@ -2244,6 +2251,7 @@ function entMount(ov){
     box.innerHTML = `<h3>Entropiya tahlili</h3><p class="sub">Hududning funksional aralashuv darajasi (Shannon entropiyasi).</p>
       <div class="row"><select class="field" id="entSel" style="flex:1">${["<option value='all'" + (entSel === "all" ? " selected" : "") + ">Butun loyiha</option>", ...bps2.map((b, i) => `<option value="${esc(b.id)}"${entSel === b.id ? " selected" : ""}>${esc(entBName(b, i))} · ${esc(fmtA(osm ? geoAreaM2(b.pts) : (P.scale ? m2of(polyAreaPx(b.pts)) : polyAreaPx(b.pts))))}</option>`)].join("")}</select>
         <button class="btn" id="entNew">+ Hudud chizish</button></div>
+      <label class="f" style="margin:8px 0 0">Toifalar soni N <input type="number" class="field" id="entN" min="2" max="30" value="${d.ent.N}" style="width:84px;display:inline-block"> <span class="help" style="font-size:11.5px">Hududlarni solishtirishda N bir xil bo‘lsin (Frank va b., 2004). Boshlang‘ich qiymat — loyihadagi ishlatilgan zona turlari soni.</span></label>
       ${d.bp ? `<div class="row" style="margin-top:8px"><input class="field" id="entName" value="${esc(d.bp.name || "")}" placeholder="${esc(d.title)}" maxlength="40" style="flex:1"><button class="btn" id="entDel">Hududni o‘chirish</button></div>` : ""}
       ${d.rows.length ? entHtml(d) : `<p class="help" style="font-size:13px">${bps2.length || entSel === "all" ? "Hisoblash uchun zonalar chizilgan bo‘lishi kerak." : ""}${!bps2.length ? " Avval “+ Hudud chizish” orqali tahlil chegarasini chizing: shundan keyin shu hudud ichidagi zonalar bo‘yicha entropiya hisoblanadi." : ""}</p>`}
       <div class="erow">${osm && d.bp ? `<button class="btn" id="entPoi">${d.poi ? "OSM obyektlarini yangilash" : "OSM obyektlari bo‘yicha hisoblash"}</button>` : ""}
@@ -2254,6 +2262,7 @@ function entMount(ov){
   draw();
   box.addEventListener("change", e => {
     if(e.target.id === "entSel"){ entSel = e.target.value; draw(); }
+    if(e.target.id === "entN"){ const v = Math.round(+e.target.value); entNUser = v >= 2 && v <= 30 ? v : null; draw(); }
     if(e.target.id === "entName"){ const bp = entBoundaries().find(b => b.id === entSel); if(bp){ bp.name = e.target.value.trim(); commit(); draw(); } }
   });
   box.addEventListener("click", async e => {
@@ -2301,8 +2310,243 @@ function openStats(){
 
 /* ---------- AI (tayyor ulanish nuqtasi) ---------- */
 function pendingAI(){ return P.polys.filter(p => p.ai && !p.approved); }
+/* =====================================================================
+   Avtomatik zonalash (OSM): 1) OSM maydonlari  2) binolar bo'yicha taxminiy to'ldirish
+   Natija "kutilmoqda" (ai:true, approved:false) holatida qo'shiladi.
+   ===================================================================== */
+const AZ_KEYS = {residential:"turarjoy", public:"jamoat", commerce:"savdo", industry:"sanoat", transport:"transport", green:"kokalamzor", recreation:"rekreatsiya", education:"talim", health:"tibbiyot", sport:"sport", special:"maxsus", agri:"qishloq", water:"suv", empty:"boshhudud"};
+const azNorm = t => String(t || "").toLowerCase().replace(/[‘’ʻʼ'`´]/g, "").replace(/[^a-z]/g, "");
+const azZone = key => P.zones.find(z => !z.analysis && azNorm(z.name).startsWith(AZ_KEYS[key]));
+function azClass(t){
+  const lu = t.landuse, le = t.leisure, na = t.natural, am = t.amenity;
+  if(am){
+    if(/^(school|kindergarten|college|university)$/.test(am)) return ["education", 30];
+    if(/^(hospital|clinic)$/.test(am)) return ["health", 30];
+    if(/^(townhall|police|fire_station|courthouse|community_centre|library|theatre|place_of_worship|social_facility)$/.test(am)) return ["public", 30];
+    if(/^(parking|bus_station|fuel)$/.test(am)) return ["transport", 25];
+    if(am === "marketplace") return ["commerce", 25];
+  }
+  if(le){
+    if(/^(pitch|stadium|sports_centre|track|golf_course)$/.test(le)) return ["sport", 28];
+    if(/^(park|garden|nature_reserve)$/.test(le)) return ["green", 20];
+    if(/^(recreation_ground|water_park|resort)$/.test(le)) return ["recreation", 20];
+  }
+  if(lu){
+    if(lu === "residential") return ["residential", 10];
+    if(/^(commercial|retail)$/.test(lu)) return ["commerce", 10];
+    if(/^(industrial|quarry)$/.test(lu)) return ["industry", 10];
+    if(/^(railway|garages)$/.test(lu)) return ["transport", 10];
+    if(/^(forest|grass|meadow|village_green|flowerbed)$/.test(lu)) return ["green", 12];
+    if(lu === "recreation_ground") return ["recreation", 12];
+    if(/^(cemetery|military)$/.test(lu)) return ["special", 12];
+    if(/^(farmland|orchard|vineyard|farmyard|greenhouse_horticulture|allotments|plant_nursery)$/.test(lu)) return ["agri", 11];
+    if(/^(brownfield|greenfield|construction)$/.test(lu)) return ["empty", 11];
+    if(/^(reservoir|basin)$/.test(lu)) return ["water", 40];
+  }
+  if(na){
+    if(/^(wood|scrub|grassland)$/.test(na)) return ["green", 12];
+    if(na === "water") return ["water", 40];
+    if(/^(sand|bare_rock)$/.test(na)) return ["empty", 12];
+  }
+  if(t.waterway === "riverbank") return ["water", 40];
+  return null;
+}
+function azBuildingKey(b, area){
+  if(/^(house|detached|semidetached_house|bungalow|terrace|residential|apartments|dormitory|farm)$/.test(b)) return "residential";
+  if(/^(commercial|retail|office|supermarket|kiosk|hotel)$/.test(b)) return "commerce";
+  if(/^(industrial|warehouse|factory|manufacture)$/.test(b)) return "industry";
+  if(/^(school|kindergarten|college|university)$/.test(b)) return "education";
+  if(/^(hospital|clinic)$/.test(b)) return "health";
+  if(/^(civic|public|government|church|mosque|cathedral|chapel|temple)$/.test(b)) return "public";
+  if(/^(garage|garages|carport|parking)$/.test(b)) return "transport";
+  if(b === "yes") return area < 500 ? "residential" : null;   // OSM'da "yes" — ko'pincha yakka turar-joy (taxminiy)
+  return null;
+}
+function azBounds(sel){
+  let pts = null, pad = .03;
+  if(sel !== "all" && sel !== "view"){ const bp = entBoundaries().find(b => b.id === sel); if(bp) pts = bp.pts; }
+  if(!pts && sel !== "view"){ const az = P.zones.find(z => z.analysis), a = P.polys.filter(p => !az || p.zoneId !== az.id).flatMap(p => p.pts); if(a.length){ pts = a; pad = .08; } }
+  if(pts){ let s = Math.min(...pts.map(q => q[0])), n = Math.max(...pts.map(q => q[0])), w = Math.min(...pts.map(q => q[1])), e = Math.max(...pts.map(q => q[1])); const dl = (n-s)*pad || .001, dg = (e-w)*pad || .001; return {s:s-dl, n:n+dl, w:w-dg, e:e+dg, boundary: sel !== "all" && sel !== "view" ? pts : null}; }
+  const b = osmMap.getBounds(); return {s:b.getSouth(), n:b.getNorth(), w:b.getWest(), e:b.getEast(), boundary:null};
+}
+function azDP(pts, tol){
+  if(pts.length < 3) return pts;
+  const keep = new Array(pts.length).fill(false); keep[0] = keep[pts.length-1] = true;
+  const st = [[0, pts.length-1]];
+  while(st.length){
+    const [a, b] = st.pop(); let dm = 0, im = -1;
+    const [ax, ay] = pts[a], [bx, by] = pts[b], dx = bx-ax, dy = by-ay, L = Math.hypot(dx, dy) || 1e-9;
+    for(let i=a+1; i<b; i++){ const d = Math.abs((pts[i][0]-ax)*dy - (pts[i][1]-ay)*dx)/L; if(d > dm){ dm = d; im = i; } }
+    if(dm > tol && im > 0){ keep[im] = true; st.push([a, im], [im, b]); }
+  }
+  return pts.filter((_, i) => keep[i]);
+}
+/* yopiq halqa uchun: boshlang'ich nuqtadan eng uzoq nuqtada ikkiga bo'lib soddalashtiriladi */
+function azSimplify(pts, tol){
+  if(pts.length < 5) return pts;
+  const f = pts[0], l = pts[pts.length-1];
+  if(f[0] !== l[0] || f[1] !== l[1]) return azDP(pts, tol);
+  let k = 1, dm = 0; for(let i=1;i<pts.length-1;i++){ const d = Math.hypot(pts[i][0]-f[0], pts[i][1]-f[1]); if(d > dm){ dm = d; k = i; } }
+  return azDP(pts.slice(0, k+1), tol).concat(azDP(pts.slice(k), tol).slice(1));
+}
+function azParse(j){
+  const areas = [], blds = [];
+  const ll = g => g.map(p => [p.lon, p.lat]);
+  const closed = c => c.length >= 4 && c[0][0] === c[c.length-1][0] && c[0][1] === c[c.length-1][1];
+  for(const el of (j.elements || [])){
+    const t = el.tags || {}, rings = [];
+    if(el.type === "way" && el.geometry) rings.push(ll(el.geometry));
+    else if(el.type === "relation" && el.members) el.members.forEach(m => { if(m.type === "way" && m.geometry && (m.role === "outer" || m.role === "")) rings.push(ll(m.geometry)); });
+    for(const c of rings){
+      if(!closed(c)) continue;
+      if(t.building) blds.push({b:t.building, ring:c});
+      else { const k = azClass(t); if(k) areas.push({key:k[0], prio:k[1], ring:c}); }
+    }
+  }
+  return {areas, blds};
+}
+const azLocal = (ring, ref) => ring.map(([lo, la]) => [(lo - ref.lng)*111320*Math.cos(ref.lat*Math.PI/180), (la - ref.lat)*110574]);
+function azTrace(cells, nx){
+  const has = new Set(cells), edges = new Map(), add = (a, b) => { const k = a[0] + "," + a[1]; if(!edges.has(k)) edges.set(k, []); edges.get(k).push(b); };
+  for(const id of cells){
+    const i = id % nx, j = (id - i)/nx;
+    if(!has.has(id - nx)) add([i,j], [i+1,j]);
+    if(!(i+1 < nx && has.has(id + 1))) add([i+1,j], [i+1,j+1]);
+    if(!has.has(id + nx)) add([i+1,j+1], [i,j+1]);
+    if(!(i > 0 && has.has(id - 1))) add([i,j+1], [i,j]);
+  }
+  let best = null, bestA = 0;
+  for(const [k0, arr] of edges){
+    while(arr.length){
+      const [sx, sy] = k0.split(",").map(Number), loop = [[sx, sy]]; let cur = arr.pop(), guard = 0;
+      while(cur && guard++ < 100000){
+        loop.push(cur); if(cur[0] === sx && cur[1] === sy) break;
+        const nx2 = edges.get(cur[0] + "," + cur[1]); cur = nx2 && nx2.length ? nx2.pop() : null;
+      }
+      if(loop.length > 3 && loop[loop.length-1][0] === sx && loop[loop.length-1][1] === sy){
+        let a = 0; for(let q=0; q<loop.length-1; q++) a += loop[q][0]*loop[q+1][1] - loop[q+1][0]*loop[q][1];
+        if(Math.abs(a) > bestA){ bestA = Math.abs(a); best = loop; }
+      }
+    }
+  }
+  if(!best) return null;
+  const out = [];  // kollinear nuqtalarni olib tashlash
+  for(let q=0; q<best.length-1; q++){
+    const a = best[(q + best.length - 2) % (best.length - 1)], b = best[q], c = best[q+1];
+    if((b[0]-a[0])*(c[1]-b[1]) - (b[1]-a[1])*(c[0]-b[0]) !== 0) out.push(b);
+  }
+  return out.length >= 3 ? out : null;
+}
+/* Binolar bo'yicha taxminiy to'r (grid) zonalash */
+function azGrid(blds, ref, bbL, B, cover, cell){
+  const minx = bbL.minx, miny = bbL.miny, nx = Math.ceil((bbL.maxx - minx)/cell), ny = Math.ceil((bbL.maxy - miny)/cell);
+  const acc = new Map();
+  for(const b of blds){
+    const i = Math.floor((b.x - minx)/cell), j = Math.floor((b.y - miny)/cell); if(i < 0 || j < 0 || i >= nx || j >= ny) continue;
+    const id = j*nx + i; let o = acc.get(id); if(!o){ o = {}; acc.set(id, o); } o[b.key] = (o[b.key] || 0) + b.area;
+  }
+  const allowed = new Array(nx*ny).fill(true);
+  for(let j=0;j<ny;j++) for(let i=0;i<nx;i++){
+    const cx = minx + (i+.5)*cell, cy = miny + (j+.5)*cell, id = j*nx + i;
+    if(B && !pip(cx, cy, B)){ allowed[id] = false; continue; }
+    for(const c of cover) if(cx >= c.minx && cx <= c.maxx && cy >= c.miny && cy <= c.maxy && pip(cx, cy, c.L)){ allowed[id] = false; break; }
+  }
+  const lab = new Array(nx*ny).fill(null);
+  acc.forEach((o, id) => { if(!allowed[id]) return; let tot = 0, best = null, bv = 0; for(const k in o){ tot += o[k]; if(o[k] > bv){ bv = o[k]; best = k; } } if(tot >= cell*cell*.05) lab[id] = best; });
+  const lab2 = lab.slice();  // yopish: bo'sh katak atrofida >=5/8 bir xil bo'lsa to'ldirish
+  for(let j=1;j<ny-1;j++) for(let i=1;i<nx-1;i++){
+    const id = j*nx + i; if(lab[id] || !allowed[id]) continue;
+    const cnt = {}; for(let dj=-1;dj<=1;dj++) for(let di=-1;di<=1;di++){ if(!di && !dj) continue; const l = lab[id + dj*nx + di]; if(l) cnt[l] = (cnt[l] || 0) + 1; }
+    for(const k in cnt) if(cnt[k] >= 5){ lab2[id] = k; break; }
+  }
+  const seen = new Uint8Array(nx*ny), res = [];
+  for(let id=0; id<nx*ny; id++){
+    if(!lab2[id] || seen[id]) continue;
+    const key = lab2[id], comp = [], q = [id]; seen[id] = 1;
+    while(q.length){
+      const c = q.pop(); comp.push(c); const i = c % nx;
+      for(const n of [c-nx, c+nx, i > 0 ? c-1 : -1, i < nx-1 ? c+1 : -1]) if(n >= 0 && n < nx*ny && !seen[n] && lab2[n] === key){ seen[n] = 1; q.push(n); }
+    }
+    if(comp.length < 4) continue;
+    const loop = azTrace(comp, nx); if(!loop) continue;
+    res.push({key, cells:comp.length, ring:loop.map(([x, y]) => [minx + x*cell, miny + y*cell])});
+  }
+  return res;
+}
+async function azRun(o){
+  const bb = azBounds(o.area), km2 = (bb.n-bb.s)*110.574*(bb.e-bb.w)*111.32*Math.cos((bb.s+bb.n)/2*Math.PI/180);
+  if(km2 > 4) throw new Error("big:" + km2.toFixed(1));
+  const bx = `(${bb.s.toFixed(6)},${bb.w.toFixed(6)},${bb.n.toFixed(6)},${bb.e.toFixed(6)})`;
+  const q = `[out:json][timeout:90];(way["landuse"]${bx};relation["landuse"]${bx};way["leisure"~"^(park|garden|nature_reserve|pitch|stadium|sports_centre|track|golf_course|recreation_ground|water_park|resort)$"]${bx};way["natural"~"^(wood|scrub|grassland|water|sand|bare_rock)$"]${bx};relation["natural"~"^(water|wood)$"]${bx};way["waterway"="riverbank"]${bx};way["amenity"~"^(school|kindergarten|college|university|hospital|clinic|townhall|police|fire_station|courthouse|community_centre|library|theatre|place_of_worship|social_facility|parking|bus_station|fuel|marketplace)$"]${bx};${o.fill ? `way["building"]${bx};` : ""});out geom qt;`;
+  const j = await m3Overpass(q), {areas, blds} = azParse(j);
+  const ref = {lat:(bb.s+bb.n)/2, lng:(bb.w+bb.e)/2}, B = bb.boundary ? ptsLocal(bb.boundary, ref) : null;
+  const inB = ring => { if(!B) return true; const L = azLocal(ring, ref); const c = [L.reduce((a,p)=>a+p[0],0)/L.length, L.reduce((a,p)=>a+p[1],0)/L.length]; return pip(c[0], c[1], B) || L.some(p => pip(p[0], p[1], B)) || pip(B[0][0], B[0][1], L); };
+  const made = [], skipped = {};
+  const A = areas.filter(a => inB(a.ring)).sort((a, b) => a.prio - b.prio);
+  const cover = [];
+  for(const a of A){
+    const z = azZone(a.key); if(!z){ skipped[a.key] = (skipped[a.key] || 0) + 1; continue; }
+    const L = azLocal(a.ring, ref), S2 = azSimplify(L, 2); if(S2.length < 4) continue;
+    const xs = L.map(p => p[0]), ys = L.map(p => p[1]);
+    cover.push({L, minx:Math.min(...xs), maxx:Math.max(...xs), miny:Math.min(...ys), maxy:Math.max(...ys)});
+    made.push({zoneId:z.id, src:"osm", pts:S2.slice(0, -1).map(([x, y]) => [ref.lat + y/110574, ref.lng + x/(111320*Math.cos(ref.lat*Math.PI/180))])});
+  }
+  let nGrid = 0;
+  if(o.fill){
+    const bl = [];
+    for(const b of blds){
+      const L = azLocal(b.ring, ref); let a = 0; for(let i=0,k=L.length-1;i<L.length;k=i++) a += L[k][0]*L[i][1] - L[i][0]*L[k][1]; a = Math.abs(a)/2;
+      const key = azBuildingKey(b.b, a); if(!key) continue;
+      bl.push({key, area:a, x:L.reduce((s,p)=>s+p[0],0)/L.length, y:L.reduce((s,p)=>s+p[1],0)/L.length});
+    }
+    const bbCorners = azLocal([[bb.w, bb.s], [bb.e, bb.n]], ref), bbL = {minx:bbCorners[0][0], miny:bbCorners[0][1], maxx:bbCorners[1][0], maxy:bbCorners[1][1]};
+    for(const g of azGrid(bl, ref, bbL, B, cover, 40)){
+      const z = azZone(g.key); if(!z){ skipped[g.key] = (skipped[g.key] || 0) + 1; continue; }
+      made.push({zoneId:z.id, src:"grid", pts:g.ring.map(([x, y]) => [ref.lat + y/110574, ref.lng + x/(111320*Math.cos(ref.lat*Math.PI/180))])}); nGrid++;
+    }
+  }
+  if(o.clear) P.polys = P.polys.filter(p => !(p.auto && !p.approved));
+  made.forEach(m => P.polys.push({id:uid("g"), zoneId:m.zoneId, pts:m.pts, ai:true, approved:false, auto:true, src:m.src}));
+  if(made.length){ commit(); refreshAll(); }
+  const per = {}; made.forEach(m => { const z = P.zones.find(z => z.id === m.zoneId); per[z.name] = (per[z.name] || 0) + 1; });
+  return {total:made.length, osm:made.length - nGrid, grid:nGrid, per, skipped, buildings:blds.length, km2};
+}
+function openAutoZones(){
+  const bps = entBoundaries(), n = pendingAI().length;
+  const hasAny = P.polys.some(p => { const az = P.zones.find(z => z.analysis); return !az || p.zoneId !== az.id; });
+  openModal({
+    title:"Avtomatik zonalash (OSM)", wide:true,
+    html:`<p style="margin-top:0">OpenStreetMap ma’lumoti (landuse, amenity, leisure, natural) va binolar asosida hududdagi funksional zonalarni <b>taxminiy</b> aniqlaydi. Natija <i>“kutilmoqda”</i> holatida qo‘shiladi: siz tasdiqlaysiz, tahrirlaysiz yoki o‘chirasiz.</p>
+      <label class="f">Hudud<select id="azArea">${bps.map((b, i) => `<option value="${esc(b.id)}">${esc(entBName(b, i))}</option>`).join("")}${hasAny ? `<option value="all">Butun loyiha hududi</option>` : ""}<option value="view"${bps.length || hasAny ? "" : " selected"}>Xaritadagi joriy ko‘rinish</option></select></label>
+      <label class="chk"><input type="checkbox" id="azFill" checked> Binolar bo‘yicha taxminiy to‘ldirish (OSM maydoni yo‘q joylarda)</label>
+      <label class="chk"><input type="checkbox" id="azClear" checked> Avvalgi tasdiqlanmagan avto-zonalarni almashtirish</label>
+      <div class="erow"><button class="btn primary" id="azRun">Zonalarni aniqlash</button></div>
+      <p class="help" id="azMsg" style="font-size:13px"></p>
+      <div id="aiPend" style="margin-top:10px">${n ? aiPendHtml(n) : ""}</div>
+      <p class="help">Hudud 4 km² dan oshmasin. “yes” deb belgilangan kichik binolar (&lt;500 m²) turar-joy deb olinadi. Natija OSM to‘liqligiga bog‘liq; hamma narsani tekshirib chiqing.</p>`,
+    actions:[{label:"Yopish"}],
+    onMount(ov){
+      $("#azRun", ov).addEventListener("click", async e => {
+        const btn = e.currentTarget, msg = $("#azMsg", ov); btn.disabled = true; msg.style.color = ""; msg.textContent = "OSM ma’lumoti olinmoqda va zonalar aniqlanmoqda…";
+        try{
+          const r = await azRun({area:$("#azArea", ov).value, fill:$("#azFill", ov).checked, clear:$("#azClear", ov).checked});
+          const sk = Object.keys(r.skipped).length ? ` O‘tkazib yuborilgan (loyihada mos zona turi yo‘q): ${Object.entries(r.skipped).map(([k, v]) => k + " — " + v).join(", ")}.` : "";
+          msg.textContent = r.total ? `${r.total} ta zona qo‘shildi (OSM maydonlari: ${r.osm}, binolar bo‘yicha taxminiy: ${r.grid}). Turlar: ${Object.entries(r.per).map(([k, v]) => k + " — " + v).join("; ")}.${sk}` : "Hududda mos OSM maydonlari yoki binolar topilmadi." + sk;
+          $("#aiPend", ov).innerHTML = aiPendHtml(pendingAI().length);
+        }catch(err){ msg.style.color = "#d64545"; msg.textContent = err && /^big/.test(err.message) ? "Hudud juda katta (" + err.message.split(":")[1] + " km²). 4 km² gacha bo‘lsin." : "OSM ma’lumotini olib bo‘lmadi (internet yoki server band). Keyinroq urinib ko‘ring."; }
+        finally{ btn.disabled = false; }
+      });
+      ov.addEventListener("click", e => {
+        const b = e.target.closest("button"); if(!b) return;
+        if(b.id === "aiOkAll"){ pendingAI().forEach(p => p.approved = true); commit(); refreshAll(); $("#aiPend", ov).innerHTML = ""; }
+        if(b.id === "aiDelAll"){ const ids = new Set(pendingAI().map(p => p.id)); P.polys = P.polys.filter(p => !ids.has(p.id)); S.poly = null; commit(); refreshAll(); $("#aiPend", ov).innerHTML = ""; }
+      });
+    }
+  });
+}
+
 function openAI(){
-  if(P.mode === "osm"){ toast("AI orqali tahlil qilish OSM rejimida hali qo‘shilmagan.", true); return; }
+  if(P.mode === "osm"){ openAutoZones(); return; }
   const n = pendingAI().length;
   openModal({
     title:"AI orqali tahlil qilish", wide:true,
