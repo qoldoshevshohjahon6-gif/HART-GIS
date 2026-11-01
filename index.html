@@ -483,6 +483,7 @@ textarea.field{min-height:90px;font-size:12px}
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const AREA_LIMIT = 3;   // km² — 3D va avtomatik zonalash uchun eng katta hudud (donib qolmasligi uchun)
 const uid = p => p + "_" + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const LS = {
@@ -726,6 +727,7 @@ function frame(){
   ctx.setTransform(DPR,0,0,DPR,0,0);
   ctx.clearRect(0,0,W,H);
   if(!P || !IMG) return;
+  if(tool === "draw" && D) drawInfo();
   legendInset = {l:Math.round(66*UIS.zb+8), t:Math.round(62*UIS.zb+8), b:Math.round(46*UIS.zb+8)};
   paintMap(ctx, {
     s:V.s, tx:V.tx, ty:V.ty, W, H, u:1, interactive:true,
@@ -1000,7 +1002,7 @@ function initOsm(){
   osmMap._fzmZones = osmZonesGrp;
   osmMap.on("click", osmMapClick);
   osmMap.on("dblclick", e => { if(tool === "draw" && D && D.pts.length >= 3){ L.DomEvent.stop(e); finishDraw(); } });
-  osmMap.on("mousemove", e => { if(tool === "draw" && D && D.pts.length){ D.hover = [e.latlng.lat, e.latlng.lng]; if(osmHoverLine) osmHoverLine.setLatLngs([D.pts[D.pts.length-1], D.hover]); else invalidate(); } });
+  osmMap.on("mousemove", e => { if(tool === "draw" && D && D.pts.length){ D.hover = [e.latlng.lat, e.latlng.lng]; drawInfo(); if(osmHoverLine) osmHoverLine.setLatLngs([D.pts[D.pts.length-1], D.hover]); else invalidate(); } });
   osmMap.getContainer().addEventListener("mouseleave", () => { if(D){ D.hover = null; invalidate(); } });
   osmMap.on("moveend zoomend", () => { Object.assign(P.view, {lat:osmMap.getCenter().lat, lng:osmMap.getCenter().lng, zoom:osmMap.getZoom()}); scheduleSave(); });
   osmMap.on("move zoom moveend zoomend", () => { if(printOn) layoutPrint(); });
@@ -2475,7 +2477,7 @@ function azGrid(blds, ref, bbL, B, cover, cell){
 }
 async function azRun(o){
   const bb = azBounds(o.area), km2 = (bb.n-bb.s)*110.574*(bb.e-bb.w)*111.32*Math.cos((bb.s+bb.n)/2*Math.PI/180);
-  if(km2 > 4) throw new Error("big:" + km2.toFixed(1));
+  if(km2 > AREA_LIMIT) throw new Error("big:" + km2.toFixed(1));
   const bx = `(${bb.s.toFixed(6)},${bb.w.toFixed(6)},${bb.n.toFixed(6)},${bb.e.toFixed(6)})`;
   const q = `[out:json][timeout:90];(way["landuse"]${bx};relation["landuse"]${bx};way["leisure"~"^(park|garden|nature_reserve|pitch|stadium|sports_centre|track|golf_course|recreation_ground|water_park|resort)$"]${bx};way["natural"~"^(wood|scrub|grassland|water|sand|bare_rock)$"]${bx};relation["natural"~"^(water|wood)$"]${bx};way["waterway"="riverbank"]${bx};way["amenity"~"^(school|kindergarten|college|university|hospital|clinic|townhall|police|fire_station|courthouse|community_centre|library|theatre|place_of_worship|social_facility|parking|bus_station|fuel|marketplace)$"]${bx};${o.fill ? `way["building"]${bx};` : ""});out geom qt;`;
   const j = await m3Overpass(q), {areas, blds} = azParse(j);
@@ -2523,7 +2525,7 @@ function openAutoZones(){
       <div class="erow"><button class="btn primary" id="azRun">Zonalarni aniqlash</button></div>
       <p class="help" id="azMsg" style="font-size:13px"></p>
       <div id="aiPend" style="margin-top:10px">${n ? aiPendHtml(n) : ""}</div>
-      <p class="help">Hudud 4 km² dan oshmasin. “yes” deb belgilangan kichik binolar (&lt;500 m²) turar-joy deb olinadi. Natija OSM to‘liqligiga bog‘liq; hamma narsani tekshirib chiqing.</p>`,
+      <p class="help">Hudud ${AREA_LIMIT} km² dan oshmasin. “yes” deb belgilangan kichik binolar (&lt;500 m²) turar-joy deb olinadi. Natija OSM to‘liqligiga bog‘liq; hamma narsani tekshirib chiqing.</p>`,
     actions:[{label:"Yopish"}],
     onMount(ov){
       $("#azRun", ov).addEventListener("click", async e => {
@@ -2533,7 +2535,7 @@ function openAutoZones(){
           const sk = Object.keys(r.skipped).length ? ` O‘tkazib yuborilgan (loyihada mos zona turi yo‘q): ${Object.entries(r.skipped).map(([k, v]) => k + " — " + v).join(", ")}.` : "";
           msg.textContent = r.total ? `${r.total} ta zona qo‘shildi (OSM maydonlari: ${r.osm}, binolar bo‘yicha taxminiy: ${r.grid}). Turlar: ${Object.entries(r.per).map(([k, v]) => k + " — " + v).join("; ")}.${sk}` : "Hududda mos OSM maydonlari yoki binolar topilmadi." + sk;
           $("#aiPend", ov).innerHTML = aiPendHtml(pendingAI().length);
-        }catch(err){ msg.style.color = "#d64545"; msg.textContent = err && /^big/.test(err.message) ? "Hudud juda katta (" + err.message.split(":")[1] + " km²). 4 km² gacha bo‘lsin." : "OSM ma’lumotini olib bo‘lmadi (internet yoki server band). Keyinroq urinib ko‘ring."; }
+        }catch(err){ msg.style.color = "#d64545"; msg.textContent = err && /^big/.test(err.message) ? "Hudud juda katta (" + err.message.split(":")[1] + " km²). " + AREA_LIMIT + " km² gacha bo‘lsin." : "OSM ma’lumotini olib bo‘lmadi (internet yoki server band). Keyinroq urinib ko‘ring."; }
         finally{ btn.disabled = false; }
       });
       ov.addEventListener("click", e => {
@@ -2850,6 +2852,25 @@ function toggleSheet(which){ openPanel(which === "left" ? "zones" : "settings");
 /* =====================================================================
    Yuqori panel / holat paneli
    ===================================================================== */
+let lastDrawInfo = "";
+function drawInfo(){
+  const el = $("#dbInfo"); if(!el || tool !== "draw") return;
+  const z = curZone(); let h;
+  if(!z) h = "Zona tanlanmagan";
+  else{
+    let extra = "";
+    if(z.analysis && D && P.mode === "osm"){
+      const pts = D.hover && D.pts.length ? D.pts.concat([D.hover]) : D.pts;
+      if(pts.length >= 3){
+        const km2 = geoAreaM2(pts)/1e6, over = km2 > AREA_LIMIT;
+        extra = ` · <b style="color:${over ? "#ff5d5d" : "inherit"}">${km2.toFixed(2)} km²</b>${over ? ` — ${AREA_LIMIT} km² dan oshdi! 3D va avto-zonalash ishlamaydi` : ` / ${AREA_LIMIT}`}`;
+        if(over && !D.warned){ D.warned = true; toast("Hudud " + km2.toFixed(1) + " km² — " + AREA_LIMIT + " km² dan katta. 3D va avtomatik zonalash uchun hududni kichraytiring.", true); }
+      }
+    }
+    h = `<span class="sw" style="background:${esc(z.color)}"></span><span>${esc(z.name)} · ${D ? D.pts.length : 0} ta nuqta${extra}</span>`;
+  }
+  if(h !== lastDrawInfo){ el.innerHTML = h; lastDrawInfo = h; }
+}
 function updateTopUI(){
   if(!P) return;
   $$("[data-tool]").forEach(b => b.classList.toggle("active", b.dataset.tool === tool));
@@ -2863,7 +2884,7 @@ function updateTopUI(){
   const db = $("#drawbar"); db.hidden = tool !== "draw";
   if(tool === "draw"){
     const z = curZone();
-    $("#dbInfo").innerHTML = z ? `<span class="sw" style="background:${esc(z.color)}"></span><span>${esc(z.name)} · ${D ? D.pts.length : 0} ta nuqta</span>` : "Zona tanlanmagan";
+    drawInfo();
     $("#dbBack").disabled = !(D && D.pts.length);
     $("#dbDone").disabled = !(D && D.pts.length);
     $("#dbCancel").disabled = !D;
@@ -3076,11 +3097,11 @@ $("#bArea").addEventListener("click", () => {
 /* =====================================================================
    3D ko'rinish (MapLibre GL): relyef, binolar, yo'llar, daraxtlar, suv, yashil hududlar
    ===================================================================== */
-const M3 = {on:false, map:null, data:null, area:"all", exag:1.4, az:225, alt:40, base:"osm", busy:false, bb:null,
-  vis:{terrain:true, buildings:true, roads:true, trees:true, water:true, green:true, zones:true, boundary:true}};
+const M3 = {on:false, map:null, data:null, raw:null, reg:null, area:"all", exag:1, demZ:12, treeCap:600, az:225, alt:40, base:"osm", busy:false, bb:null,
+  vis:{terrain:true, buildings:true, roads:true, trees:true, water:true, green:true, zones:true, boundary:true, mask:true}};
 const M3_GROUPS = {terrain:["hill"], buildings:["bld"], roads:["road-casing-major","road-major","road-casing-minor","road-minor","road-path"],
-  trees:["tree-trunk","tree-crown"], water:["water","waterway"], green:["green"], zones:["zones","zones-line"], boundary:["boundary"]};
-const M3_NAMES = [["terrain","⛰️","Relyef"],["buildings","🏢","Binolar"],["roads","🛣️","Yo‘llar"],["trees","🌳","Daraxtlar"],["water","💧","Suv obyektlari"],["green","🌿","Yashil hududlar"],["zones","🎨","Loyiha zonalari"],["boundary","🎯","Tahlil hududi"]];
+  trees:["tree-trunk","tree-crown"], water:["water","waterway"], green:["green"], zones:["zones","zones-line"], boundary:["boundary"], mask:["mask"]};
+const M3_NAMES = [["terrain","⛰️","Relyef"],["buildings","🏢","Binolar"],["roads","🛣️","Yo‘llar"],["trees","🌳","Daraxtlar"],["water","💧","Suv obyektlari"],["green","🌿","Yashil hududlar"],["zones","🎨","Loyiha zonalari"],["boundary","🎯","Tahlil hududi"],["mask","◐","Hudud tashqarisini xiralashtirish"]];
 const MAPLIBRE_JS = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js", MAPLIBRE_CSS = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css";
 const DEM_URL = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
 function loadMapLibre(){
@@ -3120,53 +3141,121 @@ const M3_DEF_H = {house:6, detached:6, semidetached_house:6, bungalow:4, terrace
 const m3bcol = b => /^(house|detached|semidetached_house|bungalow|terrace|residential|apartments|dormitory)$/.test(b) ? "#e9cfa8" : /^(commercial|retail|office|supermarket|kiosk)$/.test(b) ? "#a9bfe0" : /^(industrial|warehouse|factory)$/.test(b) ? "#b5b9bd" : /^(school|kindergarten|hospital|university|civic|public|government|church|mosque)$/.test(b) ? "#f0d97c" : "#ddd6c7";
 const FC = f => ({type:"FeatureCollection", features:f});
 /* Overpass javobini GeoJSON qatlamlariga aylantirish */
-function m3parse(j, userGreen){
-  const bld = [], road = [], water = [], waterway = [], green = [], trees = [], woods = [];
-  let est = 0;
-  const ll = g => g.map(p => [p.lon, p.lat]);
+function m3dist(x, y, ring){
+  let m = Infinity;
+  for(let i=0, j=ring.length-1; i<ring.length; j=i++){
+    const x1 = ring[j][0], y1 = ring[j][1], dx = ring[i][0]-x1, dy = ring[i][1]-y1;
+    const t = Math.max(0, Math.min(1, ((x-x1)*dx + (y-y1)*dy)/((dx*dx + dy*dy) || 1e-9)));
+    const d = Math.hypot(x - (x1 + t*dx), y - (y1 + t*dy)); if(d < m) m = d;
+  }
+  return m;
+}
+function m3hull(pts){   // [lat,lng] nuqtalarning qavariq qobig'i
+  const P2 = pts.map(p => [p[1], p[0]]).sort((a, b) => a[0] - b[0] || a[1] - b[1]); if(P2.length < 3) return pts;
+  const cr = (o, a, b) => (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0]), lo = [], up = [];
+  for(const p of P2){ while(lo.length >= 2 && cr(lo[lo.length-2], lo[lo.length-1], p) <= 0) lo.pop(); lo.push(p); }
+  for(const p of P2.slice().reverse()){ while(up.length >= 2 && cr(up[up.length-2], up[up.length-1], p) <= 0) up.pop(); up.push(p); }
+  return lo.slice(0, -1).concat(up.slice(0, -1)).map(p => [p[1], p[0]]);
+}
+const bbox2 = L => ({minx:Math.min(...L.map(q => q[0])), maxx:Math.max(...L.map(q => q[0])), miny:Math.min(...L.map(q => q[1])), maxy:Math.max(...L.map(q => q[1]))});
+/* Overpass javobini faqat belgilangan hudud (+ yo'llar uchun 50 m) bo'yicha GeoJSON qatlamlariga aylantirish */
+function m3parse(j, reg, userGreen){
+  const bld = [], road = [], water = [], waterway = [], green = [], osmTrees = [], woods = [], bl = [], roadPts = [];
+  const ref = {lat:reg.pts.reduce((a, p) => a + p[0], 0)/reg.pts.length, lng:reg.pts.reduce((a, p) => a + p[1], 0)/reg.pts.length};
+  const kx = 111320*Math.cos(ref.lat*Math.PI/180), ky = 110574;
+  const toL = ([lo, la]) => [(lo - ref.lng)*kx, (la - ref.lat)*ky], toLL = ([x, y]) => [ref.lng + x/kx, ref.lat + y/ky];
+  const RB = reg.pts.map(([la, lo]) => toL([lo, la])), RX = bbox2(RB), BUF = 50;
+  const inRB = (x, y) => pip(x, y, RB);
+  const touches = L => { const bx = bbox2(L); if(bx.maxx < RX.minx || bx.minx > RX.maxx || bx.maxy < RX.miny || bx.miny > RX.maxy) return false;
+    if(L.some(q => inRB(q[0], q[1]))) return true; if(inRB((bx.minx + bx.maxx)/2, (bx.miny + bx.maxy)/2)) return true; return pip(RB[0][0], RB[0][1], L); };
   const closed = c => c.length >= 4 && c[0][0] === c[c.length-1][0] && c[0][1] === c[c.length-1][1];
+  let est = 0;
   for(const el of (j.elements || [])){
     const t = el.tags || {};
-    if(el.type === "node"){ if(t.natural === "tree") trees.push([el.lon, el.lat, m3num(t.height), m3num(t.diameter_crown)]); continue; }
+    if(el.type === "node"){ if(t.natural === "tree"){ const q = toL([el.lon, el.lat]); if(inRB(q[0], q[1])) osmTrees.push([el.lon, el.lat, m3num(t.height), m3num(t.diameter_crown)]); } continue; }
     const rings = [];
-    if(el.type === "way" && el.geometry) rings.push(ll(el.geometry));
-    else if(el.type === "relation" && el.members) el.members.forEach(m => { if(m.type === "way" && m.geometry && (m.role === "outer" || m.role === "")) rings.push(ll(m.geometry)); });
+    if(el.type === "way" && el.geometry) rings.push(el.geometry.map(p => [p.lon, p.lat]));
+    else if(el.type === "relation" && el.members) el.members.forEach(m => { if(m.type === "way" && m.geometry && (m.role === "outer" || m.role === "")) rings.push(m.geometry.map(p => [p.lon, p.lat])); });
     if(!rings.length) continue;
     if(t.building){
       for(const c of rings){ if(!closed(c)) continue;
-        let h = m3num(t.height), known = h != null;
-        if(h == null){ const lv = m3num(t["building:levels"]); if(lv != null){ h = lv*3.2 + 1; known = true; } }
+        const L = c.map(toL); if(!touches(L)) continue;
+        let h = m3num(t.height);
+        if(h == null){ const lv = m3num(t["building:levels"]); if(lv != null) h = lv*3.2 + 1; }
         if(h == null){ h = M3_DEF_H[t.building] != null ? M3_DEF_H[t.building] : 9; est++; }
         h = Math.max(2.5, h); let mh = m3num(t.min_height); if(mh == null){ const ml = m3num(t["building:min_level"]); mh = ml != null ? ml*3.2 : 0; } if(mh >= h) mh = 0;
-        bld.push({type:"Feature", properties:{h, mh, c:m3bcol(t.building)}, geometry:{type:"Polygon", coordinates:[c]}}); }
+        bld.push({type:"Feature", properties:{h, mh, c:m3bcol(t.building)}, geometry:{type:"Polygon", coordinates:[c]}});
+        bl.push(Object.assign({L}, bbox2(L))); }
       continue;
     }
     if(t.highway){
       const h = t.highway, cls = /^(motorway|trunk|primary|secondary|tertiary)(_link)?$/.test(h) ? "major" : /^(residential|unclassified|living_street|service|road)$/.test(h) ? "minor" : /^(footway|path|cycleway|pedestrian|steps|track|bridleway)$/.test(h) ? "path" : null;
-      if(cls) for(const c of rings) if(c.length > 1) road.push({type:"Feature", properties:{cls}, geometry:{type:"LineString", coordinates:c}});
+      if(!cls) continue;
+      for(const c of rings){
+        if(c.length < 2) continue;
+        const L = c.map(toL), dens = [];
+        for(let i=0; i<L.length-1; i++){ const [x1, y1] = L[i], [x2, y2] = L[i+1], n = Math.max(1, Math.ceil(Math.hypot(x2-x1, y2-y1)/10)); for(let k=0; k<n; k++) dens.push([x1 + (x2-x1)*k/n, y1 + (y2-y1)*k/n]); }
+        dens.push(L[L.length-1]);
+        let run = []; const flush = () => { if(run.length > 1) road.push({type:"Feature", properties:{cls}, geometry:{type:"LineString", coordinates:run.map(toLL)}}); run = []; };
+        for(const q of dens){
+          if(q[0] < RX.minx - BUF || q[0] > RX.maxx + BUF || q[1] < RX.miny - BUF || q[1] > RX.maxy + BUF){ flush(); continue; }
+          if(inRB(q[0], q[1]) || m3dist(q[0], q[1], RB) <= BUF){ run.push(q); if(cls !== "path") roadPts.push(q); } else flush();
+        }
+        flush();
+      }
       continue;
     }
-    if(t.waterway && /^(river|stream|canal|drain|ditch)$/.test(t.waterway)){ for(const c of rings) if(c.length > 1) waterway.push({type:"Feature", properties:{}, geometry:{type:"LineString", coordinates:c}}); continue; }
-    if(t.natural === "water" || t.waterway === "riverbank" || t.landuse === "reservoir"){ for(const c of rings) if(closed(c)) water.push({type:"Feature", properties:{}, geometry:{type:"Polygon", coordinates:[c]}}); continue; }
+    if(t.waterway && /^(river|stream|canal|drain|ditch)$/.test(t.waterway)){
+      for(const c of rings){ if(c.length < 2) continue; if(c.map(toL).some(q => inRB(q[0], q[1]) || m3dist(q[0], q[1], RB) <= BUF)) waterway.push({type:"Feature", properties:{}, geometry:{type:"LineString", coordinates:c}}); }
+      continue;
+    }
+    if(t.natural === "water" || t.waterway === "riverbank" || t.landuse === "reservoir"){
+      for(const c of rings) if(closed(c) && touches(c.map(toL))) water.push({type:"Feature", properties:{}, geometry:{type:"Polygon", coordinates:[c]}});
+      continue;
+    }
     const wood = t.natural === "wood" || t.landuse === "forest";
     const k = wood ? "wood" : (/^(park|garden)$/.test(t.leisure || "") ? "park" : (/^(pitch|playground|recreation_ground)$/.test(t.leisure || "") || /^(grass|meadow|recreation_ground|village_green)$/.test(t.landuse || "") || /^(scrub|grassland)$/.test(t.natural || "") ? "grass" : null));
-    if(k) for(const c of rings) if(closed(c)){ green.push({type:"Feature", properties:{k}, geometry:{type:"Polygon", coordinates:[c]}}); if(wood) woods.push(c); }
+    if(k) for(const c of rings) if(closed(c)){ const L = c.map(toL); if(!touches(L)) continue; green.push({type:"Feature", properties:{k}, geometry:{type:"Polygon", coordinates:[c]}}); if(wood) woods.push(Object.assign({L}, bbox2(L))); }
   }
-  // daraxtlar: OSM nuqtalari + o'rmonlar va ko'kalamzor zonalar ichida sxematik
-  const CAP = 6000, scattered = [];
-  let totalArea = 0; const all = [...woods, ...userGreen];
-  all.forEach(c => { const la = c[0][1], k = Math.cos(la*Math.PI/180); let a = 0; for(let i=0,jx=c.length-1;i<c.length;jx=i++) a += c[jx][0]*c[i][1] - c[i][0]*c[jx][1]; totalArea += Math.abs(a)/2*110574*111320*k; });
-  const room = Math.max(0, CAP - trees.length), sp = Math.max(14, Math.sqrt(totalArea/Math.max(1, room)));
-  all.forEach(c => m3scatter(c, sp, scattered, room));
-  const treePts = trees.concat(scattered).slice(0, CAP);
-  const trunk = [], crown = [], cc = ["#4f8f4a","#5da04f","#468246","#6aa857"];
-  treePts.forEach(([lon, lat, h, d]) => {
+  const ug = userGreen.map(c => { const L = c.map(toL); return Object.assign({L}, bbox2(L)); });
+  return {fc:{bld:FC(bld.slice(0, 5000)), road:FC(road), water:FC(water), waterway:FC(waterway), green:FC(green)},
+          raw:{ref, kx, ky, RB, osmTrees, woods, ug, bl, roadPts, toLL},
+          stats:{bld:Math.min(bld.length, 5000), est, road:road.length, water:water.length + waterway.length, green:green.length}};
+}
+/* Daraxtlar: OSM nuqtalari + o'rmon/ko'kalamzor ichida sxematik; binolar va yo'llardan tashqarida; umumiy soni chegaralangan */
+function m3BuildTrees(){
+  const R = M3.raw; if(!R) return;
+  const cap = M3.treeCap, sp = 16, key = (x, y) => Math.floor(x/40) + "," + Math.floor(y/40);
+  const byHash = (a, b) => m3rnd(a[0], a[1]) - m3rnd(b[0], b[1]);
+  const osm = R.osmTrees.slice().sort((a, b) => m3rnd(a[0], a[1]) - m3rnd(b[0], b[1])).slice(0, cap);
+  const room = Math.max(0, cap - osm.length), cand = [];
+  if(room > 0){
+    const hb = new Map(), hr = new Map();
+    R.bl.forEach(b => { for(let cx = Math.floor(b.minx/40); cx <= Math.floor(b.maxx/40); cx++) for(let cy = Math.floor(b.miny/40); cy <= Math.floor(b.maxy/40); cy++){ const k = cx + "," + cy; (hb.get(k) || hb.set(k, []).get(k)).push(b); } });
+    R.roadPts.forEach(q => { const k = key(q[0], q[1]); (hr.get(k) || hr.set(k, []).get(k)).push(q); });
+    const blocked = (x, y) => {
+      for(const b of (hb.get(key(x, y)) || [])) if(x >= b.minx && x <= b.maxx && y >= b.miny && y <= b.maxy && pip(x, y, b.L)) return true;
+      const cx = Math.floor(x/40), cy = Math.floor(y/40);
+      for(let i=-1;i<=1;i++) for(let j=-1;j<=1;j++) for(const q of (hr.get((cx+i) + "," + (cy+j)) || [])) if(Math.hypot(q[0]-x, q[1]-y) < 6) return true;
+      return false;
+    };
+    for(const poly of R.woods.concat(R.ug)){
+      for(let y = poly.miny + sp/2; y < poly.maxy; y += sp) for(let x = poly.minx + sp/2; x < poly.maxx; x += sp){
+        const jx = x + (m3rnd(x, y) - .5)*sp*.8, jy = y + (m3rnd(y, x) - .5)*sp*.8;
+        if(pip(jx, jy, poly.L) && pip(jx, jy, R.RB) && !blocked(jx, jy)) cand.push([jx, jy]);
+      }
+      if(cand.length > 60000) break;
+    }
+    cand.sort(byHash);
+  }
+  const sch = cand.slice(0, room).map(q => { const ll = R.toLL(q); return [ll[0], ll[1], null, null]; });
+  const all = osm.concat(sch), trunk = [], crown = [], cc = ["#4f8f4a", "#5da04f", "#468246", "#6aa857"];
+  all.forEach(([lon, lat, h, d]) => {
     const r1 = m3rnd(lon, lat), r = d ? Math.max(1.2, d/2) : 2.4 + r1*1.2, ht = h || (6 + m3rnd(lat, lon)*4);
     trunk.push({type:"Feature", properties:{h:Math.min(2.6, ht*.4)}, geometry:{type:"Polygon", coordinates:m3circ(lon, lat, .35, 6)}});
     crown.push({type:"Feature", properties:{h:ht, mh:Math.min(2.6, ht*.4), c:cc[Math.floor(r1*cc.length) % cc.length]}, geometry:{type:"Polygon", coordinates:m3circ(lon, lat, r, 9)}});
   });
-  return {bld:FC(bld), road:FC(road), water:FC(water), waterway:FC(waterway), green:FC(green), trunk:FC(trunk), crown:FC(crown),
-          stats:{bld:bld.length, est, road:road.length, trees:treePts.length, osmTrees:trees.length, water:water.length + waterway.length, green:green.length}};
+  if(M3.data){ M3.data.trunk = FC(trunk); M3.data.crown = FC(crown); M3.data.stats.trees = all.length; M3.data.stats.osmTrees = osm.length; M3.data.stats.scatter = sch.length; }
 }
 /* Loyiha zonalari va tahlil chegarasi (GeoJSON) */
 function m3userGeo(){
@@ -3182,14 +3271,16 @@ function m3userGeo(){
   });
   return {zones:FC(zf), boundary:FC(bf), green};
 }
-function m3Bounds(){
-  let pts = null;
-  if(M3.area !== "all"){ const bp = entBoundaries().find(b => b.id === M3.area); if(bp) pts = bp.pts; }
-  if(!pts){ const az = P.zones.find(z => z.analysis), a = P.polys.filter(p => !az || p.zoneId !== az.id).flatMap(p => p.pts); if(a.length) pts = a; }
-  let s, w, n, e;
-  if(pts){ s = Math.min(...pts.map(q => q[0])); n = Math.max(...pts.map(q => q[0])); w = Math.min(...pts.map(q => q[1])); e = Math.max(...pts.map(q => q[1])); const pd = .06; const dl = (n-s)*pd || .001, dg = (e-w)*pd || .001; s -= dl; n += dl; w -= dg; e += dg; }
-  else { const b = osmMap.getBounds(); s = b.getSouth(); n = b.getNorth(); w = b.getWest(); e = b.getEast(); }
-  return {s, w, n, e};
+/* 3D hududi: tanlangan chegara; bo'lmasa — loyiha poligonlarining qavariq qobig'i; u ham bo'lmasa — xaritadagi ko'rinish */
+function m3Region(){
+  let pts = null, kind = "view";
+  if(M3.area !== "all"){ const bp = entBoundaries().find(b => b.id === M3.area); if(bp && bp.pts.length >= 3){ pts = bp.pts; kind = "boundary"; } }
+  if(!pts){
+    const az = P.zones.find(z => z.analysis), a = P.polys.filter(p => !az || p.zoneId !== az.id).flatMap(p => p.pts), a2 = a.length >= 3 ? a : P.polys.flatMap(p => p.pts);
+    if(a2.length >= 3){ pts = m3hull(a2); kind = "hull"; }
+  }
+  if(!pts){ const b = osmMap.getBounds(); pts = [[b.getSouth(), b.getWest()], [b.getSouth(), b.getEast()], [b.getNorth(), b.getEast()], [b.getNorth(), b.getWest()]]; }
+  return {pts, kind};
 }
 async function m3Overpass(q){
   let last;
@@ -3204,30 +3295,53 @@ async function m3Overpass(q){
   throw last;
 }
 function m3Status(t, err){ const el = $("#d3Stat"); if(el){ el.textContent = t; el.style.color = err ? "#d64545" : ""; } }
+function m3StatText(){
+  const st = M3.data && M3.data.stats; if(!st) return "";
+  return `Hudud: ${(M3.reg ? geoAreaM2(M3.reg.pts)/1e6 : 0).toFixed(2)} km² · Binolar: ${st.bld} (balandligi taxminiy: ${st.est}) · Yo‘llar: ${st.road} · Daraxtlar: ${st.trees} (OSM: ${st.osmTrees}, sxematik: ${st.scatter}) · Suv: ${st.water} · Yashil: ${st.green}`;
+}
 async function m3LoadData(){
   if(M3.busy) return; M3.busy = true;
   try{
-    const bb = m3Bounds(), km2 = (bb.n-bb.s)*110.574*(bb.e-bb.w)*111.32*Math.cos((bb.s+bb.n)/2*Math.PI/180);
-    if(km2 > 5){ m3Status("Hudud juda katta (" + km2.toFixed(1) + " km²). 5 km² gacha bo‘lgan hududni tanlang.", true); return; }
+    const reg = m3Region(), km2 = geoAreaM2(reg.pts)/1e6;
+    if(km2 > AREA_LIMIT){ m3Status(`Hudud juda katta (${km2.toFixed(2)} km²). ${AREA_LIMIT} km² gacha bo‘lgan hududni tanlang yoki chegarani kichraytiring.`, true); return; }
     m3Status("OSM ma’lumoti yuklanmoqda… (" + km2.toFixed(2) + " km²)");
-    const bx = `(${bb.s.toFixed(6)},${bb.w.toFixed(6)},${bb.n.toFixed(6)},${bb.e.toFixed(6)})`;
+    let s2 = Math.min(...reg.pts.map(q => q[0])), n2 = Math.max(...reg.pts.map(q => q[0])), w2 = Math.min(...reg.pts.map(q => q[1])), e2 = Math.max(...reg.pts.map(q => q[1]));
+    const dl = 60/110574, dg = 60/(111320*Math.cos((s2 + n2)/2*Math.PI/180)); s2 -= dl; n2 += dl; w2 -= dg; e2 += dg;
+    const bx = `(${s2.toFixed(6)},${w2.toFixed(6)},${n2.toFixed(6)},${e2.toFixed(6)})`;
     const q = `[out:json][timeout:90];(way["building"]${bx};way["highway"]${bx};node["natural"="tree"]${bx};way["natural"~"^(wood|water|scrub|grassland)$"]${bx};way["waterway"]${bx};way["leisure"~"^(park|garden|pitch|playground|recreation_ground)$"]${bx};way["landuse"~"^(forest|grass|meadow|recreation_ground|village_green|reservoir)$"]${bx};relation["natural"~"^(water|wood)$"]${bx};relation["landuse"="forest"]${bx};);out geom qt;`;
-    const j = await m3Overpass(q), uo = m3userGeo();
-    M3.data = Object.assign(m3parse(j, uo.green), {zones:uo.zones, boundary:uo.boundary}); M3.bb = bb;
+    const j = await m3Overpass(q), uo = m3userGeo(), pr = m3parse(j, reg, uo.green);
+    let mask = FC([]);
+    if(reg.kind !== "view"){ const ring = reg.pts.map(([la, lo]) => [lo, la]); ring.push(ring[0]); mask = FC([{type:"Feature", properties:{}, geometry:{type:"Polygon", coordinates:[[[-180,-85],[180,-85],[180,85],[-180,85],[-180,-85]], ring]}}]); }
+    M3.data = Object.assign({}, pr.fc, {zones:uo.zones, boundary:uo.boundary, mask, stats:Object.assign(pr.stats, {trees:0, osmTrees:0, scatter:0})});
+    M3.raw = pr.raw; M3.reg = reg; M3.bb = {s:s2, w:w2, n:n2, e:e2};
+    m3BuildTrees();
     await m3Apply(true);
-    const st = M3.data.stats;
-    m3Status(`Binolar: ${st.bld} (balandligi taxminiy: ${st.est}) · Yo‘llar: ${st.road} · Daraxtlar: ${st.trees} (OSM: ${st.osmTrees}, qolgani sxematik) · Suv: ${st.water} · Yashil: ${st.green}`);
+    m3Status(m3StatText());
   }catch(e){ m3Status("OSM ma’lumotini olib bo‘lmadi (internet yoki server band). Keyinroq urinib ko‘ring.", true); }
   finally{ M3.busy = false; }
+}
+function m3RebuildTrees(){
+  m3BuildTrees();
+  const map = M3.map; if(map && M3.data){ const a = map.getSource("g-trunk"), b = map.getSource("g-crown"); if(a) a.setData(M3.data.trunk); if(b) b.setData(M3.data.crown); }
+  m3Status(m3StatText());
 }
 function m3BaseSource(kind){
   const b = BASEMAPS[kind === "sat" ? "sat" : "osm"]; if(kind === "none") return null;
   return {type:"raster", tiles:[b.url], tileSize:256, maxzoom:19, attribution:b.attr};
 }
+const m3Dem = () => ({type:"raster-dem", tiles:[DEM_URL], encoding:"terrarium", tileSize:256, maxzoom:M3.demZ, attribution:"Relyef: AWS Terrain Tiles (SRTM 30 m)"});
+const HILL = {id:"hill", type:"hillshade", source:"dem", paint:{"hillshade-exaggeration":.5, "hillshade-shadow-color":"#3b4a52", "hillshade-highlight-color":"#ffffff"}};
+function m3SetDem(z){
+  M3.demZ = z; const map = M3.map; if(!map) return;
+  map.setTerrain(null);
+  const before = ["mask","green","water","waterway","zones"].find(id => map.getLayer(id));
+  if(map.getLayer("hill")) map.removeLayer("hill"); if(map.getSource("dem")) map.removeSource("dem");
+  map.addSource("dem", m3Dem()); map.addLayer(HILL, before); m3Vis();
+}
 async function m3Init(){
   await loadMapLibre();
-  const bb = M3.bb || m3Bounds(), base = m3BaseSource(M3.base);
-  const style = {version:8, sources:{dem:{type:"raster-dem", tiles:[DEM_URL], encoding:"terrarium", tileSize:256, maxzoom:15, attribution:"Relyef: AWS Terrain Tiles"}},
+  const rg = m3Region().pts, bb = M3.bb || {s:Math.min(...rg.map(q => q[0])), n:Math.max(...rg.map(q => q[0])), w:Math.min(...rg.map(q => q[1])), e:Math.max(...rg.map(q => q[1]))}, base = m3BaseSource(M3.base);
+  const style = {version:8, sources:{dem:m3Dem()},
     layers:[{id:"bg", type:"background", paint:{"background-color":"#e4eaee"}},
             {id:"hill", type:"hillshade", source:"dem", paint:{"hillshade-exaggeration":.5, "hillshade-shadow-color":"#3b4a52", "hillshade-highlight-color":"#ffffff"}}]};
   if(base){ style.sources.base = base; style.layers.splice(1, 0, {id:"base", type:"raster", source:"base"}); }
@@ -3242,9 +3356,10 @@ async function m3Apply(fit){
   const map = M3.map, d = M3.data; if(!map || !d) return;
   const put = (id, data) => { const sc = map.getSource(id); if(sc) sc.setData(data); else map.addSource(id, {type:"geojson", data}); };
   put("g-bld", d.bld); put("g-road", d.road); put("g-water", d.water); put("g-waterway", d.waterway); put("g-green", d.green);
-  put("g-trunk", d.trunk); put("g-crown", d.crown); put("g-zones", d.zones); put("g-boundary", d.boundary);
+  put("g-trunk", d.trunk); put("g-crown", d.crown); put("g-zones", d.zones); put("g-boundary", d.boundary); put("g-mask", d.mask || FC([]));
   const L = (def) => { if(!map.getLayer(def.id)) map.addLayer(def); };
   const rd = (id, cls, cas, w, col, extra) => L(Object.assign({id, type:"line", source:"g-road", filter:["==", ["get","cls"], cls], layout:{"line-cap":"round","line-join":"round"}, paint:Object.assign({"line-color":col, "line-width":LW(w)}, extra || {})}));
+  L({id:"mask", type:"fill", source:"g-mask", paint:{"fill-color":"#ffffff", "fill-opacity":.62}});
   L({id:"green", type:"fill", source:"g-green", paint:{"fill-color":["match", ["get","k"], "wood", "#6f9a63", "park", "#b7dca0", "#c9e4ae"], "fill-opacity":.8}});
   L({id:"water", type:"fill", source:"g-water", paint:{"fill-color":"#8ec5e8"}});
   L({id:"waterway", type:"line", source:"g-waterway", paint:{"line-color":"#79b4de", "line-width":LW([12,1,18,5,20,9])}});
@@ -3258,7 +3373,7 @@ async function m3Apply(fit){
   L({id:"tree-trunk", type:"fill-extrusion", source:"g-trunk", paint:{"fill-extrusion-color":"#7a5a3a", "fill-extrusion-height":["get","h"], "fill-extrusion-base":0}});
   L({id:"tree-crown", type:"fill-extrusion", source:"g-crown", paint:{"fill-extrusion-color":["get","c"], "fill-extrusion-height":["get","h"], "fill-extrusion-base":["get","mh"], "fill-extrusion-opacity":.95}});
   m3Vis();
-  if(fit && M3.bb) map.fitBounds([[M3.bb.w, M3.bb.s], [M3.bb.e, M3.bb.n]], {padding:70, pitch:60, bearing:-20, maxZoom:17, duration:0});
+  if(fit && M3.bb) map.fitBounds([[M3.bb.w, M3.bb.s], [M3.bb.e, M3.bb.n]], {padding:70, pitch:60, bearing:-20, maxZoom:18, duration:0});
 }
 function m3Vis(){
   const map = M3.map; if(!map) return;
@@ -3273,21 +3388,26 @@ function m3SetBase(kind){
 }
 function m3Panel(){
   if(!P) return;
-  const bps = entBoundaries(), sw = {terrain:"#8a8f95", buildings:"#e9cfa8", roads:"#ffd98a", trees:"#4f8f4a", water:"#8ec5e8", green:"#b7dca0", zones:"#4A90E2", boundary:"#e11d48"};
+  const bps = entBoundaries();
+  const optLabel = (b, i) => { const k = geoAreaM2(b.pts)/1e6; return esc(entBName(b, i)) + " · " + k.toFixed(2) + " km²" + (k > AREA_LIMIT ? " ⚠ katta" : ""); };
   $("#d3Box").innerHTML = `<section class="sec"><h3>Hudud</h3>
-      <label class="f" style="margin-bottom:8px"><select id="d3Area"><option value="all"${M3.area === "all" ? " selected" : ""}>Butun loyiha</option>${bps.map((b, i) => `<option value="${esc(b.id)}"${M3.area === b.id ? " selected" : ""}>${esc(entBName(b, i))}</option>`).join("")}</select></label>
+      <label class="f" style="margin-bottom:8px"><select id="d3Area"><option value="all"${M3.area === "all" ? " selected" : ""}>Butun loyiha</option>${bps.map((b, i) => `<option value="${esc(b.id)}"${M3.area === b.id ? " selected" : ""}>${optLabel(b, i)}</option>`).join("")}</select></label>
       <button class="btn primary block" id="d3Load">${M3.data ? "OSM ma’lumotini qayta yuklash" : "OSM ma’lumotini yuklash"}</button>
-      <p class="hint" id="d3Stat" style="margin-top:8px"></p></section>
+      <p class="hint" id="d3Stat" style="margin-top:8px"></p>
+      <p class="hint">Faqat shu hudud ichidagi obyektlar quriladi; yo‘llar hudud chizig‘idan 50 m gacha. Hudud ${AREA_LIMIT} km² dan oshmasin.</p></section>
     <section class="sec"><h3>Qatlamlar</h3>${M3_NAMES.map(([k, ic, nm]) => `<label class="chk"><input type="checkbox" data-d3v="${k}" ${M3.vis[k] ? "checked" : ""}> <span class="d3sw">${ic}</span> ${nm}</label>`).join("")}</section>
     <section class="sec"><h3>Ko‘rinish</h3>
-      <label class="f">Relyef balandligi: <b id="d3ExV">×${M3.exag.toFixed(1)}</b><input type="range" id="d3Ex" min="0" max="3" step="0.1" value="${M3.exag}"></label>
+      <label class="f">Relyef balandligi: <b id="d3ExV">×${M3.exag.toFixed(1)}</b><input type="range" id="d3Ex" min="0" max="2.5" step="0.1" value="${M3.exag}"></label>
+      <p class="hint" style="margin:-4px 0 8px">×1,0 — haqiqiy balandlik. Shahar tekis bo‘lsa, relyef deyarli sezilmaydi; katta qiymat sun’iy bo‘rtish va chuqurliklarni oshiradi.</p>
+      <label class="f">Relyef aniqligi<select id="d3Dem"><option value="11"${M3.demZ === 11 ? " selected" : ""}>Juda silliq</option><option value="12"${M3.demZ === 12 ? " selected" : ""}>Silliq (tavsiya)</option><option value="13"${M3.demZ === 13 ? " selected" : ""}>O‘rta</option><option value="15"${M3.demZ === 15 ? " selected" : ""}>Batafsil (shovqinli)</option></select></label>
+      <label class="f">Daraxtlar soni (maks.): <b id="d3CapV">${M3.treeCap}</b><input type="range" id="d3Cap" min="0" max="1500" step="50" value="${M3.treeCap}"></label>
       <label class="f">Quyosh yo‘nalishi: <b id="d3AzV">${M3.az}°</b><input type="range" id="d3Az" min="0" max="360" step="5" value="${M3.az}"></label>
       <label class="f">Quyosh balandligi: <b id="d3AltV">${M3.alt}°</b><input type="range" id="d3Alt" min="10" max="85" step="5" value="${M3.alt}"></label>
       <label class="f">Xarita asosi<select id="d3Base"><option value="osm"${M3.base === "osm" ? " selected" : ""}>OpenStreetMap</option><option value="sat"${M3.base === "sat" ? " selected" : ""}>Sun’iy yo‘ldosh</option><option value="none"${M3.base === "none" ? " selected" : ""}>Asossiz</option></select></label>
       <div class="d3grid"><button class="btn" data-cam="top">Tepadan</button><button class="btn" data-cam="tilt">Perspektiva</button><button class="btn" data-cam="left">⟲ 45°</button><button class="btn" data-cam="right">45° ⟳</button><button class="btn" data-cam="north">Shimolga</button><button class="btn" data-cam="fit">Hududga</button></div>
       <button class="btn block" id="d3Png">PNG yuklab olish</button>
-      <p class="hint" style="margin-top:8px">Binolar balandligi OSM’dagi height/qavat ma’lumotidan olinadi, yo‘q bo‘lsa taxminiy qo‘yiladi. Daraxtlar OSM nuqtalari va o‘rmon, ko‘kalamzor zonalarda sxematik joylashadi.</p></section>`;
-  if(M3.data){ const st = M3.data.stats; m3Status(`Binolar: ${st.bld} (balandligi taxminiy: ${st.est}) · Yo‘llar: ${st.road} · Daraxtlar: ${st.trees} · Suv: ${st.water} · Yashil: ${st.green}`); }
+      <p class="hint" style="margin-top:8px">Binolar balandligi OSM’dagi height/qavat ma’lumotidan olinadi, yo‘q bo‘lsa taxminiy. Daraxtlar OSM nuqtalari va o‘rmon, ko‘kalamzor zonalarda sxematik (binolar va yo‘llardan tashqarida) joylashadi. Relyef — SRTM 30 m sirt modeli (daraxt va binolarni ham o‘z ichiga oladi).</p></section>`;
+  if(M3.data) m3Status(m3StatText());
 }
 function m3Reset(){
   if(M3.map){ try{ M3.map.remove(); }catch(e){} M3.map = null; }
@@ -3338,6 +3458,7 @@ $("#d3Box").addEventListener("click", e => {
 $("#d3Box").addEventListener("input", e => {
   const id = e.target.id, v = e.target.value;
   if(id === "d3Ex"){ M3.exag = +v; $("#d3ExV").textContent = "×" + (+v).toFixed(1); m3Vis(); }
+  else if(id === "d3Cap"){ $("#d3CapV").textContent = v; }
   else if(id === "d3Az"){ M3.az = +v; $("#d3AzV").textContent = v + "°"; m3Light(); }
   else if(id === "d3Alt"){ M3.alt = +v; $("#d3AltV").textContent = v + "°"; m3Light(); }
 });
@@ -3345,6 +3466,8 @@ $("#d3Box").addEventListener("change", e => {
   const t = e.target;
   if(t.dataset.d3v){ M3.vis[t.dataset.d3v] = t.checked; m3Vis(); }
   else if(t.id === "d3Base") m3SetBase(t.value);
+  else if(t.id === "d3Cap"){ M3.treeCap = +t.value; m3RebuildTrees(); }
+  else if(t.id === "d3Dem") m3SetDem(+t.value);
   else if(t.id === "d3Area"){ M3.area = t.value; m3LoadData().then(m3Panel); }
 });
 /* 3D rejimida zoom tugmalari 3D xaritani boshqaradi */
